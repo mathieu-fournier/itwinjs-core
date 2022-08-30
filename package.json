@@ -16,7 +16,8 @@
     "clean": "lage clean --no-cache && cospace purge && pnpm i -w cospace",
     "setOverrides": "cospace override",
     "purge": "cospace purge",
-    "build:turbo": "turbo run build"
+    "build:turbo": "turbo run build",
+    "change": "beachball"
   },
   "keywords": [
     "Bentley",
@@ -31,6 +32,7 @@
   },
   "//dependencies": "NOTE: dependencies will be empty here and instead specified in each package.",
   "devDependencies": {
+    "beachball": "2.30.1",
     "cospace": "latest",
     "lage": "^1.7.8",
     "turbo": "^1.4.0"
