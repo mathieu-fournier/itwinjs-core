@@ -17,7 +17,7 @@ module.exports = {
         "ui/*",
         "utils/*",
       ],
-      exclude: ["extensions/test-extension", "presentation/scripts"],
+      exclude: ["extensions/test-extension", "presentation/scripts", "tools/internal"],
     },
   ],
   prereleasePrefix: "dev"

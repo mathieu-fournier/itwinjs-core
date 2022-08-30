@@ -1,0 +1,7 @@
+{
+  "type": "prerelease",
+  "comment": "investigate using beachball",
+  "packageName": "@itwin/eslint-plugin",
+  "email": "aruniverse@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
