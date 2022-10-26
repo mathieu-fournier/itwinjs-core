@@ -1,0 +1,7 @@
+{
+  "comment": "test beachball",
+  "type": "prerelease",
+  "packageName": "internal-tools",
+  "email": "66480813+paulius-valiunas@users.noreply.github.com",
+  "dependentChangeType": "prerelease"
+}

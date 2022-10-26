@@ -1,7 +1,0 @@
-{
-  "type": "prerelease",
-  "comment": "investigate using beachball",
-  "packageName": "internal-tools",
-  "email": "aruniverse@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
