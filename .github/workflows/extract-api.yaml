@@ -26,14 +26,14 @@ jobs:
         with:
           node-version: "14"
 
-      - name: Rush install
-        run: node common/scripts/install-run-rush.js install
+      - name: pnpm install
+        run: pnpm install
 
-      - name: Rush build
-        run: node common/scripts/install-run-rush.js build -v -p max
+      - name: pnpm build
+        run: pnpm build
 
-      - name: Rush extract-api
-        run: node common/scripts/install-run-rush.js extract-api
+      - name: pnpm extract-api
+        run: pnpm extract-api
 
       - name: Publish extracted api
         uses: actions/upload-artifact@v2

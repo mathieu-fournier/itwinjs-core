@@ -10,14 +10,12 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build:lage": "lage build",
+    "build": "lage build",
     "build:clean": "lage build --no-cache",
     "build:profile": "lage build --no-cache --profile",
-    "clean": "lage clean --no-cache && cospace purge && pnpm i -w cospace",
-    "setOverrides": "cospace override",
-    "purge": "cospace purge",
-    "build:turbo": "turbo run build",
-    "change": "beachball"
+    "clean": "lage clean --no-cache",
+    "purge": "rimraf node_modules **/node_modules",
+    "change": "beachball --type prerelease --no-commit --dependent-change-type prerelease"
   },
   "keywords": [
     "Bentley",
@@ -33,8 +31,16 @@
   "//dependencies": "NOTE: dependencies will be empty here and instead specified in each package.",
   "devDependencies": {
     "beachball": "^2.30.1",
-    "cospace": "latest",
     "lage": "^1.8.0",
-    "turbo": "^1.5.5"
+    "lint-staged": "^13.0.3",
+    "rimraf": "^3.0.2",
+    "syncpack": "^8.2.4"
+  },
+  "syncpack": {
+    "versionGroups": [
+      { "dependencies": ["*"], "packages": ["@itwin/eslint-plugin"] }
+    ],
+    "workspace": false,
+    "peer": false
   }
 }

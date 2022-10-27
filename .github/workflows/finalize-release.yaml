@@ -48,8 +48,7 @@ jobs:
             exit $exitCode
           fi
 
-          rush change --bulk --message "" --bump-type none
-          git add .
+          pnpm change -m "" --no-commit --type none
           git commit --amend --no-edit
 
           exit $?

@@ -1,3 +1,7 @@
+/*---------------------------------------------------------------------------------------------
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 /*",* @type {import("beachball").BeachballConfig } */
 module.exports = {
   access: "public",
@@ -11,13 +15,14 @@ module.exports = {
         "core/**",
         "domains/**",
         "editor/**",
-        "extensions/*",
-        "presentation/*",
-        "tools/*",
-        "ui/*",
-        "utils/*",
+        "extensions/**",
+        "presentation/**",
+        "tools/**",
+        "ui/**",
+        "utils/**",
       ],
       exclude: ["extensions/test-extension", "presentation/scripts", "tools/internal"],
+      disallowedChangeTypes: ["major", "minor", "patch"],
     },
   ],
   prereleasePrefix: "dev"

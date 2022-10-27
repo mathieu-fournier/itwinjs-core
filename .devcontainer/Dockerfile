@@ -18,7 +18,6 @@ RUN \
   fonts-liberation libayatana-appindicator1 libnss3 libsecret-1-0 \
   lsb-release xdg-utils wget \
   && apt-get install -y git nodejs locales zsh procps \
-  && npm install -g @microsoft/rush \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ENV \

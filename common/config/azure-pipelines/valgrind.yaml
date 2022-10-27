@@ -43,17 +43,17 @@ jobs:
       # - script: sudo apt-get install valgrind
       #   displayName: apt install valgrind
 
-      - script: node common/scripts/install-run-rush.js install
-        displayName: rush install
+      - script: pnpm install
+        displayName: pnpm install
 
-      - script: node common/scripts/install-run-rush.js rebuild
-        displayName: rush rebuild
+      - script: pnpm rebuild
+        displayName: pnpm rebuild
         condition: succeeded()
 
       - script: mkdir $(VALGRIND_RESULTS)
 
-      - script: 'valgrind --suppressions=$(Agent.BuildDirectory)/s/common/config/azure-pipelines/valgrind.supp --leak-check=full --track-origins=yes --gen-suppressions=all --trace-children=yes node common/scripts/install-run-rush.js cover |& tee $(VALGRIND_RESULTS)memcheck$(Build.BuildId).txt'
-        displayName: 'Run Valgrind on rush cover'
+      - script: 'valgrind --suppressions=$(Agent.BuildDirectory)/s/common/config/azure-pipelines/valgrind.supp --leak-check=full --track-origins=yes --gen-suppressions=all --trace-children=yes pnpm cover |& tee $(VALGRIND_RESULTS)memcheck$(Build.BuildId).txt'
+        displayName: 'Run Valgrind on pnpm cover'
         failOnStderr: false
 
       - task: archiveandpublishartifact@0

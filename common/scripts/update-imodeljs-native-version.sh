@@ -62,14 +62,14 @@ rm "$RepoRoot/common/config/rush/pnpm-lock.yaml"
 rm -rf "$RepoRoot/common/temp"
 
 # Update to new @bentley/imodeljs-native package.
-rush update
+pnpm install
 checkfail
 
 git commit -am"@bentley/imodeljs-native $AddonVersion"
 checkfail
 
 # Generate empty change logs.
-yes "" | rush change
+pnpm change -m "Update imodeljs-native"
 checkfail
 
 git add "$RepoRoot/common/changes"

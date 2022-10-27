@@ -14,9 +14,11 @@
 .github/workflows  @calebmshafer @wgoehrig @ColinKerr
 .github/CODEOWNERS @iTwin/itwinjs-core-admins
 
-.gitattributes  @iTwin/itwinjs-core-admins
-.gitignore      @iTwin/itwinjs-core-admins
-rush.json       @iTwin/itwinjs-core-admins
+.gitattributes      @iTwin/itwinjs-core-admins
+.gitignore          @iTwin/itwinjs-core-admins
+pnpm-workspace.yaml @iTwin/itwinjs-core-admins
+beachball.config.js @iTwin/itwinjs-core-admins
+lage.config.js      @iTwin/itwinjs-core-admins
 
 # The syntax used below tries to cover both files and folders in the common folder that operate per=package
 # Due to syntax requirements, both can't be covered in a single line

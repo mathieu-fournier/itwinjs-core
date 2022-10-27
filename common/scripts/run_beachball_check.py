@@ -14,7 +14,7 @@ if buildReason == "PullRequest":
 print ("Current branch: " + srcBranch)
 print ("Target branch: " + targetBranch)
 
-# Verifying with rush change requires the branch that is being merged into to be provided.  More details, https://rushjs.io/pages/commands/rush_change/.
+# Verifying with beachball check requires the branch that is being merged into to be provided.  More details, https://microsoft.github.io/beachball/cli/options.html#general-options.
 # With release/* being a potential target branch in addition to master, special case those branches.
 if targetBranch.find("refs/heads/release") != -1:
     branchCmd = ["-b", targetBranch.replace("refs/heads/", "origin/")]
@@ -25,7 +25,7 @@ else:
     # Uses default head ("origin/master"), if not defined
     branchCmd = []
 
-command = ["node", "common/scripts/install-run-rush.js", "change", "-v"] + branchCmd
+command = ["pnpm", "beachball", "check"] + branchCmd
 print ("Executing: " + " ".join(command))
 
 proc = subprocess.Popen(command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)

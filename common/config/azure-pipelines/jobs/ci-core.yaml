@@ -43,8 +43,8 @@ jobs:
 
     - powershell: |
         # Get the new version number.
-        $json = Get-Content -Raw -Path common/config/rush/version-policies.json | ConvertFrom-Json
-        $currVersion = $json[0].version
+        $json = Get-Content -Raw -Path core/common/package.json | ConvertFrom-Json
+        $currVersion = $json.version
 
         $newBuildNumber = $currVersion + "_$(Build.BuildNumber)"
 
