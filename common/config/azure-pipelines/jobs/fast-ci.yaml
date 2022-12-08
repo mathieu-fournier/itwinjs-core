@@ -33,6 +33,6 @@ jobs:
       nodeVersion: 18.12.x
       buildIos: true
       pool:
-        name: $(name)
+        name: iModelTechMacArm
         demands:
           - Agent.OS -equals $(platform)
