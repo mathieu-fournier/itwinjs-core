@@ -44,7 +44,7 @@ steps:
     displayName: rush build
     workingDirectory: ${{ parameters.workingDir }}
     condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Agent.OS'], 'Darwin'))
-  - script: arch -x86_64 npm run ios:all
+  - script: npm run ios:all
     workingDirectory: "test-apps/display-test-app"
     displayName: "Build & run iOS display-test-app"
     condition: and(succeeded(), eq('${{ parameters.buildIos }}',true), or(eq(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.Reason'], 'Manual')), eq(variables['Agent.OS'], 'Darwin'))
