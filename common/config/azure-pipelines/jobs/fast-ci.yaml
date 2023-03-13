@@ -33,15 +33,16 @@ jobs:
         "Windows_Node_18":
           platform: Windows_NT
           name: $(win_pool)
-        "Linux_Node_18":
-          platform: Linux
-          name: $(linux_pool)
-        "MacOS_Node_18":
-          platform: Darwin
-          name: $(mac_pool)
+        # "Linux_Node_18":
+        #   platform: Linux
+        #   name: $(linux_pool)
+        # "MacOS_Node_18":
+        #   platform: Darwin
+        #   name: $(mac_pool)
 
     pool:
-      name: $(name)
+      # name: $(name)
+      name: iModeljs Windows
       demands:
         - Agent.OS -equals $(platform)
 
