@@ -73,28 +73,32 @@ export class CoincidentGeometryQuery {
    * @param pointA1 end point of segment A
    * @param pointB0 start point of segment B
    * @param pointB1 end point of segment B
+   * @param restrictToBounds when segments are colinear: true to return bounded overlap or undefined; false to return unbounded overlap.
+   * @return whether the segments are colinear, and if so, their overlap details
    */
-  public coincidentSegmentRangeXY(pointA0: Point3d, pointA1: Point3d, pointB0: Point3d, pointB1: Point3d, restrictToBounds: boolean = true): CurveLocationDetailPair | undefined {
+  public coincidentSegmentRangeXY(pointA0: Point3d, pointA1: Point3d, pointB0: Point3d, pointB1: Point3d, restrictToBounds: boolean = true): {colinear: boolean, overlap?: CurveLocationDetailPair} {
+    let colinear = false;
     const detailA0OnB = this.projectPointToSegmentXY(pointA0, pointB0, pointB1);
     if (pointA0.distanceXY(detailA0OnB.point) > this._tolerance)
-      return undefined;
+      return {colinear};
     const detailA1OnB = this.projectPointToSegmentXY(pointA1, pointB0, pointB1);
     if (pointA1.distanceXY(detailA1OnB.point) > this._tolerance)
-      return undefined;
+      return {colinear};
 
     const detailB0OnA = this.projectPointToSegmentXY(pointB0, pointA0, pointA1);
     if (pointB0.distanceXY(detailB0OnA.point) > this._tolerance)
-      return undefined;
+      return {colinear};
     const detailB1OnA = this.projectPointToSegmentXY(pointB1, pointA0, pointA1);
     if (pointB1.distanceXY(detailB1OnA.point) > this._tolerance)
-      return undefined;
+      return {colinear};
 
+    colinear = true;
     detailA0OnB.fraction1 = detailA1OnB.fraction;
     detailA0OnB.point1 = detailA1OnB.point;  // capture -- detailA1OnB is not reused.
     detailB0OnA.fraction1 = detailB1OnA.fraction;
-    detailB0OnA.point1 = detailB1OnA.point;
+    detailB0OnA.point1 = detailB1OnA.point;  // capture -- detailB1OnA is not reused.
     if (!restrictToBounds)
-      return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
+      return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
 
     const segment = Segment1d.create(detailB0OnA.fraction, detailB0OnA.fraction1);
     if (segment.clampDirectedTo01()) {
@@ -105,33 +109,33 @@ export class CoincidentGeometryQuery {
       // recompute fractions and points..
       CoincidentGeometryQuery.assignDetailInterpolatedFractionsAndPoints(detailB0OnA, f0, f1, pointA0, pointA1, f0 > f1);
       CoincidentGeometryQuery.assignDetailInterpolatedFractionsAndPoints(detailA0OnB, h0, h1, pointB0, pointB1, h0 > h1);
-      return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
+      return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
+    }
+    // check for intersection at start/end points
+    if (segment.signedDelta() < 0.0) {
+      if (detailB0OnA.point.isAlmostEqual(pointA0, this.tolerance)) {
+        detailB0OnA.collapseToStart();
+        detailA0OnB.collapseToStart();
+        return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
+      }
+      if (detailB0OnA.point1.isAlmostEqual(pointA1, this.tolerance)) {
+        detailB0OnA.collapseToEnd();
+        detailA0OnB.collapseToEnd();
+        return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
+      }
     } else {
-      if (segment.signedDelta() < 0.0) {
-        if (detailB0OnA.point.isAlmostEqual(pointA0, this.tolerance)) {
-          detailB0OnA.collapseToStart();
-          detailA0OnB.collapseToStart();
-          return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
-        }
-        if (detailB0OnA.point1.isAlmostEqual(pointA1, this.tolerance)) {
-          detailB0OnA.collapseToEnd();
-          detailA0OnB.collapseToEnd();
-          return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
-        }
-      } else {
-        if (detailB0OnA.point.isAlmostEqual(pointA1, this.tolerance)) {
-          detailB0OnA.collapseToStart();
-          detailA0OnB.collapseToEnd();
-          return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
-        }
-        if (detailB0OnA.point1.isAlmostEqual(pointA0, this.tolerance)) {
-          detailB0OnA.collapseToEnd();
-          detailA0OnB.collapseToStart();
-          return CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB);
-        }
+      if (detailB0OnA.point.isAlmostEqual(pointA1, this.tolerance)) {
+        detailB0OnA.collapseToStart();
+        detailA0OnB.collapseToEnd();
+        return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
+      }
+      if (detailB0OnA.point1.isAlmostEqual(pointA0, this.tolerance)) {
+        detailB0OnA.collapseToEnd();
+        detailA0OnB.collapseToStart();
+        return {colinear, overlap: CurveLocationDetailPair.createCapture(detailB0OnA, detailA0OnB)};
       }
     }
-    return undefined;
+    return {colinear};  // colinear segments are disjoint
   }
   /**
    * Create a CurveLocationDetailPair for a coincident interval of two overlapping curves

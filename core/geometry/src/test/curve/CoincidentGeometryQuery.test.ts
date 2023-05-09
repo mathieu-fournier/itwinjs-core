@@ -42,7 +42,7 @@ describe("CoincidentGeometryQuery", () => {
         const rangeA01 = rangeA.intersect(range01);
         const pointB0 = pointA0.interpolate(fA0, pointA1);
         const pointB1 = pointA0.interpolate(fA1, pointA1);
-        const pair = context.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, true);
+        const result = context.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, true);
         GeometryCoreTestIO.captureGeometry(allGeometry, LineSegment3d.create(pointA0, pointA1), x0, y0 + dy0);
         GeometryCoreTestIO.captureGeometry(allGeometry, LineSegment3d.create(pointB0, pointB1), x0, y0 + dy1);
         const qB = pointB0;
@@ -50,22 +50,22 @@ describe("CoincidentGeometryQuery", () => {
         GeometryCoreTestIO.captureGeometry(allGeometry, LineSegment3d.create(pointA0, qB), x0, y0);
 
         const expectPair = !rangeA01.isNull;
-        if (pair) {
-          const pA = pair.detailA.point.clone();
-          const pB = pair.detailB.point.clone();
+        if (result.overlap) {
+          const pA = result.overlap.detailA.point.clone();
+          const pB = result.overlap.detailB.point.clone();
           pA.y += y0 + dy2;
           pB.y += y0 + dy3;
           GeometryCoreTestIO.captureGeometry(allGeometry, LineSegment3d.create(pA, pB), x0, 0);
-          GeometryCoreTestIO.captureCurveLocationDetails(allGeometry, pair, 0.01, x0, y0);
-          if (pair.detailA.point1 && !ck.testCoordinate(rangeA01.length(), pair.detailA.point.distance(pair.detailA.point1), "length A", fA0, fA1))
+          GeometryCoreTestIO.captureCurveLocationDetails(allGeometry, result.overlap, 0.01, x0, y0);
+          if (result.overlap.detailA.point1 && !ck.testCoordinate(rangeA01.length(), result.overlap.detailA.point.distance(result.overlap.detailA.point1), "length A", fA0, fA1))
             GeometryCoreTestIO.createAndCaptureXYMarker(allGeometry, 0, pointA0.interpolate(2.0, pointA1), endMarkerSize, x0, y0);
-          if (pair.detailB.point1 && !ck.testCoordinate(rangeA01.length(), pair.detailB.point.distance(pair.detailB.point1), "length B", fA0, fA1))
+          if (result.overlap.detailB.point1 && !ck.testCoordinate(rangeA01.length(), result.overlap.detailB.point.distance(result.overlap.detailB.point1), "length B", fA0, fA1))
             GeometryCoreTestIO.createAndCaptureXYMarker(allGeometry, 0, pointB0.interpolate(2.0, pointB1), endMarkerSize, x0, y0 + dy1);
         } else {
           GeometryCoreTestIO.createAndCaptureXYMarker(allGeometry, 0, pointA0, 0.2, x0, y0);
         }
-        ck.testBoolean(expectPair, pair !== undefined, prettyPrint([[pointA0, pointA1], [pointB0, pointB1]]), pair, fA0, fA1);
-        context.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, true);
+        if (!ck.testBoolean(expectPair, result.overlap !== undefined, prettyPrint([[pointA0, pointA1], [pointB0, pointB1]]), result, fA0, fA1))
+          context.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, true); // repeat to debug
         y0 += yStep;
       }
       x0 += xStep;

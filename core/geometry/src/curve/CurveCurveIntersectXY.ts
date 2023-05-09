@@ -261,19 +261,25 @@ export class CurveCurveIntersectXY extends NullGeometryHandler {
     extendB1: boolean,
     reversed: boolean,
   ) {
-    const uv = CurveCurveIntersectXY._workVector2dA;
-    // Problem: Normal practice is to do the (quick, simple) transverse intersection first
+    // Problem: Normal practice is to do the (quick, simple) transverse intersection first.
     // But the transverse intersector notion of coincidence is based on the determinant ratios, which are hard to relate
-    //     to physical tolerance.
-    //  So do the overlap first.  This should do a quick exit in non-coincident case.
-    const overlap = this._coincidentGeometryContext.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1);
-    if (overlap) {
-      this.recordPointWithLocalFractions(
-        overlap.detailA.fraction, cpA, fractionA0, fractionA1,
-        overlap.detailB.fraction, cpB, fractionB0, fractionB1, reversed, overlap);
-    } else if (SmallSystem.lineSegment3dXYTransverseIntersectionUnbounded(
-      pointA0, pointA1,
-      pointB0, pointB1, uv)) {
+    // to physical tolerance. So do the overlap first. This should do a quick exit in non-coincident case.
+    const result = this._coincidentGeometryContext.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1);
+    if (result.colinear) {
+      if (result.overlap) {
+        this.recordPointWithLocalFractions(
+          result.overlap.detailA.fraction, cpA, fractionA0, fractionA1,
+          result.overlap.detailB.fraction, cpB, fractionB0, fractionB1,
+          reversed, result.overlap
+        );
+      } else {
+        // segments are colinear but disjoint, so no intersections to record
+      }
+      return;
+    }
+    // segments are not colinear, so it's safe to do transverse intersection
+    const uv = CurveCurveIntersectXY._workVector2dA;
+    if (SmallSystem.lineSegment3dXYTransverseIntersectionUnbounded(pointA0, pointA1, pointB0, pointB1, uv)) {
       if (this.acceptFractionOnLine(extendA0, uv.x, extendA1, pointA0, pointA1, this._coincidentGeometryContext.tolerance)
         && this.acceptFractionOnLine(extendB0, uv.y, extendB1, pointB0, pointB1, this._coincidentGeometryContext.tolerance)) {
         this.recordPointWithLocalFractions(uv.x, cpA, fractionA0, fractionA1, uv.y, cpB, fractionB0, fractionB1, reversed);
