@@ -282,7 +282,11 @@ export class RegionOps {
           result.tryAddChild(loop);
       }
     });
-    return result;
+    if (result.children.length === 0)
+      return undefined;
+    if (result.children.length === 1)
+      return result.children[0];  // Loop
+    return result;  // UnionRegion
   }
 
   /**
