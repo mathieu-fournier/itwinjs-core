@@ -702,19 +702,20 @@ describe("RegionBoolean", () => {
       testCases.push({ jsonFilePath: "./src/test/testInputs/curve/michelLoops2.imjs", expectedNumComponents: 338, skipBoolean: true }); // 10 seconds
     }
     for (const testCase of testCases) {
-      const inputs = IModelJson.Reader.parse(JSON.parse(fs.readFileSync(testCase.jsonFilePath, "utf8"))) as Loop[];
+      const inputs = IModelJson.Reader.parse(JSON.parse(fs.readFileSync(testCase.jsonFilePath, "utf8"))) as AnyRegion[];
       if (ck.testDefined(inputs, "inputs successfully parsed") && inputs) {
         GeometryCoreTestIO.captureCloneGeometry(allGeometry, inputs, x0, y0);
-        const range: Range3d = Range3d.createFromVariantData(inputs.map((loop: Loop) => { return [loop.range().low, loop.range().high]; }));
+        const range: Range3d = Range3d.createFromVariantData(inputs.map((loop: AnyRegion) => { return [loop.range().low, loop.range().high]; }));
         xDelta = 1.5 * range.xLength();
         yDelta = 1.5 * range.yLength();
-        let merged: Loop[] | AnyRegion | undefined = inputs;
+        let merged: AnyRegion | AnyRegion[] | undefined = inputs;
         if (!testCase.skipBoolean) {
-          // Do a Boolean union of the inputs. This means holes will be lost! But that's OK, as we're only interested in the outer loop.
+          // Do a Boolean union of the inputs. This means holes will be lost! But that's OK, as here we're only interested in the outer loop.
           // It is hard to use RegionOps.regionBooleanXY to discover holes: you have to know a priori how to separate the loops into arrays
-          //    of solids and holes because both arrays undergo a hole-destroying Boolean union before the main (RegionBinaryOpType.Parity) operation.
-          // RegionOps.sortOuterAndHoleLoopsXY can produce a Union/ParityRegion from loops, after which you know which loops are "holes".
-          //    But if a hole loop intersects any other loop, you don't know its parity-rule-defined subregions because intersections aren't computed.
+          //    of solids and holes because both input arrays undergo a hole-destroying union before the main parity operation starts.
+          // RegionOps.sortOuterAndHoleLoopsXY can produce a Union/ParityRegion from loops, after which you know which input loops are "holes".
+          //    But it doesn't discover holes that aren't already loops in the input array, and if a hole loop intersects any other loop, you
+          //    don't know its parity-rule-defined subregions---both because it doesn't compute intersections.
           merged = RegionOps.regionBooleanXY(inputs, undefined, RegionBinaryOpType.Union, testCase.tolerance);
           if (ck.testDefined(merged, "regionBooleanXY succeeded") && merged) {
             x0 += xDelta;
@@ -804,6 +805,88 @@ describe("RegionBoolean", () => {
       y0 += delta;
     }
     GeometryCoreTestIO.saveGeometry(allGeometry, "RegionBoolean", "OverlappingArcs");
+    expect(ck.getNumErrors()).equals(0);
+  });
+
+  it("HoleDiscovery", () => {
+    const ck = new Checker();
+    const allGeometry: GeometryQuery[] = [];
+    let x0 = 0;
+    const delta = 15;
+    // test case has four congruent trapezoids arranged in a "picture frame" configuration
+    const inputs = IModelJson.Reader.parse(JSON.parse(fs.readFileSync("./src/test/testInputs/curve/pictureFrame.imjs", "utf8"))) as Loop[];
+    if (ck.testDefined(inputs, "inputs successfully parsed") && inputs) {
+      GeometryCoreTestIO.captureCloneGeometry(allGeometry, inputs, x0);
+
+      // sorting loops does not discover holes that aren't inputs
+      const sorted = RegionOps.sortOuterAndHoleLoopsXY(inputs);
+      GeometryCoreTestIO.captureCloneGeometry(allGeometry, sorted, x0 += delta);
+      if (ck.testType(sorted, UnionRegion, "sortOuterAndHoleLoopsXY produced a UnionRegion"))
+        ck.testExactNumber(inputs.length, sorted.children.length, "sortOuterAndHoleLoopsXY didn't add loops to the input");
+
+      // union of loops results in no additional loops, does not find hole loops
+      const merged = RegionOps.regionBooleanXY(inputs, undefined, RegionBinaryOpType.Union);
+      let mergedChildrenAreLoops = false;
+      GeometryCoreTestIO.captureCloneGeometry(allGeometry, merged, x0 += delta);
+      if (ck.testType(merged, UnionRegion, "regionBooleanXY union produced a UnionRegion")) {
+        mergedChildrenAreLoops = ck.testArrayType(merged.children, Loop, "regionBooleanXY produced a UnionRegion with all Loop children");
+        ck.testExactNumber(inputs.length, merged.children.length, "regionBooleanXY added no bridge edges that survive");
+      }
+
+      // union of loops split into groups does not change result
+      if (merged) {
+        const merged2 = RegionOps.regionBooleanXY([inputs[0], inputs[1]], [inputs[2], inputs[3]], RegionBinaryOpType.Union);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, merged2, x0 += delta);
+        if (ck.testType(merged2, UnionRegion, "regionBooleanXY union produced a UnionRegion"))
+          ck.testExactNumber(merged.children.length, merged2.children.length, "regionBooleanXY union not affected by input grouping)");
+      }
+
+      // sorting loops after union changes nothing
+      if (merged && mergedChildrenAreLoops) {
+        const mergedThenSorted = RegionOps.sortOuterAndHoleLoopsXY(merged.children as Loop[]);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, mergedThenSorted, x0 += delta);
+        if (ck.testType(mergedThenSorted, UnionRegion, "sortOuterAndHoleLoopsXY after regionBooleanXY produced a UnionRegion")) {
+          ck.testExactNumber(merged.children.length, mergedThenSorted.children.length, "sortOuterAndHoleLoopsXY after regionBooleanXY didn't change loop count");
+          ck.testArrayType(mergedThenSorted.children, Loop, "sortOuterAndHoleLoopsXY after regionBooleanXY produced a UnionRegion with all Loop children");
+        }
+      }
+
+      // finding all loops only finds outer loop; hole loops are indistinguishable from other positive area loops
+      const signedLoops = RegionOps.constructAllXYRegionLoops(inputs);
+      let exteriorLoop = undefined;
+      if (ck.testExactNumber(1, signedLoops.length, "constructAllXYRegionLoops found one connected component")) {
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, [...signedLoops[0].negativeAreaLoops, ...signedLoops[0].positiveAreaLoops], x0 += delta);
+        if (ck.testExactNumber(1, signedLoops[0].negativeAreaLoops.length, "the component returned by constructAllXYRegionLoops has one exterior loop"))
+          exteriorLoop = signedLoops[0].negativeAreaLoops[0];
+        ck.testExactNumber(inputs.length + 1, signedLoops[0].positiveAreaLoops.length, "constructAllXYRegionLoops added the hole loop to the positive area (input) loops");
+      }
+
+      // subtracting inputs from outer loop discovers hole
+      let hole = undefined;
+      if (exteriorLoop) {
+        const subtracted = RegionOps.regionBooleanXY(exteriorLoop, inputs, RegionBinaryOpType.AMinusB);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, subtracted, x0 += delta);
+        if (ck.testType(subtracted, Loop, "regionBooleanXY subtract found a single hole"))
+          hole = subtracted;
+      }
+
+      // sorting hole and outer loop creates a parity region
+      let solid = undefined;
+      if (hole && exteriorLoop) {
+        const sorted = RegionOps.sortOuterAndHoleLoopsXY([exteriorLoop, hole]);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, sorted, x0 += delta);
+        if (ck.testType(sorted, ParityRegion, "sortOuterAndHoleLoopsXY created a single parity region"))
+          solid = sorted;
+      }
+
+      // verify simplified union of inputs is the inputs
+      if (solid) {
+        const subtracted = RegionOps.regionBooleanXY(solid, inputs, RegionBinaryOpType.AMinusB);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, subtracted, x0 += delta);
+        ck.testUndefined(subtracted, "regionBooleanXY subtract is empty as expected");
+      }
+    }
+    GeometryCoreTestIO.saveGeometry(allGeometry, "RegionBoolean", "HoleDiscovery");
     expect(ck.getNumErrors()).equals(0);
   });
 });
@@ -1478,7 +1561,7 @@ function exerciseAreaBooleans(dataA: AnyRegion[], dataB: AnyRegion[],
     const result = RegionOps.regionBooleanXY(dataA, dataB, opType);
     if (showVertexNeighborhoods)
       HalfEdgeGraphMerge.announceVertexNeighborhoodFunction = undefined;
-    areas.push(RegionOps.computeXYArea(result!)!);
+    areas.push(result ? (RegionOps.computeXYArea(result) ?? 0.0) : 0.0);
     GeometryCoreTestIO.captureCloneGeometry(allGeometry, result, x0, y0);
   }
   const area0 = areas[0]; // union

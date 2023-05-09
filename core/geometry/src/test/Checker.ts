@@ -261,6 +261,13 @@ export class Checker {
     this.announceError("Expect defined with type", data, params);
     return false;
   }
+  public testArrayType<T extends Function>(array: any[], classType: T, ...params: any[]): boolean {
+    for (const entry of array) {
+      if (!this.testType(entry, classType))
+        return this.announceError("Expect array entry with type", array, params);
+    }
+    return this.announceOK();
+  }
   public testIsFinite(dataA: any, ...params: any[]): dataA is number {
     if (Number.isFinite(dataA))
       return this.announceOK();
