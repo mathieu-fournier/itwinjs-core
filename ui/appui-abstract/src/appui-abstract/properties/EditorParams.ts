@@ -12,6 +12,7 @@
  * for use by `DatePickerPopup`. If a parseData function is not implemented
  * then string to date parsing will not be possible when a `DateFormatter` is used.
  * @public
+ * @deprecated
  */
 export interface DateFormatter {
   formateDate: (day: Date) => string;
@@ -20,6 +21,7 @@ export interface DateFormatter {
 
 /** Alternate Data Formats that can be provide by javascript. Can be used by Date TypeConverter and TypeEditor.
  * @public
+ * @deprecated
  */
 export enum AlternateDateFormats {
   None = 0,
@@ -39,6 +41,7 @@ export enum AlternateDateFormats {
 
 /** Enum that defines supported time formats.
  * @public
+ * @deprecated
  */
 export enum TimeDisplay {
   // 12 hour with minutes and cycle(AM/PM)

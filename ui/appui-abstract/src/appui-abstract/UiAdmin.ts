@@ -8,7 +8,6 @@
 
 import { BeUiEvent } from "@itwin/core-bentley";
 import { AbstractMenuItemProps } from "./items/AbstractMenuItemProps";
-import { AbstractToolbarProps } from "./items/AbstractToolbarProps";
 import { RelativePosition } from "./items/RelativePosition";
 import { PropertyDescription } from "./properties/Description";
 import { Primitives } from "./properties/PrimitiveTypes";
@@ -122,12 +121,13 @@ export class UiAdmin {
    * @param _relativePosition Position relative to the given location. Defaults to TopRight.
    * @param _htmlElement The HTMLElement that anchors the Toolbar. If undefined, the location is relative to the overall window.
    * @return true if the Toolbar was displayed, false if the Toolbar could not be displayed.
+   * @deprecated
    */
-  public showToolbar(
-    _toolbarProps: AbstractToolbarProps, _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc,
-    _relativePosition?: RelativePosition, _htmlElement?: HTMLElement): boolean {
-    return false;
-  }
+  // public showToolbar(
+  //   _toolbarProps: AbstractToolbarProps, _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc,
+  //   _relativePosition?: RelativePosition, _htmlElement?: HTMLElement): boolean {
+  //   return false;
+  // }
 
   /** Hides the toolbar. */
   public hideToolbar(): boolean { return false; }
@@ -246,13 +246,14 @@ export class UiAdmin {
    * @param _relativePosition Position relative to the given location. Defaults to TopRight.
    * @param _anchorElement The HTMLElement that anchors the Card. If undefined, the location is relative to the overall window.
    * @return true if the Card was displayed, false if the Card could not be displayed.
+   * @deprecated
    */
-  public showCard(
-    _content: HTMLElement, _title: string | PropertyRecord | undefined, _toolbarProps: AbstractToolbarProps | undefined,
-    _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc,
-    _relativePosition?: RelativePosition, _anchorElement?: HTMLElement): boolean {
-    return false;
-  }
+  // public showCard(
+  //   _content: HTMLElement, _title: string | PropertyRecord | undefined, _toolbarProps: AbstractToolbarProps | undefined,
+  //   _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc,
+  //   _relativePosition?: RelativePosition, _anchorElement?: HTMLElement): boolean {
+  //   return false;
+  // }
 
   /** Hides the Card. */
   public hideCard(): boolean { return false; }

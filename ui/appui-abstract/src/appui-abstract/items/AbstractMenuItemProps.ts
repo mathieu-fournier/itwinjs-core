@@ -11,6 +11,7 @@ import { ConditionalStringValue } from "./ConditionalStringValue";
 
 /** Properties for a Menu item
  * @public
+ * @deprecated
  */
 export interface AbstractMenuItemProps extends CommonItemProps {
   /** The id for the menu item. */

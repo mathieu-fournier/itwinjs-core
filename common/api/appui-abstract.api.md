@@ -4,18 +4,16 @@
 
 ```ts
 
-import { BeEvent } from '@itwin/core-bentley';
 import { BentleyError } from '@itwin/core-bentley';
 import { BeUiEvent } from '@itwin/core-bentley';
 import { GetMetaDataFunction } from '@itwin/core-bentley';
 import { Id64String } from '@itwin/core-bentley';
-import { MarkRequired } from '@itwin/core-bentley';
 
-// @public
+// @public @deprecated
 export interface AbstractActionItemProps extends CommonItemProps, CommandHandler {
 }
 
-// @public
+// @public @deprecated
 export interface AbstractMenuItemProps extends CommonItemProps {
     iconRight?: string | ConditionalStringValue;
     id: string;
@@ -24,119 +22,6 @@ export interface AbstractMenuItemProps extends CommonItemProps {
 }
 
 // @public @deprecated
-export interface AbstractStatusBarActionItem extends AbstractStatusBarItem {
-    readonly execute: () => void;
-    readonly icon?: string | ConditionalStringValue;
-    readonly label?: string | ConditionalStringValue;
-    readonly tooltip?: string | ConditionalStringValue;
-}
-
-// @public @deprecated
-export interface AbstractStatusBarCustomItem extends AbstractStatusBarItem {
-    // (undocumented)
-    readonly isCustom: true;
-}
-
-// @public @deprecated
-export interface AbstractStatusBarItem extends ProvidedItem {
-    applicationData?: any;
-    readonly badgeType?: BadgeType;
-    readonly id: string;
-    readonly internalData?: Map<string, any>;
-    readonly isDisabled?: boolean | ConditionalBooleanValue;
-    readonly isHidden?: boolean | ConditionalBooleanValue;
-    readonly itemPriority: number;
-    readonly section: StatusBarSection;
-}
-
-// @public @deprecated
-export class AbstractStatusBarItemUtilities {
-    static createActionItem: (id: string, section: StatusBarSection, itemPriority: number, icon: string | ConditionalStringValue, tooltip: string | ConditionalStringValue, execute: () => void, overrides?: Partial<AbstractStatusBarCustomItem>) => AbstractStatusBarActionItem;
-    static createLabelItem: (id: string, section: StatusBarSection, itemPriority: number, icon: string | ConditionalStringValue, label: string | ConditionalStringValue, labelSide?: StatusBarLabelSide, overrides?: Partial<AbstractStatusBarLabelItem>) => AbstractStatusBarLabelItem;
-}
-
-// @public @deprecated
-export interface AbstractStatusBarLabelItem extends AbstractStatusBarItem {
-    readonly icon?: string | ConditionalStringValue;
-    readonly label: string | ConditionalStringValue;
-    readonly labelSide?: StatusBarLabelSide;
-}
-
-// @public
-export interface AbstractToolbarProps {
-    items: CommonToolbarItem[];
-    toolbarId?: string;
-}
-
-// @public @deprecated
-export interface AbstractWidgetProps extends ProvidedItem {
-    readonly allowedPanelTargets?: ReadonlyArray<"left" | "right" | "bottom" | "top">;
-    readonly applicationData?: any;
-    readonly badgeType?: BadgeType;
-    readonly canPopout?: boolean;
-    readonly defaultFloatingPosition?: {
-        x: number;
-        y: number;
-    };
-    defaultFloatingSize?: {
-        width: number;
-        height: number;
-    };
-    readonly defaultState?: WidgetState;
-    readonly fillZone?: boolean;
-    readonly floatingContainerId?: string;
-    readonly getWidgetContent: () => any;
-    hideWithUiWhenFloating?: boolean;
-    readonly icon?: string | ConditionalStringValue;
-    readonly id?: string;
-    readonly internalData?: Map<string, any>;
-    readonly isFloatingStateSupported?: boolean;
-    readonly isFloatingStateWindowResizable?: boolean;
-    // @deprecated
-    readonly isFreeform?: boolean;
-    readonly isStatusBar?: boolean;
-    readonly isToolSettings?: boolean;
-    readonly label?: string | ConditionalStringValue;
-    readonly onWidgetStateChanged?: () => void;
-    readonly priority?: number;
-    readonly restoreTransientState?: () => boolean;
-    readonly saveTransientState?: () => void;
-    // @deprecated
-    readonly stateFunc?: (state: Readonly<WidgetState>) => WidgetState;
-    readonly syncEventIds?: string[];
-    readonly tooltip?: string | ConditionalStringValue;
-}
-
-// @public @deprecated
-export enum AbstractZoneLocation {
-    // (undocumented)
-    BottomLeft = 7,
-    // (undocumented)
-    BottomRight = 9,
-    // (undocumented)
-    CenterLeft = 4,
-    // (undocumented)
-    CenterRight = 6
-}
-
-// @public
-export interface ActionButton extends ToolbarItem {
-    readonly execute: () => void;
-    readonly icon: string | ConditionalStringValue;
-    readonly label: string | ConditionalStringValue;
-}
-
-// @public @deprecated
-export interface AllowedUiItemProviderOverrides {
-    // @beta
-    providerId?: string;
-    // @beta
-    stageIds?: string[];
-    // @beta
-    stageUsages?: string[];
-}
-
-// @public
 export enum AlternateDateFormats {
     // (undocumented)
     IsoDateTime = 2,
@@ -165,57 +50,6 @@ export interface ArrayValue extends BasePropertyValue {
 }
 
 // @public @deprecated
-export interface BackstageActionItem extends CommonBackstageItem {
-    // (undocumented)
-    readonly execute: () => void;
-}
-
-// @public @deprecated
-export type BackstageItem = BackstageActionItem | BackstageStageLauncher;
-
-// @internal
-export interface BackstageItemsChangedArgs {
-    // (undocumented)
-    readonly items: ReadonlyArray<BackstageItem>;
-}
-
-// @internal
-export class BackstageItemsManager {
-    constructor(items?: ReadonlyArray<BackstageItem>);
-    // (undocumented)
-    add(itemOrItems: BackstageItem | ReadonlyArray<BackstageItem>): void;
-    // (undocumented)
-    static getSyncIdsOfInterest(items: readonly BackstageItem[]): string[];
-    // (undocumented)
-    get items(): ReadonlyArray<BackstageItem>;
-    set items(items: ReadonlyArray<BackstageItem>);
-    loadItems(items: ReadonlyArray<BackstageItem>): void;
-    readonly onItemsChanged: BeEvent<(args: BackstageItemsChangedArgs) => void>;
-    // (undocumented)
-    refreshAffectedItems(eventIds: Set<string>): void;
-    // (undocumented)
-    remove(itemIdOrItemIds: BackstageItem["id"] | ReadonlyArray<BackstageItem["id"]>): void;
-}
-
-// @public @deprecated
-export enum BackstageItemType {
-    ActionItem = 1,
-    StageLauncher = 2
-}
-
-// @public @deprecated
-export class BackstageItemUtilities {
-    static createActionItem: (itemId: string, groupPriority: number, itemPriority: number, execute: () => void, label: string | ConditionalStringValue, subtitle?: string | ConditionalStringValue, icon?: string | ConditionalStringValue, overrides?: Partial<BackstageActionItem>) => BackstageActionItem;
-    static createStageLauncher: (frontstageId: string, groupPriority: number, itemPriority: number, label: string | ConditionalStringValue, subtitle?: string | ConditionalStringValue, icon?: string | ConditionalStringValue, overrides?: Partial<BackstageStageLauncher>) => BackstageStageLauncher;
-}
-
-// @public @deprecated
-export interface BackstageStageLauncher extends CommonBackstageItem {
-    // (undocumented)
-    readonly stageId: string;
-}
-
-// @public
 export enum BadgeType {
     New = 2,
     None = 0,
@@ -267,34 +101,6 @@ export abstract class BaseQuantityDescription implements PropertyDescription {
     abstract get quantityType(): string;
     // (undocumented)
     typename: string;
-}
-
-// @public @deprecated
-export class BaseUiItemsProvider implements UiItemsProvider {
-    constructor(_providerId: string, isSupportedStage?: ((stageId: string, stageUsage: string, stageAppData?: any, provider?: UiItemsProvider) => boolean) | undefined);
-    // (undocumented)
-    get id(): string;
-    // (undocumented)
-    isSupportedStage?: ((stageId: string, stageUsage: string, stageAppData?: any, provider?: UiItemsProvider) => boolean) | undefined;
-    // (undocumented)
-    onUnregister(): void;
-    provideBackstageItems(): BackstageItem[];
-    // (undocumented)
-    protected _providerId: string;
-    // (undocumented)
-    provideStatusBarItems(stageId: string, stageUsage: string, stageAppData?: any): CommonStatusBarItem[];
-    // (undocumented)
-    provideStatusBarItemsInternal(_stageId: string, _stageUsage: string, _stageAppData?: any): CommonStatusBarItem[];
-    // (undocumented)
-    provideToolbarButtonItems(stageId: string, stageUsage: string, toolbarUsage: ToolbarUsage, toolbarOrientation: ToolbarOrientation, stageAppData?: any): CommonToolbarItem[];
-    // (undocumented)
-    provideToolbarButtonItemsInternal(_stageId: string, _stageUsage: string, _toolbarUsage: ToolbarUsage, _toolbarOrientation: ToolbarOrientation, _stageAppData?: any): CommonToolbarItem[];
-    // (undocumented)
-    provideWidgets(stageId: string, stageUsage: string, location: StagePanelLocation, section?: StagePanelSection, _zoneLocation?: AbstractZoneLocation, stageAppData?: any): ReadonlyArray<AbstractWidgetProps>;
-    // (undocumented)
-    provideWidgetsInternal(_stageId: string, _stageUsage: string, _location: StagePanelLocation, _section?: StagePanelSection, _zoneLocation?: AbstractZoneLocation, _stageAppData?: any): AbstractWidgetProps[];
-    // (undocumented)
-    unregister(): void;
 }
 
 // @public
@@ -845,7 +651,7 @@ export interface ColorEditorParams extends BasePropertyEditorParams {
     type: PropertyEditorParamTypes.ColorData;
 }
 
-// @public
+// @public @deprecated
 export interface CommandHandler {
     execute?: (args?: any) => any;
     getCommandArgs?: () => any[];
@@ -853,23 +659,6 @@ export interface CommandHandler {
 }
 
 // @public @deprecated
-export interface CommonBackstageItem extends ProvidedItem {
-    applicationData?: any;
-    readonly badgeType?: BadgeType;
-    readonly groupPriority: number;
-    readonly icon?: string | ConditionalStringValue;
-    readonly id: string;
-    readonly internalData?: Map<string, any>;
-    readonly isActive?: boolean | ConditionalBooleanValue;
-    readonly isDisabled?: boolean | ConditionalBooleanValue;
-    readonly isHidden?: boolean | ConditionalBooleanValue;
-    readonly itemPriority: number;
-    readonly label: string | ConditionalStringValue;
-    readonly subtitle?: string | ConditionalStringValue;
-    readonly tooltip?: string | ConditionalStringValue;
-}
-
-// @public
 export interface CommonItemProps {
     applicationData?: any;
     badgeType?: BadgeType;
@@ -885,12 +674,6 @@ export interface CommonItemProps {
 }
 
 // @public @deprecated
-export type CommonStatusBarItem = AbstractStatusBarActionItem | AbstractStatusBarLabelItem | AbstractStatusBarCustomItem;
-
-// @public
-export type CommonToolbarItem = ActionButton | GroupButton | CustomButtonDefinition;
-
-// @public
 export class ConditionalBooleanValue {
     constructor(testFunc: () => boolean, syncEventIds: string[], value?: boolean);
     static getValue(conditionalValue: ConditionalBooleanValue | boolean | undefined): boolean;
@@ -903,7 +686,7 @@ export class ConditionalBooleanValue {
     get value(): boolean;
 }
 
-// @public
+// @public @deprecated
 export class ConditionalStringValue {
     constructor(stringGetter: () => string, syncEventIds: string[], value?: string);
     static getValue(conditionalValue: ConditionalStringValue | string | undefined): string | undefined;
@@ -929,13 +712,6 @@ export function convertSimple2RegExpPattern(pattern: string): string;
 export function createMatches(score: undefined | FuzzyScore): IMatch[];
 
 // @public
-export interface CustomButtonDefinition extends ToolbarItem {
-    readonly icon?: string | ConditionalStringValue;
-    readonly isCustom: true;
-    readonly label?: string | ConditionalStringValue;
-}
-
-// @public
 export interface CustomFormattedNumberParams extends BasePropertyEditorParams {
     // (undocumented)
     formatFunction: (numberValue: number) => string;
@@ -945,7 +721,7 @@ export interface CustomFormattedNumberParams extends BasePropertyEditorParams {
     type: PropertyEditorParamTypes.CustomFormattedNumber;
 }
 
-// @public
+// @public @deprecated
 export interface DateFormatter {
     // (undocumented)
     formateDate: (day: Date) => string;
@@ -1122,7 +898,7 @@ export interface EnumerationChoicesInfo {
 // @internal (undocumented)
 export function equalsIgnoreCase(a: string, b: string): boolean;
 
-// @public
+// @public @deprecated
 export enum FunctionKey {
     // (undocumented)
     F1 = "F1",
@@ -1184,14 +960,6 @@ export interface GenericUiEventArgs {
 
 // @internal
 export const getClassName: (obj: any) => string;
-
-// @public
-export interface GroupButton extends ToolbarItem {
-    readonly icon: string | ConditionalStringValue;
-    readonly items: ReadonlyArray<ActionButton | GroupButton>;
-    readonly label: string | ConditionalStringValue;
-    readonly panelLabel?: string | ConditionalStringValue;
-}
 
 // @public
 export interface IconDefinition {
@@ -1259,18 +1027,6 @@ export interface InputEditorSizeParams extends BasePropertyEditorParams {
 }
 
 // @public @deprecated
-export const isAbstractStatusBarActionItem: (item: CommonStatusBarItem) => item is AbstractStatusBarActionItem;
-
-// @public @deprecated
-export const isAbstractStatusBarCustomItem: (item: CommonStatusBarItem) => item is AbstractStatusBarCustomItem;
-
-// @public @deprecated
-export const isAbstractStatusBarLabelItem: (item: CommonStatusBarItem) => item is AbstractStatusBarLabelItem;
-
-// @public @deprecated
-export const isActionItem: (item: BackstageItem) => item is BackstageActionItem;
-
-// @public
 export function isArrowKey(key: string): boolean;
 
 // @public
@@ -1296,9 +1052,6 @@ export function isLowerAsciiLetter(code: number): boolean;
 
 // @internal (undocumented)
 export function isPatternInWord(patternLow: string, patternPos: number, patternLen: number, wordLow: string, wordPos: number, wordLen: number): boolean;
-
-// @public @deprecated
-export const isStageLauncher: (item: BackstageItem) => item is BackstageStageLauncher;
 
 // @public
 export const isSuppressLabelEditorParams: (item: BasePropertyEditorParams) => item is SuppressLabelEditorParams;
@@ -1616,11 +1369,6 @@ export enum PropertyValueFormat {
     Struct = 2
 }
 
-// @public @deprecated
-export interface ProvidedItem {
-    readonly providerId?: string;
-}
-
 // @public
 export interface RangeEditorParams extends BasePropertyEditorParams {
     maximum?: number;
@@ -1631,7 +1379,7 @@ export interface RangeEditorParams extends BasePropertyEditorParams {
     type: PropertyEditorParamTypes.Range;
 }
 
-// @public
+// @public @deprecated
 export enum RelativePosition {
     // (undocumented)
     Bottom = 3,
@@ -1678,7 +1426,7 @@ export interface SliderEditorParams extends BasePropertyEditorParams {
     type: PropertyEditorParamTypes.Slider;
 }
 
-// @public
+// @public @deprecated
 export enum SpecialKey {
     // (undocumented)
     Add = "Add",
@@ -1727,48 +1475,6 @@ export enum SpecialKey {
 }
 
 // @public @deprecated
-export enum StagePanelLocation {
-    // (undocumented)
-    Bottom = 105,
-    // @deprecated (undocumented)
-    BottomMost = 106,
-    // (undocumented)
-    Left = 103,
-    // (undocumented)
-    Right = 104,
-    // (undocumented)
-    Top = 101,
-    // @deprecated (undocumented)
-    TopMost = 102
-}
-
-// @public @deprecated
-export enum StagePanelSection {
-    // (undocumented)
-    End = 2,
-    // @deprecated (undocumented)
-    Middle = 1,
-    // (undocumented)
-    Start = 0
-}
-
-// @public @deprecated
-export enum StageUsage {
-    // (undocumented)
-    Edit = "Edit",
-    // (undocumented)
-    General = "General",
-    // (undocumented)
-    Private = "Private",
-    // (undocumented)
-    Redline = "Redline",
-    // (undocumented)
-    Settings = "Settings",
-    // (undocumented)
-    ViewOnly = "ViewOnly"
-}
-
-// @public
 export class StandardContentLayouts {
     // (undocumented)
     static readonly availableLayouts: ContentLayoutProps[];
@@ -1870,50 +1576,6 @@ export enum StandardTypeNames {
 export function startsWithIgnoreCase(str: string, candidate: string): boolean;
 
 // @public @deprecated
-export type StatusBarItemId = CommonStatusBarItem["id"];
-
-// @internal
-export interface StatusBarItemsChangedArgs {
-    // (undocumented)
-    readonly items: ReadonlyArray<CommonStatusBarItem>;
-}
-
-// @internal
-export class StatusBarItemsManager {
-    constructor(items?: ReadonlyArray<CommonStatusBarItem>);
-    // (undocumented)
-    add(itemOrItems: CommonStatusBarItem | ReadonlyArray<CommonStatusBarItem>): void;
-    // (undocumented)
-    static getSyncIdsOfInterest(items: readonly CommonStatusBarItem[]): string[];
-    get items(): ReadonlyArray<CommonStatusBarItem>;
-    set items(items: ReadonlyArray<CommonStatusBarItem>);
-    loadItems(items: ReadonlyArray<CommonStatusBarItem>): void;
-    readonly onItemsChanged: BeEvent<(args: StatusBarItemsChangedArgs) => void>;
-    // (undocumented)
-    refreshAffectedItems(eventIds: Set<string>): void;
-    remove(itemIdOrItemIds: StatusBarItemId | ReadonlyArray<StatusBarItemId>): void;
-    // (undocumented)
-    removeAll(): void;
-}
-
-// @public @deprecated
-export enum StatusBarLabelSide {
-    Left = 0,
-    Right = 1
-}
-
-// @public @deprecated
-export enum StatusBarSection {
-    Center = 1,
-    Context = 3,
-    Left = 0,
-    Message = 0,
-    Right = 2,
-    Selection = 2,
-    Stage = 1
-}
-
-// @public
 export type StringGetter = () => string;
 
 // @public
@@ -1943,7 +1605,7 @@ export interface SyncPropertiesChangeEventArgs {
     properties: DialogPropertySyncItem[];
 }
 
-// @public
+// @public @deprecated
 export enum TimeDisplay {
     // (undocumented)
     H12MC = "hh:mm aa",
@@ -1953,74 +1615,6 @@ export enum TimeDisplay {
     H24M = "hh:mm",
     // (undocumented)
     H24MS = "hh:mm:ss"
-}
-
-// @public
-export interface ToolbarItem extends ProvidedItem {
-    readonly applicationData?: any;
-    readonly badgeType?: BadgeType;
-    readonly description?: string | ConditionalStringValue;
-    readonly groupPriority?: number;
-    readonly id: string;
-    readonly internalData?: Map<string, any>;
-    readonly isActive?: boolean;
-    readonly isDisabled?: boolean | ConditionalBooleanValue;
-    readonly isHidden?: boolean | ConditionalBooleanValue;
-    readonly isPressed?: boolean;
-    readonly itemPriority: number;
-    readonly parentToolGroupId?: string;
-}
-
-// @public @deprecated
-export type ToolbarItemId = CommonToolbarItem["id"];
-
-// @internal
-export interface ToolbarItemsChangedArgs {
-    // (undocumented)
-    readonly items: ReadonlyArray<CommonToolbarItem>;
-}
-
-// @internal
-export class ToolbarItemsManager {
-    constructor(items?: ReadonlyArray<CommonToolbarItem>);
-    // (undocumented)
-    add(itemOrItems: CommonToolbarItem | ReadonlyArray<CommonToolbarItem>): void;
-    // (undocumented)
-    static getSyncIdsOfInterest(items: readonly CommonToolbarItem[]): string[];
-    get items(): ReadonlyArray<CommonToolbarItem>;
-    set items(items: ReadonlyArray<CommonToolbarItem>);
-    // (undocumented)
-    protected _items: ReadonlyArray<CommonToolbarItem>;
-    loadItems(items: ReadonlyArray<CommonToolbarItem>): void;
-    readonly onItemsChanged: BeEvent<(args: ToolbarItemsChangedArgs) => void>;
-    // (undocumented)
-    refreshAffectedItems(eventIds: Set<string>): void;
-    remove(itemIdOrItemIds: ToolbarItemId | ReadonlyArray<ToolbarItemId>): void;
-    // (undocumented)
-    removeAll(): void;
-    // (undocumented)
-    setActiveToolId(toolId: string): void;
-}
-
-// @public
-export class ToolbarItemUtilities {
-    static createActionButton: (id: string, itemPriority: number, icon: string | ConditionalStringValue, label: string | ConditionalStringValue, execute: () => void, overrides?: Partial<ActionButton>) => ActionButton;
-    static createGroupButton: (id: string, itemPriority: number, icon: string | ConditionalStringValue, label: string | ConditionalStringValue, items: ReadonlyArray<ActionButton | GroupButton>, overrides?: Partial<GroupButton>) => GroupButton;
-    static isActionButton(item: CommonToolbarItem): item is ActionButton;
-    static isCustomDefinition(item: CommonToolbarItem): item is CustomButtonDefinition;
-    static isGroupButton(item: CommonToolbarItem): item is GroupButton;
-}
-
-// @public @deprecated
-export enum ToolbarOrientation {
-    Horizontal = 0,
-    Vertical = 1
-}
-
-// @public @deprecated
-export enum ToolbarUsage {
-    ContentManipulation = 0,
-    ViewNavigation = 1
 }
 
 // @public
@@ -2050,7 +1644,6 @@ export class UiAdmin {
     setFocusToHome(): void;
     showAngleEditor(_initialValue: number, _location: PointProps, _onCommit: OnNumberCommitFunc, _onCancel: OnCancelFunc, _htmlElement?: HTMLElement): boolean;
     showCalculator(_initialValue: number, _resultIcon: string, _location: PointProps, _onCommit: OnNumberCommitFunc, _onCancel: OnCancelFunc, _htmlElement?: HTMLElement): boolean;
-    showCard(_content: HTMLElement, _title: string | PropertyRecord | undefined, _toolbarProps: AbstractToolbarProps | undefined, _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc, _relativePosition?: RelativePosition, _anchorElement?: HTMLElement): boolean;
     showContextMenu(_menuItemsProps: AbstractMenuItemProps[], _location: PointProps, _htmlElement?: HTMLElement): boolean;
     showHeightEditor(_initialValue: number, _location: PointProps, _onCommit: OnNumberCommitFunc, _onCancel: OnCancelFunc, _htmlElement?: HTMLElement): boolean;
     showHTMLElement(_displayElement: HTMLElement, _location: PointProps, _offset: PointProps, _onCancel: OnCancelFunc, _relativePosition?: RelativePosition, _anchorElement?: HTMLElement): boolean;
@@ -2058,7 +1651,6 @@ export class UiAdmin {
     showKeyinPalette(_htmlElement?: HTMLElement): boolean;
     showLengthEditor(_initialValue: number, _location: PointProps, _onCommit: OnNumberCommitFunc, _onCancel: OnCancelFunc, _htmlElement?: HTMLElement): boolean;
     showMenuButton(_id: string, _menuItemsProps: AbstractMenuItemProps[], _location: PointProps, _htmlElement?: HTMLElement): boolean;
-    showToolbar(_toolbarProps: AbstractToolbarProps, _location: PointProps, _offset: PointProps, _onItemExecuted: OnItemExecutedFunc, _onCancel: OnCancelFunc, _relativePosition?: RelativePosition, _htmlElement?: HTMLElement): boolean;
     // (undocumented)
     updateFeatureFlags(uiFlags: UiFlags): void;
 }
@@ -2107,53 +1699,7 @@ export interface UiFlags {
     allowKeyinPalette?: boolean;
 }
 
-// @public @deprecated
-export type UiItemProviderOverrides = MarkRequired<AllowedUiItemProviderOverrides, "providerId" | "stageUsages"> | MarkRequired<AllowedUiItemProviderOverrides, "providerId" | "stageIds"> | // eslint-disable-line @typescript-eslint/indent
-MarkRequired<AllowedUiItemProviderOverrides, "stageIds"> | // eslint-disable-line @typescript-eslint/indent
-MarkRequired<AllowedUiItemProviderOverrides, "stageUsages"> | // eslint-disable-line @typescript-eslint/indent
-MarkRequired<AllowedUiItemProviderOverrides, "providerId" | "stageUsages" | "stageIds">;
-
-// @public @deprecated
-export interface UiItemProviderRegisteredEventArgs {
-    // (undocumented)
-    providerId: string;
-}
-
-// @public @deprecated
-export enum UiItemsApplicationAction {
-    Allow = 0,
-    Disallow = 1,
-    Update = 2
-}
-
-// @public @deprecated
-export class UiItemsManager {
-    // @internal
-    static clearAllProviders(): void;
-    static getBackstageItems(): BackstageItem[];
-    static getStatusBarItems(stageId: string, stageUsage: string, stageAppData?: any): CommonStatusBarItem[];
-    static getToolbarButtonItems(stageId: string, stageUsage: string, toolbarUsage: ToolbarUsage, toolbarOrientation: ToolbarOrientation, stageAppData?: any): CommonToolbarItem[];
-    static getUiItemsProvider(providerId: string): UiItemsProvider | undefined;
-    static getWidgets(stageId: string, stageUsage: string, location: StagePanelLocation, section?: StagePanelSection, zoneLocation?: AbstractZoneLocation, stageAppData?: any): ReadonlyArray<AbstractWidgetProps>;
-    static get hasRegisteredProviders(): boolean;
-    static readonly onUiProviderRegisteredEvent: BeEvent<(ev: UiItemProviderRegisteredEventArgs) => void>;
-    static register(uiProvider: UiItemsProvider, overrides?: UiItemProviderOverrides): void;
-    static get registeredProviderIds(): string[];
-    static unregister(uiProviderId: string): void;
-}
-
-// @public @deprecated
-export interface UiItemsProvider {
-    readonly id: string;
-    onUnregister?: () => void;
-    provideBackstageItems?: () => BackstageItem[];
-    provideStatusBarItems?: (stageId: string, stageUsage: string, stageAppData?: any) => CommonStatusBarItem[];
-    provideToolbarButtonItems?: (stageId: string, stageUsage: string, toolbarUsage: ToolbarUsage, toolbarOrientation: ToolbarOrientation, stageAppData?: any) => CommonToolbarItem[];
-    provideWidgets?: (stageId: string, stageUsage: string, location: StagePanelLocation, section?: StagePanelSection, // eslint-disable-line deprecation/deprecation
-    zoneLocation?: AbstractZoneLocation, stageAppData?: any) => ReadonlyArray<AbstractWidgetProps>;
-}
-
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export abstract class UiLayoutDataProvider extends UiDataProvider {
     applyUiPropertyChange: (_updatedValue: DialogPropertySyncItem) => void;
     static editorWantsLabel(item: DialogItem): boolean;
@@ -2181,15 +1727,6 @@ export class UiSyncEvent extends UiEvent<UiSyncEventArgs> {
 export interface UiSyncEventArgs {
     // (undocumented)
     eventIds: Set<string>;
-}
-
-// @public @deprecated
-export enum WidgetState {
-    Closed = 1,
-    Floating = 3,
-    Hidden = 2,
-    Open = 0,
-    Unloaded = 4
 }
 
 // (No @packageDocumentation comment for this package)

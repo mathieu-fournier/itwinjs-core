@@ -8,6 +8,7 @@
 
 /** Relative Position for popups
  * @public
+ * @deprecated Move to Core
  */
 export enum RelativePosition {
   Left = 0,

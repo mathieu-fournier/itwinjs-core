@@ -5,7 +5,6 @@
 import { expect } from "chai";
 import * as sinon from "sinon";
 import { AbstractMenuItemProps } from "../appui-abstract/items/AbstractMenuItemProps";
-import { AbstractToolbarProps } from "../appui-abstract/items/AbstractToolbarProps";
 import { RelativePosition } from "../appui-abstract/items/RelativePosition";
 import { PropertyDescription } from "../appui-abstract/properties/Description";
 import { UiAdmin } from "../appui-abstract/UiAdmin";
@@ -64,22 +63,22 @@ describe("UiAdmin", () => {
     expect(uiAdmin.showContextMenu(menuItemProps, uiAdmin.createXAndY(150, 250), doc.documentElement)).to.be.false;
   });
 
-  it("showToolbar should return false by default", () => {
-    const toolbarProps: AbstractToolbarProps = {
-      toolbarId: "test",
-      items: [
-        { id: "tool", itemPriority: 10, label: "tool label", icon: "icon-placeholder", execute: () => { } },
-        { id: "command", itemPriority: 20, label: "command label", icon: "icon-placeholder", execute: () => { } },
-        { id: "command2", itemPriority: 30, label: "command label", icon: "icon-placeholder", execute: () => { } },
-      ],
-    };
-    const doc = new DOMParser().parseFromString("<div>xyz</div>", "text/html");
-    const spySelect = sinon.fake();
-    const spyCancel = sinon.fake();
+  // it("showToolbar should return false by default", () => {
+  //   const toolbarProps: AbstractToolbarProps = {
+  //     toolbarId: "test",
+  //     items: [
+  //       { id: "tool", itemPriority: 10, label: "tool label", icon: "icon-placeholder", execute: () => { } },
+  //       { id: "command", itemPriority: 20, label: "command label", icon: "icon-placeholder", execute: () => { } },
+  //       { id: "command2", itemPriority: 30, label: "command label", icon: "icon-placeholder", execute: () => { } },
+  //     ],
+  //   };
+  //   const doc = new DOMParser().parseFromString("<div>xyz</div>", "text/html");
+  //   const spySelect = sinon.fake();
+  //   const spyCancel = sinon.fake();
 
-    expect(uiAdmin.showToolbar(toolbarProps, uiAdmin.createXAndY(150, 250), uiAdmin.createXAndY(8, 8), spySelect, spyCancel, RelativePosition.BottomRight, doc.documentElement)).to.be.false;
-    expect(uiAdmin.hideToolbar()).to.be.false;
-  });
+  //   expect(uiAdmin.showToolbar(toolbarProps, uiAdmin.createXAndY(150, 250), uiAdmin.createXAndY(8, 8), spySelect, spyCancel, RelativePosition.BottomRight, doc.documentElement)).to.be.false;
+  //   expect(uiAdmin.hideToolbar()).to.be.false;
+  // });
 
   it("showMenuButton should return false by default", () => {
     const menuItemProps: AbstractMenuItemProps[] = [
@@ -154,24 +153,24 @@ describe("UiAdmin", () => {
     expect(uiAdmin.hideHTMLElement()).to.be.false;
   });
 
-  it("showCard should return false by default", () => {
-    const html = '<div style="width: 120px; height: 50px; display: flex; justify-content: center; align-items: center; background-color: aqua;">Hello World!</div>';
-    const content = new DOMParser().parseFromString(html, "text/html");
-    const toolbarProps: AbstractToolbarProps = {
-      toolbarId: "test",
-      items: [
-        { id: "tool", itemPriority: 10, label: "tool label", icon: "icon-placeholder", execute: () => { } },
-        { id: "command", itemPriority: 20, label: "command label", icon: "icon-placeholder", execute: () => { } },
-        { id: "command2", itemPriority: 30, label: "command label", icon: "icon-placeholder", execute: () => { } },
-      ],
-    };
-    const spySelect = sinon.fake();
-    const spyCancel = sinon.fake();
-    const doc = new DOMParser().parseFromString("<div>xyz</div>", "text/html");
+  // it("showCard should return false by default", () => {
+  //   const html = '<div style="width: 120px; height: 50px; display: flex; justify-content: center; align-items: center; background-color: aqua;">Hello World!</div>';
+  //   const content = new DOMParser().parseFromString(html, "text/html");
+  //   const toolbarProps: AbstractToolbarProps = {
+  //     toolbarId: "test",
+  //     items: [
+  //       { id: "tool", itemPriority: 10, label: "tool label", icon: "icon-placeholder", execute: () => { } },
+  //       { id: "command", itemPriority: 20, label: "command label", icon: "icon-placeholder", execute: () => { } },
+  //       { id: "command2", itemPriority: 30, label: "command label", icon: "icon-placeholder", execute: () => { } },
+  //     ],
+  //   };
+  //   const spySelect = sinon.fake();
+  //   const spyCancel = sinon.fake();
+  //   const doc = new DOMParser().parseFromString("<div>xyz</div>", "text/html");
 
-    expect(uiAdmin.showCard(content.documentElement, "Title", toolbarProps, uiAdmin.createXAndY(150, 250), uiAdmin.createXAndY(8, 8), spySelect, spyCancel, RelativePosition.BottomRight, doc.documentElement)).to.be.false;
-    expect(uiAdmin.hideCard()).to.be.false;
-  });
+  //   expect(uiAdmin.showCard(content.documentElement, "Title", toolbarProps, uiAdmin.createXAndY(150, 250), uiAdmin.createXAndY(8, 8), spySelect, spyCancel, RelativePosition.BottomRight, doc.documentElement)).to.be.false;
+  //   expect(uiAdmin.hideCard()).to.be.false;
+  // });
 
   it("openToolSettingsPopup should return false by default", () => {
     class TestUiDataProvider extends UiDataProvider { }

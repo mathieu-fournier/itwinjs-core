@@ -12,11 +12,13 @@ import { ConditionalStringValue } from "./ConditionalStringValue";
 
 /** Prototype for string getter function.
  * @public
+ * @deprecated
  */
 export type StringGetter = () => string;
 
 /** Definition that specifies properties shared between many ConfigurableUi components.
  * @public
+ * @deprecated
  */
 export interface CommonItemProps {
   /** can be used by application to store miscellaneous data. */
@@ -46,6 +48,7 @@ export interface CommonItemProps {
 
 /** Definition for a command handler.
  * @public
+ * @deprecated
  */
 export interface CommandHandler {
   /** Function to execute */
@@ -58,6 +61,7 @@ export interface CommandHandler {
 
 /** Definition for an item that executes and action.
  * @public
+ * @deprecated
  */
 export interface AbstractActionItemProps extends CommonItemProps, CommandHandler {
 }

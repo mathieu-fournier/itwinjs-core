@@ -8,6 +8,7 @@
 
 /** Specifies type of badge, if any, that should be overlaid on UI component.
  * @public
+ * @deprecated
  */
 export enum BadgeType {
   /** No badge. */

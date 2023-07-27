@@ -66,6 +66,7 @@ export interface DialogRow {
 
 /**
  * @public
+ * @deprecated
  */
 export abstract class UiLayoutDataProvider extends UiDataProvider {
   private _items: ReadonlyArray<DialogItem> | undefined;
