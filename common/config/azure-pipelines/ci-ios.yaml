@@ -24,6 +24,8 @@ jobs:
   - job:
     timeoutInMinutes: 120
     pool:
+      name: iModelTechMacArm
+      demands: 'Agent.Name -equals BuildMacM1Minion51-A'
       vmImage: macos-latest
     workspace:
       clean: all
