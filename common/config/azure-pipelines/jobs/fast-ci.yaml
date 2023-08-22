@@ -44,6 +44,7 @@ jobs:
       name: $(name)
       demands:
         - Agent.OS -equals $(platform)
+        - Agent.Name -equals BuildMacM1Minion51-A
 
     timeoutInMinutes: 60
 
