@@ -5,13 +5,14 @@
 
 import { expect } from "chai";
 import { WmtsCapabilities } from "../../../tile/map/WmtsCapabilities";
-
+import { resolve } from "path";
 describe("WmtsCapabilities", () => {
   const SMALL_DEGREES_DIFFERENCE = 1.0e-8;
   const SMALL_DECIMAL_DIFFERENCE = 1.0e-6;
 
   it("should parse USGS WMTS capabilities", async () => {
-    const capabilities = await WmtsCapabilities.create("assets/wmts_capabilities/USGSHydroCached_capabilities.xml");
+    const url = resolve(process.cwd(),"src/test/public/assets/wmts_capabilities/USGSHydroCached_capabilities.xml");
+    const capabilities = await WmtsCapabilities.create(url);
     expect(capabilities?.version).to.equal("1.0.0");
 
     // Test GetCapabilities operation metadata

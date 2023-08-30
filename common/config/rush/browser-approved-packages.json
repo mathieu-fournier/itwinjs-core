@@ -383,6 +383,18 @@
       "allowedCategories": [ "frontend" ]
     },
     {
+      "name": "@vitest/browser",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
+      "name": "@vitest/ui",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
+      "name": "@vitest/utils",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
       "name": "@xmldom/xmldom",
       "allowedCategories": [ "backend", "common", "internal", "tools" ]
     },
@@ -433,6 +445,10 @@
     {
       "name": "canonical-path",
       "allowedCategories": [ "tools" ]
+    },
+    {
+      "name": "canvas",
+      "allowedCategories": [ "frontend" ]
     },
     {
       "name": "case-sensitive-paths-webpack-plugin",
@@ -579,12 +595,24 @@
       "allowedCategories": [ "frontend" ]
     },
     {
+      "name": "gl",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
       "name": "glob",
       "allowedCategories": [ "backend", "frontend", "integration-testing", "internal", "tools" ]
     },
     {
       "name": "google-protobuf",
       "allowedCategories": [ "extensions" ]
+    },
+    {
+      "name": "happy-dom",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
+      "name": "headless-gl",
+      "allowedCategories": [ "frontend" ]
     },
     {
       "name": "https-browserify",
@@ -625,6 +653,10 @@
     {
       "name": "jsdom-global",
       "allowedCategories": [ "extensions", "frontend", "internal" ]
+    },
+    {
+      "name": "jsdom-worker",
+      "allowedCategories": [ "frontend" ]
     },
     {
       "name": "json-schema-faker",
@@ -832,7 +864,7 @@
     },
     {
       "name": "vite",
-      "allowedCategories": [ "internal" ]
+      "allowedCategories": [ "frontend", "internal" ]
     },
     {
       "name": "vite-plugin-env-compatible",
@@ -841,6 +873,18 @@
     {
       "name": "vite-plugin-inspect",
       "allowedCategories": [ "internal" ]
+    },
+    {
+      "name": "vite-tsconfig-paths",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
+      "name": "vitest",
+      "allowedCategories": [ "frontend" ]
+    },
+    {
+      "name": "webdriverio",
+      "allowedCategories": [ "frontend" ]
     },
     {
       "name": "webpack",

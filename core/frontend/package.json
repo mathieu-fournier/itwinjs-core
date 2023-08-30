@@ -23,6 +23,7 @@
     "test": "npm run -s webpackTests && certa -r chrome",
     "cover": "npm -s test",
     "test:debug": "certa -r chrome --debug",
+    "test:vitest": "vitest WmtsCapabilities --dir src/test --ui",
     "webpackTests": "webpack --config ./src/test/utils/webpack.config.js 1>&2 && npm run -s webpackTestWorker",
     "webpackTestWorker": "webpack --config ./src/test/worker/webpack.config.js 1>&2 && cpx \"./lib/test/test-worker.js\" ./lib/test",
     "webpackWorkers": "webpack --config ./src/workers/ImdlParser/webpack.config.js 1>&2"
@@ -83,7 +84,16 @@
     "sinon": "^15.0.4",
     "source-map-loader": "^4.0.0",
     "typescript": "~5.0.2",
-    "webpack": "^5.76.0"
+    "webpack": "^5.76.0",
+    "vitest": "^0.34.3",
+    "vite": "^4.4.9",
+    "gl": "~6.0.2",
+    "@types/gl": "~6.0.2",
+    "@vitest/ui": "~0.34.3",
+    "jsdom-worker": "~0.3.0",
+    "@vitest/browser": "~0.34.3",
+    "webdriverio": "~8.15.10",
+    "vite-tsconfig-paths": "~4.2.0"
   },
   "//dependencies": [
     "NOTE: these dependencies should be only for things that DO NOT APPEAR IN THE API",
