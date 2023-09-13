@@ -4,13 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 import * as fs from "fs";
 import * as path from "path";
-import { Logger, LogLevel, ProcessDetector } from "@itwin/core-bentley";
+import { Logger, LogLevel, OpenMode, ProcessDetector } from "@itwin/core-bentley";
 import { ElectronMainAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronMain";
 import { ElectronHost, ElectronHostOptions } from "@itwin/core-electron/lib/cjs/ElectronBackend";
 import { BackendIModelsAccess } from "@itwin/imodels-access-backend";
 import { IModelsClient } from "@itwin/imodels-client-authoring";
-import { IModelHost, IModelHostOptions, LocalhostIpcHost } from "@itwin/core-backend";
-import { IModelReadRpcInterface, IModelTileRpcInterface, RpcInterfaceDefinition, RpcManager, SnapshotIModelRpcInterface } from "@itwin/core-common";
+import { IModelDb, IModelHost, IModelHostOptions, LocalhostIpcHost } from "@itwin/core-backend";
+import { IModelReadRpcInterface, IModelRpcProps, IModelTileRpcInterface, RpcInterfaceDefinition, RpcManager, SnapshotIModelRpcInterface } from "@itwin/core-common";
 import { MobileHost, MobileHostOpts } from "@itwin/core-mobile/lib/cjs/MobileBackend";
 import { DtaConfiguration, getConfig } from "../common/DtaConfiguration";
 import { DtaRpcInterface } from "../common/DtaRpcInterface";
@@ -71,6 +71,22 @@ class DisplayTestAppRpc extends DtaRpcInterface {
 
     const jsonStr = fs.readFileSync(cameraPathsFileName).toString();
     return jsonStr ?? "";
+  }
+
+  public override async reopen(props: IModelRpcProps) {
+    // Mimics iModeldb.closeAndReopen (called during pull)
+    const iModel = IModelDb.tryFindByKey(props.key);
+    if (!iModel)
+      return;
+
+    const closeAndReopen = (openMode: OpenMode) => {
+      const fileName = iModel.pathName;
+      iModel.nativeDb.closeIModel();
+      iModel.nativeDb.openIModel(fileName, openMode, undefined);
+    }
+
+    closeAndReopen(OpenMode.ReadWrite);
+    closeAndReopen(OpenMode.Readonly);
   }
 
   public override async writeExternalCameraPaths(bimFileName: string, cameraPaths: string): Promise<void> {

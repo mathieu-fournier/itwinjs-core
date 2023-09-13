@@ -16,6 +16,7 @@ import { EnvironmentEditor } from "./EnvironmentEditor";
 import { Settings } from "./FeatureOverrides";
 import { ThematicDisplayEditor } from "./ThematicDisplay";
 import { ToolBarDropDown } from "./ToolBar";
+import { DtaRpcInterface } from "../common/DtaRpcInterface";
 
 // cspell:ignore cels
 
@@ -380,6 +381,15 @@ export class ViewAttributes {
     };
 
     this._updates.push(update);
+
+    this.addCheckbox("Close open.", () => {
+      //Very crude way of mimicking what happens during pull/push.
+      // Toggle this "flag" to reopen the nativedb
+      const props = this._vp.iModel.getRpcProps();
+      DtaRpcInterface.getClient().reopen(props).then(() => {
+        console.log("Reopened native db")
+      })
+    }, parent);
   }
 
   private addMonochrome(parent: HTMLElement): void {
