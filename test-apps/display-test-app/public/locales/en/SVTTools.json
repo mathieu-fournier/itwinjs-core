@@ -172,6 +172,9 @@
     },
     "DtaClipByElementGeometry": {
       "keyin": "dta clip element geometry"
+    },
+    "AGTestTool": {
+      "keyin": "dta ag test"
     }
   }
 }
