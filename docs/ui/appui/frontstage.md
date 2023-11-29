@@ -19,6 +19,8 @@ Learn more about [creating content controls](./content-control.md#content-contro
 To display a frontstage on the screen activate it by using the [FrameworkFrontstages.setActiveFrontstage]($appui-react).
 
 ```tsx
+[[include:AppUI.Frontstage.Activate.Imports]]
+
 [[include:AppUI.Frontstage.Activate]]
 ```
 
@@ -44,6 +46,8 @@ Each floating widget and a stage panel section is a widget container which can c
 To define a frontstage configuration of a standard layout use the [StandardFrontstageProvider]($appui-react).
 
 ```tsx
+[[include:AppUI.StandardFrontstageProvider.Imports]]
+
 [[include:AppUI.StandardFrontstageProvider]]
 ```
 
