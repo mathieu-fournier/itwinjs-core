@@ -8,8 +8,8 @@ defaultState: activeOpen
 
 - #### Get Started
 
-  - [CRA Template](./appui/get-started.md#cra-template)
-  - [Manual installation](./appui/get-started.md#manual-installation)
+  - [Viewer Component](./appui/get-started.md#viewer-component)
+  - [Manual Configuration](./appui/get-started.md#manual-configuration)
 
 - #### Learn AppUI
 
