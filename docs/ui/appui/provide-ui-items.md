@@ -3,18 +3,27 @@
 ## Overview
 
 [UiItemsProvider]($appui-react) is a mechanism for providing UI elements such as widgets, toolbar, status bar and backstage items to the application.
-Use the [UiItemsManager]($appui-react) to register a provider.
+To create a new provider implement the interface.
 
 ```tsx
 [[include:AppUI.UiItemsProvider.Imports]]
 
 [[include:AppUI.UiItemsProvider.Provider]]
+```
+
+Use the [UiItemsManager]($appui-react) to register a provider.
+
+```tsx
+[[include:AppUI.UiItemsProvider.Register.Imports]]
+
 [[include:AppUI.UiItemsProvider.Register]]
 ```
 
 To limit the scope of the provider to specific frontstages use an override object that contains an array of frontstage ids or stage usages.
 
 ```tsx
+[[include:AppUI.UiItemsProvider.Override.Imports]]
+
 [[include:AppUI.UiItemsProvider.Override]]
 ```
 
@@ -36,7 +45,7 @@ Use [UiItemsProvider.getWidgets]($appui-react) to provide additional widgets to 
 
 ### Floating widget
 
-**Floating widget** is displayed in a dialog like component of the page and is not docked to one of the stage panels. This feature is enabled by default, but you can provide additional options to [Widget.canFloat]($appui-react) property. Since the user is in control of the layout a **docked widget** can be *undocked* to create a new floating widget. For more information, see [User Interactions](./frontstage.md#user-interactions).
+**Floating widget** is displayed in a dialog like component of the page and is not docked to one of the stage panels. This feature is enabled by default, but you can provide additional options to [Widget.canFloat]($appui-react) property. Since the user is in control of the layout a **docked widget** can be *undocked* to create a new floating widget. For more information, see [User Interactions](./create-frontstage.md#user-interactions).
 
 ## Provide Toolbar Items
 

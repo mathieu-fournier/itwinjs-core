@@ -14,7 +14,7 @@ To create a **frontstage** extend a [FrontstageProvider]($appui-react) and imple
 [[include:AppUI.FrontstageProvider]]
 ```
 
-Learn more about [creating content controls](./content-control.md#content-control).
+Learn more about [creating content controls](./define-content.md#content-control).
 
 To register a frontstage use [FrameworkFrontstages.addFrontstageProvider]($appui-react).
 
@@ -71,7 +71,7 @@ While defining a standard layout you have the capability to provide an initial c
 
 A standard frontstage is divided into two sections dedicated for content manipulation and view navigation that overlay the content control. By default [ContentToolWidgetComposer]($appui-react) and [ViewToolWidgetComposer]($appui-react) are used to display up to four toolbars with a specific purpose as defined in [ToolbarUsage]($appui-react) and [ToolbarOrientation]($appui-react). Alternatively you can provide custom components for `contentManipulation` and `viewNavigation` when [Creating a Frontstage](#create-a-frontstage).
 
-You can use [UiItemsProvider]($appui-react) to provide additional items to the toolbars. For more information, see [Provide Toolbar Items](./ui-items-provider#toolbar-items).
+You can use [UiItemsProvider]($appui-react) to provide additional items to the toolbars. For more information, see [Provide Toolbar Items](./provide-ui-items.md#toolbar-items).
 
 To create a custom toolbar you can use a [ToolbarComposer]($appui-react) component.
 
@@ -101,13 +101,13 @@ To display the tool settings you need to supply property information from the To
 
 **Status bar** is a dedicated area in the user interface that displays multiple status fields with information about the current state of the application. In a standard layout [StatusBarComposer]($appui-react) is used to display a status bar at the bottom of the application.
 
-You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide StatusBar Items](./ui-items-provider#statusbar-items).
+You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide StatusBar Items](./provide-ui-items.md#statusbar-items).
 
 ### Backstage
 
 **Backstage** is a main navigation menu of the application. You can provide menu items to open frontstages, overlays or launch custom tasks. In the standard layout [BackstageComposer]($appui-react) is used to display a menu along the left edge of the application.
 
-You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide Backstage Items](./ui-items-provider#backstage-items).
+You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide Backstage Items](./provide-ui-items.md#backstage-items).
 
 To set-up the backstage define `appBackstage` property of [ConfigurableUiContent]($appui-react).
 
