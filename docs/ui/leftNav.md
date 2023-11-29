@@ -13,6 +13,6 @@ defaultState: activeOpen
 
 - #### Learn AppUI
 
-  - [Define Content](./appui/content-control.md)
-  - [Create Frontstage](./appui/frontstage.md)
-  - [Add UI elements](./appui/ui-items-provider.md)
+  - [Define Content](./appui/define-content.md)
+  - [Create Frontstage](./appui/create-frontstage.md)
+  - [Provide UI items](./appui/provide-ui-items.md)

@@ -1,4 +1,6 @@
-# Frontstage
+# Create Frontstage
+
+## Overview
 
 **Frontstage** is a layout configuration that resembles a page and allows you to define and implement a layout tailored to a specific task within an application. The configuration provides flexibility and control over the visual presentation of content allowing you to create task-specific page layout that enhances user experience. AppUI provides a standard layout, but a custom layout can be defined and used by the frontstage.
 
@@ -6,13 +8,21 @@
 
 ## Create a Frontstage
 
-To create a **frontstage** implement and register a [FrontstageProvider]($appui-react) which returns a [FrontstageConfig]($appui-react).
+To create a **frontstage** extend a [FrontstageProvider]($appui-react) and implement the [FrontstageProvider.frontstageConfig]($appui-react).
 
 ```tsx
 [[include:AppUI.FrontstageProvider]]
 ```
 
 Learn more about [creating content controls](./content-control.md#content-control).
+
+To register a frontstage use [FrameworkFrontstages.addFrontstageProvider]($appui-react).
+
+```tsx
+[[include:AppUI.Frontstage.Register.Imports]]
+
+[[include:AppUI.Frontstage.Register]]
+```
 
 ## Activate a Frontstage
 
