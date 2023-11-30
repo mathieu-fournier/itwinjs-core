@@ -71,6 +71,19 @@ While defining a standard layout you have the capability to provide an initial c
 
 <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--interaction&viewMode=story"></iframe>
 
+Available user interactions:
+
+- **Dock/undock a widget** - drag a widget and drop it on one of widget targets. You can drag a widget tab or a widget title bar. Widget targets are displayed when you start dragging a widget, but you can use tabs or a title bar of another widget.
+- **Float a widget** - drag and drop a widget anywhere on the page. You can drag a widget tab or a widget title bar.
+- **Popout a widget** - click on the popout icon in the widget title bar. Close the window popup to return the widget to the original widget container.
+- **Resize a floating widget** - drag one of four edges or corners of a floating widget.
+- **Move a floating widget** - drag the widget by the title bar.
+- **Send back a floating widget** - click on the send back icon in the widget title bar.
+- **Resize a stage panel** - drag the resize handle of a stage panel.
+- **Pin/unpin a stage panel** - click on the pin/unpin icon in the title bar of a first stage panel section.
+- **Collapse/uncollapse a stage panel** - click on the resize handle of a stage panel or use the drag interaction.
+- **Resize a stage panel section** - drag the resize handle between the stage panel sections.
+
 ### Toolbars
 
 A standard frontstage is divided into two sections dedicated for content manipulation and view navigation that overlay the content control. By default [ContentToolWidgetComposer]($appui-react) and [ViewToolWidgetComposer]($appui-react) are used to display up to four toolbars with a specific purpose as defined in [ToolbarUsage]($appui-react) and [ToolbarOrientation]($appui-react). Alternatively you can provide custom components for `contentManipulation` and `viewNavigation` when [Creating a Frontstage](#create-a-frontstage).
