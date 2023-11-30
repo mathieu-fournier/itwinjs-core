@@ -28,16 +28,16 @@ To get full control over AppUI initialization, you can configure it manually. Th
 
 1. Initialize `IModelApp`.
 
-   AppUi relies on the iTwin.js [IModelApp]($core-frontend) singleton. You can initialize it by calling `IModelApp.startup()` and provide it with the desired configuration.
+   AppUI relies on the iTwin.js [IModelApp]($core-frontend) singleton. You can initialize it by calling `IModelApp.startup()` and provide it with the desired configuration.
 
-   Some of AppUi features are provided through the following `IModelApp` startup options.
+   Some of AppUI features are provided through the following `IModelApp` startup options.
 
-   |Option|Class|
-   |---|---|
-   |`toolAdmin`|[FrameworkToolAdmin]($appui-react)
-   |`notifications`|[AppNotificationManager]($appui-react)
-   |`uiAdmin`|[FrameworkUiAdmin]($appui-react)
-   |`accuDraw`|[FrameworkAccuDraw]($appui-react)
+   | Option          | Class                                  |
+   | --------------- | -------------------------------------- |
+   | `toolAdmin`     | [FrameworkToolAdmin]($appui-react)     |
+   | `notifications` | [AppNotificationManager]($appui-react) |
+   | `uiAdmin`       | [FrameworkUiAdmin]($appui-react)       |
+   | `accuDraw`      | [FrameworkAccuDraw]($appui-react)      |
 
    <!-- Here we have a problem, we don't have the type of learning document that we are currently writing that matches the level of information we give here for IModelApp setup part...
 

@@ -29,7 +29,7 @@ To limit the scope of the provider to specific frontstages use an override objec
 
 ## Provide Widgets
 
-Use [UiItemsProvider.getWidgets]($appui-react) to provide additional widgets to the application. To specify the default location of the [Widget]($appui-react) set the [Widget.layouts]($appui-react) property.
+Implement [UiItemsProvider.getWidgets]($appui-react) to provide additional widgets to the application. To specify the default location of the [Widget]($appui-react) set the [Widget.layouts]($appui-react) property.
 
 ```tsx
 [[include:AppUI.UiItemsProvider.Widgets]]
@@ -49,7 +49,7 @@ Use [UiItemsProvider.getWidgets]($appui-react) to provide additional widgets to 
 
 ## Provide Toolbar Items
 
-Use [UiItemsProvider.getToolbarItems]($appui-react) to provide additional toolbar items to the application. Set the [ToolbarItem.layouts]($appui-react) property to specify the toolbar to which the [ToolbarItem]($appui-react) should be added. You can use one of [ToolbarItemUtilities]($appui-react) to create a toolbar item of specific type.
+Implement [UiItemsProvider.getToolbarItems]($appui-react) to provide additional toolbar items to the application. Set the [ToolbarItem.layouts]($appui-react) property to specify the toolbar to which the [ToolbarItem]($appui-react) should be added. You can use one of [ToolbarItemUtilities]($appui-react) to create a toolbar item of specific type.
 
 ```tsx
 [[include:AppUI.UiItemsProvider.ToolbarItems]]
@@ -57,7 +57,7 @@ Use [UiItemsProvider.getToolbarItems]($appui-react) to provide additional toolba
 
 ## Provide StatusBar Items
 
-Use [UiItemsProvider.getStatusBarItems]($appui-react) to provide additional status bar items to the application. You can use [StatusBarItemUtilities]($appui-react) to create a [StatusBarItem]($appui-react) of specific type.
+Implement [UiItemsProvider.getStatusBarItems]($appui-react) to provide additional status bar items to the application. You can use [StatusBarItemUtilities]($appui-react) to create a [StatusBarItem]($appui-react) of specific type.
 
 ```tsx
 [[include:AppUI.UiItemsProvider.StatusBarItems]]
@@ -65,7 +65,7 @@ Use [UiItemsProvider.getStatusBarItems]($appui-react) to provide additional stat
 
 ## Provide Backstage Items
 
-Use [UiItemsProvider.getBackstageItems]($appui-react) to provide additional backstage items to the application. You can use [BackstageItemUtilities]($appui-react) to create a [BackstageItem]($appui-react) of specific type.
+Implement [UiItemsProvider.getBackstageItems]($appui-react) to provide additional backstage items to the application. You can use [BackstageItemUtilities]($appui-react) to create a [BackstageItem]($appui-react) of specific type.
 
 ```tsx
 [[include:AppUI.UiItemsProvider.BackstageItems]]
