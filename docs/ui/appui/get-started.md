@@ -49,27 +49,27 @@ To get full control over AppUI initialization, you can configure it manually. Th
    `UiFramework` is the core state and main entry point of AppUI API. It is a singleton that needs to be initialized before using any of the AppUI components. If you already use a redux store for your application, you can provide it to the `UiFramework` singleton at initialization, along with a key where the state should be kept in your app store. Otherwise, `UiFramework` will create its own store by passing it `undefined`. This store can then be accessed by the `UiFramework.store` property.
 
    ```tsx
-    UiFramework.initialize(store, "appUIState");
-    ```
+   UiFramework.initialize(store, "appUIState");
+   ```
 
-    or
+   or
 
-    ```tsx
-    UiFramework.initialize(undefined);
-    ```
+   ```tsx
+   UiFramework.initialize(undefined);
+   ```
 
 3. Render `ConfigurableUiContent`.
 
    `ConfigurableUiContent` is the main component of AppUI. It is responsible for rendering the UI and managing the UI state. It needs to be rendered inside a react-redux `Provider` and AppUI `ThemeManager` and `UiStateStorageHandler` components as well.
 
    ```tsx
-    <Provider store={UiFramework.store}>
-      <ThemeManager>
-        <UiStateStorageHandler>
-          <ConfigurableUiContent />
-        </UiStateStorageHandler>
-      </ThemeManager>
-    </Provider>
+   <Provider store={UiFramework.store}>
+     <ThemeManager>
+       <UiStateStorageHandler>
+         <ConfigurableUiContent />
+       </UiStateStorageHandler>
+     </ThemeManager>
+   </Provider>
    ```
 
 With these initialization steps, AppUI is ready to display frontstages.

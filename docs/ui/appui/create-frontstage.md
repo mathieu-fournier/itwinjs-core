@@ -4,7 +4,9 @@
 
 **Frontstage** is a layout configuration that resembles a page and allows you to define and implement a layout tailored to a specific task within an application. The configuration provides flexibility and control over the visual presentation of content allowing you to create task-specific page layout that enhances user experience. AppUI provides a standard layout, but a custom layout can be defined and used by the frontstage.
 
-<iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--overview&viewMode=story"></iframe>
+> Here is a frontstage that you can interact with. Give it a try!
+>
+> <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--overview&viewMode=story"></iframe>
 
 ## Create a Frontstage
 
@@ -36,11 +38,11 @@ To display a frontstage on the screen activate it by using the [FrameworkFrontst
 
 ## Frontstage Types
 
-| Type | Description |
-| --- | --- |
+| Type        | Description                                                                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Primary** | Represents the task that the user is engaged with. Usually it contains an entry point to the Backstage from where other primary frontstages can be activated. |
-| **Nested** | Overlays other frontstages. Usually it is used for a specific sub-task of a primary frontstage and contains a button to return to the overlayed frontstage. |
-| **Modal** | Dedicated frontstage overlay that is used for application settings and data management user interfaces. |
+| **Nested**  | Overlays other frontstages. Usually it is used for a specific sub-task of a primary frontstage and contains a button to return to the overlayed frontstage.   |
+| **Modal**   | Dedicated frontstage overlay that is used for application settings and data management user interfaces.                                                       |
 
 ## Standard Frontstage Layout
 
@@ -49,7 +51,9 @@ Each frontstage has up to four stage panels that are displayed on the side of th
 Additionally a frontstage can contain multiple floating widgets that are not docked to the side of the page.
 Each floating widget and a stage panel section is a widget container which can contain multiple widgets.
 
-<iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--widget-container&viewMode=story"></iframe>
+> Give it a try!
+>
+> <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--widget-container&viewMode=story"></iframe>
 
 ### Create a Standard Frontstage
 

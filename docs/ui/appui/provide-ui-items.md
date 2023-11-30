@@ -39,7 +39,9 @@ Implement [UiItemsProvider.getWidgets]($appui-react) to provide additional widge
 
 **Popout widget** is a widget opened in a new window popup. To enable this feature set the [Widget.canPopout]($appui-react) property. When enabled the user can open the popout widget by clicking on the popout icon in the widget title bar.
 
-<iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=widget-canpopout--enabled&viewMode=story"></iframe>
+> Give it a try!
+>
+> <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=widget-canpopout--enabled&viewMode=story"></iframe>
 
 *NOTE:* widget component must be written in a way that works properly in a window popup. For example `ownerDocument` and `ownerDocument.defaultView` should be used instead of typically used `window` or `document` properties when registering the listeners.
 
