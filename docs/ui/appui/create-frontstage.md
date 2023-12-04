@@ -4,7 +4,7 @@
 
 **Frontstage** is a layout configuration that resembles a page and allows you to define and implement a layout tailored to a specific task within an application. The configuration provides flexibility and control over the visual presentation of content allowing you to create task-specific page layout that enhances user experience. AppUI provides a standard layout, but a custom layout can be defined and used by the frontstage.
 
-> Here is a frontstage that you can interact with. Give it a try!
+> _Here is a frontstage that you can interact with. Give it a try!_
 >
 > <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--overview&viewMode=story"></iframe>
 
@@ -13,6 +13,8 @@
 To create a **frontstage** extend a [FrontstageProvider]($appui-react) and implement the [FrontstageProvider.frontstageConfig]($appui-react).
 
 ```tsx
+[[include:AppUI.FrontstageProvider.Imports]]
+
 [[include:AppUI.FrontstageProvider]]
 ```
 
@@ -51,7 +53,7 @@ Each frontstage has up to four stage panels that are displayed on the side of th
 Additionally a frontstage can contain multiple floating widgets that are not docked to the side of the page.
 Each floating widget and a stage panel section is a widget container which can contain multiple widgets.
 
-> Give it a try!
+> _Give it a try!_
 >
 > <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--widget-container&viewMode=story"></iframe>
 
@@ -126,7 +128,7 @@ You can use [UiItemsProvider]($appui-react) to provide additional items to the s
 
 You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide Backstage Items](./provide-ui-items.md#backstage-items).
 
-To set-up the backstage define `appBackstage` property of [ConfigurableUiContent]($appui-react).
+To set-up the backstage define the `appBackstage` property of [ConfigurableUiContent]($appui-react).
 
 ```tsx
 [[include:AppUI.Backstage.SetUp]]
