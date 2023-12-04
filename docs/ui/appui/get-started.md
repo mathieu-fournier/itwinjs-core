@@ -34,7 +34,6 @@ To get full control over AppUI initialization, you can configure it manually. Th
 
    | Option          | Class                                  |
    | --------------- | -------------------------------------- |
-   | `toolAdmin`     | [FrameworkToolAdmin]($appui-react)     |
    | `notifications` | [AppNotificationManager]($appui-react) |
    | `uiAdmin`       | [FrameworkUiAdmin]($appui-react)       |
    | `accuDraw`      | [FrameworkAccuDraw]($appui-react)      |
