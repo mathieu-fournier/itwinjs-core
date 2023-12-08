@@ -2,7 +2,7 @@
 
 ## Overview
 
-AppUI is a library that provides a set of React components and APIs to build applications using the iTwin.js stack.
+AppUI is a framework that provides a set of React components and APIs to build applications using the iTwin.js stack.
 
 To use AppUI, you can either use the Viewer component or configure it manually depending on your needs.
 

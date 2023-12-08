@@ -10,7 +10,7 @@ This can be done directly in javascript, html and css or with any UI framework y
 
 ## AppUI
 
-AppUI is a library that provides a set of React components to build UI for iTwin.js applications. It organize the workflows in frontstages displaying a central content (typically the iTwin.js canvas) surrounded by tool settings, toolbars, status bar and widgets to have a uniform look and feel.
+AppUI is a framework that provides a set of React components to build UI for iTwin.js applications. It organize the workflows in frontstages displaying a central content (typically the iTwin.js canvas) surrounded by tool settings, toolbars, status bar and widgets to have a uniform look and feel.
 
 Widgets can be docked, floated, resized, moved, etc. by the user at runtime allowing them to configure their UI to their liking.
 
