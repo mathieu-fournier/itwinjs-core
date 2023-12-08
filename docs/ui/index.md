@@ -22,4 +22,4 @@ You can get more information in the [AppUI documentation](./appui/index.md).
 
 ## Custom UI
 
-If the features provided by AppUI are not sufficient, it is possible to build a custom UI using any UI framework. The only need in that case is a reference to a `div` element, which will be used as the container for the iTwin.js canvas.
+If the features provided by AppUI are not sufficient, it is possible to build a custom UI using any UI framework. The only need in that case is a reference to a `div` element, which will be used as the container for the iTwin.js canvas. For an example, see [Typescript Viewer Sample](https://github.com/iTwin/viewer-sample-typescript).
