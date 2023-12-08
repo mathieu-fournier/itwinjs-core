@@ -2,17 +2,18 @@
 defaultState: activeOpen
 ---
 
-## [User Interface](./index.md)
+## User Interface
 
-### [AppUI](./appui/index.md)
+### [Overview](/ui)
 
-- #### Get Started
+### AppUI
 
-  - [Viewer Component](./appui/get-started.md#viewer-component)
-  - [Manual Configuration](./appui/get-started.md#manual-configuration)
+- ## [Get Started](/ui/appui/get-started)
 
-- #### Learn AppUI
+- ## [Define Content](/ui/appui/define-content)
 
-  - [Define Content](./appui/define-content.md)
-  - [Create Frontstage](./appui/create-frontstage.md)
-  - [Provide UI items](./appui/provide-ui-items.md)
+- ## [Create Frontstage](/ui/appui/create-frontstage)
+
+- ## [Provide UI items](/ui/appui/provide-ui-items)
+
+### [UI Glossary](/ui/uiglossary)

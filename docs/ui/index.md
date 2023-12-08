@@ -8,6 +8,8 @@ Everything else displayed on the screen will be the User Interface (UI) and need
 
 This can be done directly in javascript, html and css or with any UI framework your teams prefer.
 
+![Comparisons between AppUI and a custom UI](./images/comparison.svg)
+
 ## AppUI
 
 AppUI is a framework that provides a set of React components to build UI for iTwin.js applications. It organize the workflows in frontstages displaying a central content (typically the iTwin.js canvas) surrounded by tool settings, toolbars, status bar and widgets to have a uniform look and feel.
