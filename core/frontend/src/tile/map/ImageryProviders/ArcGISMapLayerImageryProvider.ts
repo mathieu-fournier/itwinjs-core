@@ -94,7 +94,7 @@ export class ArcGISIdentifyRequestUrl {
     newUrl.searchParams.append("geometryType", json.geometryType);
 
     if (json.sr) {
-      newUrl.searchParams.append("sr", `${json.geometryType}`);
+      newUrl.searchParams.append("sr", `${json.sr}`);
     }
 
     if (json.layers) {
@@ -270,7 +270,10 @@ export class ArcGISMapLayerImageryProvider extends ArcGISImageryProvider {
 
       // Create tile map object only if we are going to request tiles from this server and it support tilemap requests.
       if (this._tileMapSupported) {
-        this._tileMap = new ArcGISTileMap(this._settings.url, this._settings, json.tileInfo?.lods?.length, this._accessClient);
+        const fetch = async (url: URL, options?: RequestInit): Promise<Response> => {
+          return this.fetch(url, options);
+        };
+        this._tileMap = new ArcGISTileMap(this._settings.url, this._settings, fetch, json.tileInfo?.lods?.length);
       }
     }
 
@@ -333,8 +336,9 @@ export class ArcGISMapLayerImageryProvider extends ArcGISImageryProvider {
       geometryType: "esriGeometryPoint",
       tolerance,
       mapExtent: {low: {x: bbox.left, y: bbox.bottom}, high: {x: bbox.right, y: bbox.top}},
+      sr: 3857,
       imageDisplay: {width: this.tileSize, height: this.tileSize, dpi: 96},
-      layers: {prefix: "visible", layerIds},
+      layers: {prefix: "top", layerIds},
       returnGeometry,
       maxAllowableOffset}, 3 /* 1mm accuracy*/);
 

@@ -760,7 +760,12 @@ export class Geometry {
       columnA.w, columnB.w, columnC.w,
     );
   }
-  /** 2D cross product of vectors with the vectors presented as numbers. */
+  /**
+   * 2D cross product of vectors with the vectors presented as numbers.
+   * * Sign of 2d cross product is positive <=> sweeping from first vector to second vector is ccw orientation.
+   * * Sign of 2d cross product is negative <=> sweeping from first vector to second vector is clockwise orientation.
+   * * 2d cross product is 0 <=> parallel/antiparallel vectors.
+   */
   public static crossProductXYXY(ux: number, uy: number, vx: number, vy: number): number {
     return ux * vy - uy * vx;
   }
@@ -785,7 +790,14 @@ export class Geometry {
       ux * vy - uy * vx,
     );
   }
-  /** 2D dot product of vectors with the vectors presented as numbers. */
+  /**
+   * 2D dot product of vectors with the vectors presented as numbers.
+   * * Sign of dot product is positive <=> vectorA points into the same half-space as vectorB.
+   * * Sign of dot product is negative <=> vectorA points into opposite half-space as vectorB.
+   * * Dot product is 0 <=> perpendicular vectors.
+   * * **Note:** half-space is defined in terms of a vector, by the perpendicular plane at its origin (it splits
+   * the universe into two halves).
+   */
   public static dotProductXYXY(ux: number, uy: number, vx: number, vy: number): number {
     return ux * vx + uy * vy;
   }
@@ -994,9 +1006,10 @@ export class Geometry {
       // (c0,s0) is the closest approach of the line to the circle center (origin)
       const c0 = da2b2 * cosCoff; // -ad/(a^2+b^2)
       const s0 = da2b2 * sinCoff; // -bd/(a^2+b^2)
-      if (criterion <= 0.0) { // nSolution = 1
-        // We observed criterion = -2.22e-16 in a rotated tangent system, therefore for negative criteria near
-        // zero, return the near-tangency; for tiny positive criteria, fall through to return both solutions.
+      if (criterion <= Geometry.smallMetricDistanceSquared) { // nSolution = 1
+        // We observed criterion = -2.22e-16 in a rotated tangent system, and criterion = 4.44e-16 in a
+        // transverse line-arc intersectXYZ near-tangency, therefore for criteria near zero (on either side),
+        // return the (near) tangency; any larger criteria fall through to return both solutions.
         result = [Vector2d.create(c0, s0)];
       } else { // nSolution = 2
         const s = Math.sqrt(criterion * a2b2r); // sqrt(a^2+b^2-d^2)) / (a^2+b^2)
