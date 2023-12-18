@@ -1,19 +1,12 @@
----
-defaultState: activeOpen
----
-
 ## User Interface
 
-### [Overview](/ui)
+### [Overview](./)
 
 ### AppUI
 
-- ## [Get Started](/ui/appui/get-started)
+- ## [Get Started](./appui/get-started)
+- ## [Define Content](./appui/define-content)
+- ## [Create Frontstage](./appui/create-frontstage)
+- ## [Provide UI items](./appui/provide-ui-items)
 
-- ## [Define Content](/ui/appui/define-content)
-
-- ## [Create Frontstage](/ui/appui/create-frontstage)
-
-- ## [Provide UI items](/ui/appui/provide-ui-items)
-
-### [UI Glossary](/ui/uiglossary)
+### [UI Glossary](./uiglossary)

@@ -1,7 +1,7 @@
 ---
 tableRowAnchors: true
-layout: custom-ui-feedback.handlebars
 pageClass: appui-experiment
+appuiExperiment: true
 ---
 
 # Glossary of terms in iTwin.js UI

@@ -1,3 +1,9 @@
+---
+tableRowAnchors: true
+pageClass: appui-experiment
+appuiExperiment: true
+---
+
 # Provide UI items
 
 ## Overview
