@@ -1,7 +1,3 @@
----
-pageClass: "appui-experiment"
----
-
 ## [iTwin JS LIbrary](../../learning)
 
 ### User Interface
@@ -11,11 +7,8 @@ pageClass: "appui-experiment"
 ### AppUI
 
 - ## [Get Started](./appui/get-started)
-
 - ## [Define Content](./appui/define-content)
-
 - ## [Create Frontstage](./appui/create-frontstage)
-
 - ## [Provide UI items](./appui/provide-ui-items)
 
 ### [UI Glossary](./uiglossary)

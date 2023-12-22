@@ -1,3 +1,9 @@
+---
+tableRowAnchors: true
+pageClass: appui-experiment
+appuiExperiment: true
+---
+
 # Define Content
 
 ## Overview
@@ -56,20 +62,20 @@ const mainTableContent = {
 
 ## Content Layout
 
-Multiple content controls can be displayed at the same time by an application, to determine how these content are organized on the screen,  you need to provide a layout.
+Multiple content controls can be displayed at the same time by an application, to determine how these content are organized on the screen, you need to provide a layout.
 
 AppUI provides 8 layouts out of the box that you can refer simply by name in the `StandardContentLayouts` object:
 
 ```ts
 class StandardContentLayouts {
-    static readonly singleView: ContentLayoutProps;
-    static readonly fourQuadrants: ContentLayoutProps;
-    static readonly twoVerticalSplit: ContentLayoutProps;
-    static readonly twoHorizontalSplit: ContentLayoutProps;
-    static readonly threeViewsTwoOnLeft: ContentLayoutProps;
-    static readonly threeViewsTwoOnRight: ContentLayoutProps;
-    static readonly threeViewsTwoOnBottom: ContentLayoutProps;
-    static readonly threeViewsTwoOnTop: ContentLayoutProps;
+  static readonly singleView: ContentLayoutProps;
+  static readonly fourQuadrants: ContentLayoutProps;
+  static readonly twoVerticalSplit: ContentLayoutProps;
+  static readonly twoHorizontalSplit: ContentLayoutProps;
+  static readonly threeViewsTwoOnLeft: ContentLayoutProps;
+  static readonly threeViewsTwoOnRight: ContentLayoutProps;
+  static readonly threeViewsTwoOnBottom: ContentLayoutProps;
+  static readonly threeViewsTwoOnTop: ContentLayoutProps;
 }
 ```
 
@@ -91,10 +97,10 @@ const myOwnLayout = {
         locked: false,
         top: 1,
         bottom: 2,
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 ```
 
 ## Content Group
@@ -114,10 +120,12 @@ new ContentGroup({
       id: "alternate-imodel-view",
       classId: IModelViewportControl,
       applicationData: {
-        viewstate: () => {/* some function that return a monochrome viewstate */},
-      }
-    }
-  ]
+        viewstate: () => {
+          /* some function that return a monochrome viewstate */
+        },
+      },
+    },
+  ],
 });
 ```
 

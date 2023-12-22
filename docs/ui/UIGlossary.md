@@ -1,6 +1,9 @@
 ---
 tableRowAnchors: true
+pageClass: appui-experiment
+appuiExperiment: true
 ---
+
 <!--
 This need to be put below "tableRowAnchors: true" to work.
 I had to remove it because it was breaking the build as the handlebars is not set in this branch.

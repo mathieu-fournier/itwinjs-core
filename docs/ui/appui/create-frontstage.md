@@ -1,3 +1,9 @@
+---
+tableRowAnchors: true
+pageClass: appui-experiment
+appuiExperiment: true
+---
+
 # Create Frontstage
 
 ## Overview

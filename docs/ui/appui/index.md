@@ -1,3 +1,9 @@
+---
+tableRowAnchors: true
+pageClass: appui-experiment
+appuiExperiment: true
+---
+
 # AppUI
 
 ## Overview
@@ -18,7 +24,7 @@ Dedicated **status bar** area at the bottom of the application for components th
 
 ![StatusBar](../../learning/ui/appui/images/StatusBar.png)
 
-Interactive **widget** components that display relevant content of the application. Here a *Conversations* widget is floating, while *Properties*, *Categories* and other widgets are docked into the right panel. For more information, see [Widgets](./create-frontstage.md#widgets).
+Interactive **widget** components that display relevant content of the application. Here a _Conversations_ widget is floating, while _Properties_, _Categories_ and other widgets are docked into the right panel. For more information, see [Widgets](./create-frontstage.md#widgets).
 
 ![Widgets](../../learning/ui/appui/images/AppUiLightTheme.png)
 
