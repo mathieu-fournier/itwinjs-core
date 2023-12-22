@@ -114,8 +114,15 @@ jobs:
           useCurrentTransformerDocsArtifact: ${{ parameters.useCurrentTransformerDocsArtifact }}
           useCurrentAuthClientsDocsArtifact: ${{ parameters.useCurrentAuthClientsDocsArtifact }}
 
+      # temporary... add new babel.config.json to workingDir
+      - script: |
+          echo { "presets": ["@babel/preset-env", "@babel/preset-react"], "plugins": ["@babel/plugin-syntax-dynamic-import", "@babel/plugin-syntax-jsx"] } > babel.config.json
+        displayName: Create babel.config.json
+        workingDirectory: ${{ parameters.workingDir }}
+
+
       # Currently BeMetalsmith is an internal only tool
-      - script: npm install @bentley/bemetalsmith@5.3.0-alpha.0 --legacy-peer-deps
+      - script: npm install @bentley/bemetalsmith@5.3.0-alpha.1 --legacy-peer-deps
         displayName: Install BeMetalsmith
         workingDirectory: ${{ parameters.workingDir }}
 
