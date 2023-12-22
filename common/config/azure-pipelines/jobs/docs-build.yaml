@@ -135,7 +135,7 @@ jobs:
       - publish: ${{ parameters.workingDir }}/generated-docs
         artifact: Core Generated Docs
         displayName: Publish Core Generated Docs Artifact
-        condition: and(succeeded(), eq('${{ parameters.shouldPublish }}', true), eq('${{ parameters.useCoreDocsArtifact }}', false))
+        # condition: and(succeeded(), eq('${{ parameters.shouldPublish }}', true), eq('${{ parameters.useCoreDocsArtifact }}', false))
 
       - publish: ${{ parameters.stagingDir }}/config/.updated.json
         artifact: .updated.json
@@ -145,7 +145,7 @@ jobs:
       - publish: ${{ parameters.outputDir }}
         artifact: DocsBuild
         displayName: Publish Pipeline Artifact - DocsBuild
-        condition: and(succeeded(), eq('${{ parameters.shouldPublish }}', true))
+        # condition: and(succeeded(), eq('${{ parameters.shouldPublish }}', true))
 
         # tag the build to trigger the release pipeline
       - powershell: |
