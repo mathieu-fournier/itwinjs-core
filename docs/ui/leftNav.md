@@ -1,19 +1,21 @@
 ---
-defaultState: activeOpen
+pageClass: "appui-experiment"
 ---
 
-## User Interface
+## [iTwin JS LIbrary](../../learning)
 
-### [Overview](/ui)
+### User Interface
+
+### [Overview](./)
 
 ### AppUI
 
-- ## [Get Started](/ui/appui/get-started)
+- ## [Get Started](./appui/get-started)
 
-- ## [Define Content](/ui/appui/define-content)
+- ## [Define Content](./appui/define-content)
 
-- ## [Create Frontstage](/ui/appui/create-frontstage)
+- ## [Create Frontstage](./appui/create-frontstage)
 
-- ## [Provide UI items](/ui/appui/provide-ui-items)
+- ## [Provide UI items](./appui/provide-ui-items)
 
-### [UI Glossary](/ui/uiglossary)
+### [UI Glossary](./uiglossary)
