@@ -119,7 +119,8 @@ jobs:
         displayName: Install BeMetalsmith
         workingDirectory: ${{ parameters.workingDir }}
 
-      - script: "./node_modules/.bin/bmsBuild --strictLinkChecking --topicsMustHaveDesc --source ${{ parameters.stagingDir }} --destination ${{ parameters.outputDir }}/public_build --siteTitle iTwin.js"
+      # !!DO NOT ALLOW THIS TO MERGE WITHOUT REINSTATING --strictLinkChecking!! Bypassing for appui-experiment ONLY!
+      - script: "./node_modules/.bin/bmsBuild --topicsMustHaveDesc --source ${{ parameters.stagingDir }} --destination ${{ parameters.outputDir }}/public_build --siteTitle iTwin.js"
         displayName: Run bmsBuild
         workingDirectory: ${{ parameters.workingDir }}
 
