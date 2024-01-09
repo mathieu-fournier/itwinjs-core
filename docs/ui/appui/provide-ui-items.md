@@ -6,8 +6,6 @@ appuiExperiment: true
 
 # Provide UI items
 
-## Overview
-
 [UiItemsProvider]($appui-react) is a mechanism for providing UI elements such as widgets, toolbar, status bar and backstage items to the application.
 To create a new provider implement the interface.
 

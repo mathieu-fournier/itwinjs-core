@@ -6,8 +6,6 @@ appuiExperiment: true
 
 # AppUI
 
-## Overview
-
 AppUI is a React based framework consisting of APIs and components that enable iTwin.js applications to implement the AppUI design.
 This design organizes the visual elements on the screen in a way that is familiar to users of desktop applications where the screen is divided into a content area surrounded by panels that contain widgets, toolbars, and status bar.
 In an iTwin.js application, the content area is usually a [Viewport](../../learning/ui/imodel-components/Viewport.md), while information such as element properties and data hierarchies are displayed in [widgets](../../learning/ui/appui-react/Widgets).

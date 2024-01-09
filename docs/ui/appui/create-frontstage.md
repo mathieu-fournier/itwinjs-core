@@ -6,15 +6,11 @@ appuiExperiment: true
 
 # Create Frontstage
 
-## Overview
-
 **Frontstage** is a layout configuration that resembles a page and allows you to define and implement a layout tailored to a specific task within an application. The configuration provides flexibility and control over the visual presentation of content allowing you to create task-specific page layout that enhances user experience. AppUI provides a standard layout, but a custom layout can be defined and used by the frontstage.
 
 > _Here is a frontstage that you can interact with. Give it a try!_
 >
 > <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--overview&viewMode=story"></iframe>
-
-## Create a Frontstage
 
 To create a **frontstage** extend a [FrontstageProvider]($appui-react) and implement the [FrontstageProvider.frontstageConfig]($appui-react).
 
@@ -34,7 +30,7 @@ To register a frontstage use [FrameworkFrontstages.addFrontstageProvider]($appui
 [[include:AppUI.Frontstage.Register]]
 ```
 
-## Activate a Frontstage
+## Activate Frontstage
 
 To display a frontstage on the screen activate it by using the [FrameworkFrontstages.setActiveFrontstage]($appui-react).
 
@@ -63,7 +59,7 @@ Each floating widget and a stage panel section is a widget container which can c
 >
 > <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--widget-container&viewMode=story"></iframe>
 
-### Create a Standard Frontstage
+### Create Standard Frontstage
 
 To define a frontstage configuration of a standard layout use the [StandardFrontstageProvider]($appui-react).
 

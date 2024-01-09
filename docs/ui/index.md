@@ -6,8 +6,6 @@ appuiExperiment: true
 
 # User Interface
 
-## Overview
-
 iTwin.js [frontend](../learning/frontend/index.md) provide a set of API to display iTwin and iModel graphical content to a div by writing to its canvas directly, and will catch mouse movement to make the tool works.
 
 Everything else displayed on the screen will be the User Interface (UI) and needs to be built using other tools.
