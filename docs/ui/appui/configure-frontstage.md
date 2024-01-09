@@ -4,7 +4,7 @@ pageClass: appui-experiment
 appuiExperiment: true
 ---
 
-# Create Frontstage
+# Configure Frontstage
 
 **Frontstage** is a layout configuration that resembles a page and allows you to define and implement a layout tailored to a specific task within an application. The configuration provides flexibility and control over the visual presentation of content allowing you to create task-specific page layout that enhances user experience. AppUI provides a standard layout, but a custom layout can be defined and used by the frontstage.
 

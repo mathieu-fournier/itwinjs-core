@@ -9,7 +9,7 @@
 - ## [Overview](./appui)
 - ## [Get Started](./appui/get-started)
 - ## [Define Content](./appui/define-content)
-- ## [Create Frontstage](./appui/create-frontstage)
+- ## [Configure Frontstage](./appui/configure-frontstage)
 - ## [Provide UI items](./appui/provide-ui-items)
 
 ### [UI Glossary](./uiglossary)

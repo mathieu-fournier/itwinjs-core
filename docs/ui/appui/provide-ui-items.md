@@ -47,7 +47,7 @@ _NOTE:_ widget component must be written in a way that works properly in a windo
 
 ### Floating widget
 
-**Floating widget** is displayed in a dialog like component of the page and is not docked to one of the stage panels. This feature is enabled by default, but you can provide additional options to [Widget.canFloat]($appui-react) property. Since the user is in control of the layout a **docked widget** can be _undocked_ to create a new floating widget. For more information, see [User Interactions](./create-frontstage.md#user-interactions).
+**Floating widget** is displayed in a dialog like component of the page and is not docked to one of the stage panels. This feature is enabled by default, but you can provide additional options to [Widget.canFloat]($appui-react) property. Since the user is in control of the layout a **docked widget** can be _undocked_ to create a new floating widget. For more information, see [User Interactions](./configure-frontstage.md#user-interactions).
 
 ## Provide Toolbar Items
 

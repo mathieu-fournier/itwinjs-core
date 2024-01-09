@@ -129,4 +129,4 @@ new ContentGroup({
 
 ## Next Steps
 
-Now that you know how to define content, you can learn how to display it in the [create frontstage](./create-frontstage.md) section.
+Now that you know how to define content, you can learn how to display it in the [configure frontstage](./configure-frontstage.md) section.
