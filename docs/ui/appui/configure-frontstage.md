@@ -59,8 +59,6 @@ Each floating widget and a stage panel section is a widget container which can c
 >
 > <iframe style="width:100%;height:400px" src="https://itwin.github.io/appui/storybook/iframe.html?args=&id=frontstage-frontstageprovider--widget-container&viewMode=story"></iframe>
 
-### Create Standard Frontstage
-
 To define a frontstage configuration of a standard layout use the [StandardFrontstageProvider]($appui-react).
 
 ```tsx
@@ -69,7 +67,7 @@ To define a frontstage configuration of a standard layout use the [StandardFront
 [[include:AppUI.StandardFrontstageProvider]]
 ```
 
-### User Interactions
+## User Interactions
 
 While defining a standard layout you have the capability to provide an initial configuration however the user is in control of most of the UI elements on the screen.
 
@@ -88,7 +86,7 @@ Available user interactions:
 - **Collapse/uncollapse a stage panel** - click on the resize handle of a stage panel or use the drag interaction.
 - **Resize a stage panel section** - drag the resize handle between the stage panel sections.
 
-### Toolbars
+## Toolbars
 
 A standard frontstage is divided into two sections dedicated for content manipulation and view navigation that overlay the content control. By default [ContentToolWidgetComposer]($appui-react) and [ViewToolWidgetComposer]($appui-react) are used to display up to four toolbars with a specific purpose as defined in [ToolbarUsage]($appui-react) and [ToolbarOrientation]($appui-react). Alternatively you can provide custom components for `contentManipulation` and `viewNavigation` when [Creating a Frontstage](#create-a-frontstage).
 
@@ -96,7 +94,7 @@ You can use [UiItemsProvider]($appui-react) to provide additional items to the t
 
 To create a custom toolbar you can use a [ToolbarComposer]($appui-react) component.
 
-### Widgets
+## Widgets
 
 [Widget]($appui-react) is an interactive UI element for a custom content of an application that allows the user to view and/or modify data relevant to their current context. The content of the widget is just a React component, but additional meta-data such as label or icon can be provided to customize or initialize the widget.
 
@@ -108,7 +106,7 @@ Widget container to which the widget is assigned can have multiple states.
 
 **Popout** - when a widget is displayed in a separate window popup.
 
-### Tool Settings
+## Tool Settings
 
 **Tool settings** is a dedicated area in the user interface that contains settings for the active tool. In a standard layout it is displayed as a bar at the top of the application, but it can be undocked as a regular widget as well.
 
@@ -118,13 +116,13 @@ To display the tool settings you need to supply property information from the To
 [[include:AppUI.ToolSettings.SupplyProperties]]
 ```
 
-### Status Bar
+## Status Bar
 
 **Status bar** is a dedicated area in the user interface that displays multiple status fields with information about the current state of the application. In a standard layout [StatusBarComposer]($appui-react) is used to display a status bar at the bottom of the application.
 
 You can use [UiItemsProvider]($appui-react) to provide additional items to the status bar. For more information, see [Provide StatusBar Items](./provide-ui-items.md#statusbar-items).
 
-### Backstage
+## Backstage
 
 **Backstage** is a main navigation menu of the application. You can provide menu items to open frontstages, overlays or launch custom tasks. In the standard layout [BackstageComposer]($appui-react) is used to display a menu along the left edge of the application.
 
