@@ -6,11 +6,7 @@ appuiExperiment: true
 
 # Get Started
 
-## Overview
-
-AppUI is a framework that provides a set of React components and APIs to build applications using the iTwin.js stack.
-
-To use AppUI, you can either use the Viewer component or configure it manually depending on your needs.
+There are two ways to start using the AppUI framework. You can either use the prebuilt `Viewer` component or configure the AppUI manually depending on your needs.
 
 ## Viewer component
 

@@ -6,8 +6,6 @@ appuiExperiment: true
 
 # Define Content
 
-## Overview
-
 The content in AppUI is what is displayed in the back of your application, it is the main reason your application exists, to show, modify and interact with the content.
 
 This content must be defined and is split in 3 ideas: Control, Layout and Group
@@ -131,4 +129,4 @@ new ContentGroup({
 
 ## Next Steps
 
-Now that you know how to define content, you can learn how to display it in the [create frontstage](./create-frontstage.md) section.
+Now that you know how to define content, you can learn how to display it in the [configure frontstage](./configure-frontstage.md) section.
