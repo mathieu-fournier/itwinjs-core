@@ -122,7 +122,7 @@ jobs:
 
 
       # Currently BeMetalsmith is an internal only tool
-      - script: npm install @bentley/bemetalsmith@5.3.0-alpha.3
+      - script: npm install @bentley/bemetalsmith@5.3.0-alpha.5
         displayName: Install BeMetalsmith
         workingDirectory: ${{ parameters.workingDir }}
 
