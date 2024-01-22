@@ -76,7 +76,7 @@ Implement [UiItemsProvider.getBackstageItems]($appui-react) to provide additiona
 ## Update UI Items
 
 To update provided UI items dynamically use conditional value types. When creating a conditional value provide a function that returns a value based on the current state of the application. Provided function is invoked whenever the specified events are raised.
-AppUI provides these conditional value types: [ConditionalBooleanValue]($appui-abstract), [ConditionalStringValue]($appui-abstract), [ConditionalIconItem]($appui-react).
+AppUI provides these conditional value types: [ConditionalBooleanValue]($appui-abstract), [ConditionalStringValue]($appui-abstract), [ConditionalIconItem]($core-react).
 Use [SyncUiEventDispatcher.dispatchSyncUiEvent]($appui-react) to dispatch the events.
 
 ```tsx
