@@ -4,10 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { BeTimePoint, Id64Set, Id64String } from "@itwin/core-bentley";
-import { BatchType, RenderMode, RenderSchedule, ViewFlagOverrides } from "@itwin/core-common";
-import {
-  acquireImdlDecoder, ImdlDecoder, IModelApp, Tile, TileDrawArgs, TileTree, TileTreeParams,
-} from "@itwin/core-frontend";
+import { acquireImdlDecoder, BatchType, ImdlDecoder, IModelApp, RenderMode, RenderSchedule, Tile, TileDrawArgs, TileTree, TileTreeParams, ViewFlagOverrides } from "@itwin/core-extension";
 import { BatchedTile, BatchedTileParams } from "./BatchedTile";
 import { BatchedTilesetReader, ModelMetadata } from "./BatchedTilesetReader";
 import { frontendTilesOptions } from "./FrontendTiles";

@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import { expect } from "chai";
-import { ModelDisplayTransform, ModelDisplayTransformProvider } from "@itwin/core-frontend";
+import { ModelDisplayTransform, ModelDisplayTransformProvider } from "@itwin/core-extension";
 import { ModelGroupDisplayTransforms } from "../ModelGroupDisplayTransforms";
 import { Transform } from "@itwin/core-geometry";
 

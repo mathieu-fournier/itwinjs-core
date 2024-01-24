@@ -4,12 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { Logger } from "@itwin/core-bentley";
-import { RenderSchedule } from "@itwin/core-common";
-import {
-  AnimationNodeId,
-  AttachToViewportArgs, createSpatialTileTreeReferences, IModelConnection, SpatialTileTreeReferences, SpatialViewState,
-  TileTreeLoadStatus, TileTreeOwner, TileTreeReference,
-} from "@itwin/core-frontend";
+import { AnimationNodeId, AttachToViewportArgs, createSpatialTileTreeReferences, IModelConnection, RenderSchedule, SpatialTileTreeReferences, SpatialViewState, TileTreeLoadStatus, TileTreeOwner, TileTreeReference } from "@itwin/core-extension";
 import {  BatchedTileTreeReference, BatchedTileTreeReferenceArgs  } from "./BatchedTileTreeReference";
 import { getBatchedTileTreeOwner } from "./BatchedTileTreeSupplier";
 import { BatchedModels } from "./BatchedModels";

@@ -4,8 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { assert, Id64Set, Id64String } from "@itwin/core-bentley";
-import { PlanProjectionSettings, RenderSchedule, ViewFlagOverrides } from "@itwin/core-common";
-import { ModelDisplayTransform, RenderClipVolume } from "@itwin/core-frontend";
+import { ModelDisplayTransform, PlanProjectionSettings, RenderClipVolume, RenderSchedule, ViewFlagOverrides } from "@itwin/core-extension";
 import { ModelGroupDisplayTransforms } from "./ModelGroupDisplayTransforms";
 
 /** Plan projection settings relevant to a [[ModelGroupInfo]].

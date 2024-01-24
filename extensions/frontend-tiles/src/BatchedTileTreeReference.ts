@@ -5,12 +5,7 @@
 
 import { assert } from "@itwin/core-bentley";
 import { Range3d, Transform } from "@itwin/core-geometry";
-import {
-  BatchType, FeatureAppearance, FeatureAppearanceProvider, FeatureAppearanceSource, GeometryClass, ViewFlagOverrides,
-} from "@itwin/core-common";
-import {
-  formatAnimationBranchId, RenderClipVolume, SceneContext, TileDrawArgs, TileGraphicType, TileTree, TileTreeOwner, TileTreeReference,
-} from "@itwin/core-frontend";
+import { BatchType, FeatureAppearance, FeatureAppearanceProvider, FeatureAppearanceSource, formatAnimationBranchId, GeometryClass, RenderClipVolume, SceneContext, TileDrawArgs, TileGraphicType, TileTree, TileTreeOwner, TileTreeReference, ViewFlagOverrides } from "@itwin/core-extension";
 import { BatchedModels } from "./BatchedModels";
 import { ModelGroupInfo } from "./ModelGroup";
 

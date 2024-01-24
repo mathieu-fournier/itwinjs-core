@@ -4,9 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 import { ModelGroupDisplayTransforms } from "./ModelGroupDisplayTransforms";
 import { groupModels, ModelGroup, ModelGroupingContext } from "./ModelGroup";
-import { RenderClipVolume, SpatialViewState } from "@itwin/core-frontend";
+import { PlanProjectionSettings, RenderClipVolume, RenderSchedule, SpatialViewState, ViewFlagOverrides } from "@itwin/core-extension";
 import { assert, CompressedId64Set, Id64Set, Id64String } from "@itwin/core-bentley";
-import { PlanProjectionSettings, RenderSchedule, ViewFlagOverrides } from "@itwin/core-common";
 import { ModelMetadata } from "./BatchedTilesetReader";
 
 /** Groups the set of spatial models included in a [[BatchedSpatialTileTreeReferences]] based on their display settings.

@@ -6,8 +6,7 @@ import { expect, use } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import { Range3d } from "@itwin/core-geometry";
-import { Cartographic, EcefLocation } from "@itwin/core-common";
-import { BlankConnection, IModelApp } from "@itwin/core-frontend";
+import { BlankConnection, Cartographic, EcefLocation, IModelApp } from "@itwin/core-extension";
 import { MeshExport, MeshExports, obtainMeshExportTilesetUrl, queryMeshExports, QueryMeshExportsArgs } from "../FrontendTiles";
 
 use(chaiAsPromised);

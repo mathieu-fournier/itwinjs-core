@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { CompressedId64Set, Id64Set, Id64String } from "@itwin/core-bentley";
-import { ModelDisplayTransform, ModelDisplayTransformProvider } from "@itwin/core-frontend";
+import { ModelDisplayTransform, ModelDisplayTransformProvider } from "@itwin/core-extension";
 
 function equalDisplayTransforms(a: ModelDisplayTransform, b: ModelDisplayTransform): boolean {
   return !!a.premultiply === !!b.premultiply && a.transform.isAlmostEqual(b.transform);

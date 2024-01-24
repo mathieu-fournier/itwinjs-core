@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AccessToken, Logger } from "@itwin/core-bentley";
-import { IModelApp, IModelConnection, SpatialTileTreeReferences, SpatialViewState } from "@itwin/core-frontend";
+import { IModelApp, IModelConnection, SpatialTileTreeReferences, SpatialViewState } from "@itwin/core-extension";
 import { loggerCategory } from "./LoggerCategory";
 import { createBatchedSpatialTileTreeReferences } from "./BatchedSpatialTileTreeRefs";
 

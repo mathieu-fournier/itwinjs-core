@@ -5,8 +5,7 @@
 import { expect } from "chai";
 import { Id64Set, Id64String } from "@itwin/core-bentley";
 import { ClipVector, Transform } from "@itwin/core-geometry";
-import { PlanProjectionSettings, RenderSchedule, ViewFlagOverrides } from "@itwin/core-common";
-import { ModelDisplayTransform,  RenderClipVolume } from "@itwin/core-frontend";
+import { ModelDisplayTransform, PlanProjectionSettings, RenderClipVolume, RenderSchedule, ViewFlagOverrides } from "@itwin/core-extension";
 import { groupModels, ModelGroupingContext } from "../ModelGroup";
 import { ModelGroupDisplayTransforms } from "../ModelGroupDisplayTransforms";
 

@@ -5,11 +5,7 @@
 
 import { assert, BeTimePoint, ByteStream, Logger } from "@itwin/core-bentley";
 import { Transform } from "@itwin/core-geometry";
-import { ColorDef, Tileset3dSchema } from "@itwin/core-common";
-import {
-  GraphicBranch, GraphicBuilder, IModelApp, RealityTileLoader, RenderSystem, Tile, TileBoundingBoxes, TileContent,
-  TileDrawArgs, TileParams, TileRequest, TileRequestChannel, TileTreeLoadStatus, TileUser, TileVisibility, Viewport,
-} from "@itwin/core-frontend";
+import { ColorDef, GraphicBranch, GraphicBuilder, IModelApp, RealityTileLoader, RenderSystem, Tile, TileBoundingBoxes, TileContent, TileDrawArgs, TileParams, TileRequest, TileRequestChannel, Tileset3dSchema, TileTreeLoadStatus, TileUser, TileVisibility, Viewport } from "@itwin/core-extension";
 import { loggerCategory } from "./LoggerCategory";
 import { BatchedTileTree } from "./BatchedTileTree";
 import { frontendTilesOptions } from "./FrontendTiles";

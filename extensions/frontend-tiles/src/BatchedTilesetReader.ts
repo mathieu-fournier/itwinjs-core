@@ -7,8 +7,7 @@ import { Id64, Id64Set, Id64String } from "@itwin/core-bentley";
 import {
   Matrix3d, Point3d, Range3d, Range3dProps, Transform, Vector3d,
 } from "@itwin/core-geometry";
-import { Tileset3dSchema as schema, ViewFlagOverrides } from "@itwin/core-common";
-import { IModelConnection, RealityModelTileUtils, TileLoadPriority } from "@itwin/core-frontend";
+import { IModelConnection, RealityModelTileUtils, Tileset3dSchema as schema, TileLoadPriority, ViewFlagOverrides } from "@itwin/core-extension";
 import { BatchedTileTreeParams } from "./BatchedTileTree";
 import { BatchedTile, BatchedTileParams } from "./BatchedTile";
 

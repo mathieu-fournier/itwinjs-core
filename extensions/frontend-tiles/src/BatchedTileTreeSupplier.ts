@@ -4,10 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { comparePossiblyUndefined, compareStrings, CompressedId64Set, Logger } from "@itwin/core-bentley";
-import { RenderSchedule } from "@itwin/core-common";
-import {
-  IModelConnection, TileTree, TileTreeOwner, TileTreeSupplier,
-} from "@itwin/core-frontend";
+import { IModelConnection, RenderSchedule, TileTree, TileTreeOwner, TileTreeSupplier } from "@itwin/core-extension";
 import { loggerCategory } from "./LoggerCategory";
 import { BatchedTilesetReader, BatchedTilesetSpec } from "./BatchedTilesetReader";
 import { BatchedTileTree } from "./BatchedTileTree";
