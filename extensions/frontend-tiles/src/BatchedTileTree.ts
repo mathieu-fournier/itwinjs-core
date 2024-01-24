@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { BeTimePoint, Id64Set, Id64String } from "@itwin/core-bentley";
-import { acquireImdlDecoder, BatchType, ImdlDecoder, IModelApp, RenderMode, RenderSchedule, Tile, TileDrawArgs, TileTree, TileTreeParams, ViewFlagOverrides } from "@itwin/core-extension";
+import { acquireImdlDecoder, BatchType, ExtensionHost, ImdlDecoder, RenderMode, RenderSchedule, Tile, TileDrawArgs, TileTree, TileTreeParams, ViewFlagOverrides } from "@itwin/core-extension";
 import { BatchedTile, BatchedTileParams } from "./BatchedTile";
 import { BatchedTilesetReader, ModelMetadata } from "./BatchedTilesetReader";
 import { frontendTilesOptions } from "./FrontendTiles";
@@ -45,7 +45,7 @@ export class BatchedTileTree extends TileTree {
       batchModelId: this.modelId,
       is3d: true,
       containsTransformNodes: false,
-      noWorker: !IModelApp.tileAdmin.decodeImdlInWorker,
+      noWorker: !ExtensionHost.tileAdmin.decodeImdlInWorker,
     });
   }
 

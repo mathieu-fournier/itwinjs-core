@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { AccessToken, Logger } from "@itwin/core-bentley";
-import { IModelApp, IModelConnection, SpatialTileTreeReferences, SpatialViewState } from "@itwin/core-extension";
+import { ExtensionHost, IModelConnection, SpatialTileTreeReferences, SpatialViewState } from "@itwin/core-extension";
 import { loggerCategory } from "./LoggerCategory";
 import { createBatchedSpatialTileTreeReferences } from "./BatchedSpatialTileTreeRefs";
 
@@ -87,7 +87,7 @@ export interface QueryMeshExportsArgs {
 export async function * queryMeshExports(args: QueryMeshExportsArgs): AsyncIterableIterator<MeshExport> {
   const headers = {
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
-    Authorization: args.accessToken ?? await IModelApp.getAccessToken(),
+    Authorization: args.accessToken ?? await ExtensionHost.getAccessToken(),
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     Accept: "application/vnd.bentley.itwin-platform.v1+json",
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
@@ -179,7 +179,7 @@ export async function obtainMeshExportTilesetUrl(args: ObtainMeshExportTilesetUr
  */
 export interface FrontendTilesOptions {
   /** Provide the base URL for the pre-published tileset for a given iModel.
-   * If omitted, [[obtainMeshExportTilesetUrl]] will be invoked with default arguments, using the access token provided by [[IModelApp]].
+   * If omitted, [[obtainMeshExportTilesetUrl]] will be invoked with default arguments, using the access token provided by [[ExtensionHost]].
    */
   computeSpatialTilesetBaseUrl?: ComputeSpatialTilesetBaseUrl;
   /** The maximum number of levels in the tile tree to skip loading if they do not provide the desired level of detail for the current view.
@@ -219,7 +219,7 @@ export function initializeFrontendTiles(options: FrontendTilesOptions): void {
     frontendTilesOptions.enableEdges = true;
 
   const computeUrl = options.computeSpatialTilesetBaseUrl ?? (
-    async (iModel: IModelConnection) => obtainMeshExportTilesetUrl({ iModel, accessToken: await IModelApp.getAccessToken() })
+    async (iModel: IModelConnection) => obtainMeshExportTilesetUrl({ iModel, accessToken: await ExtensionHost.getAccessToken() })
   );
 
   SpatialTileTreeReferences.create = (view: SpatialViewState) => createBatchedSpatialTileTreeReferences(view, computeUrl);
