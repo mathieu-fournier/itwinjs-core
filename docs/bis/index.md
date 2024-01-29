@@ -1,5 +1,5 @@
 Redirecting...
 <script>
-  var url = './guide/intro/overview/';
+  var url = './intro/overview/';
   window.location = url;
 </script>
