@@ -27,3 +27,5 @@ Interactive **widget** components that display relevant content of the applicati
 ![Widgets](../../learning/ui/appui/images/AppUiLightTheme.png)
 
 The main content area is overlaid by **toolbar** components. The upper left corner is dedicated to the tools that manipulate the content of the application and the upper right corner is dedicated to the tools that navigate the view. For more information, see [Toolbars](./configure-frontstage.md#toolbars).
+
+UI elements used in the layout can be updated dynamically, for more information see [Dynamic UI Item Updates](./provide-ui-items.md#dynamic-ui-item-updates).
