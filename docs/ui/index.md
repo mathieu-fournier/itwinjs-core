@@ -24,7 +24,7 @@ The configuration of the frontstages can be done through easily sharable [UiItem
 
 It also handle switching between frontstages and content, and provide a set of standard element for common workflows.
 
-You can get more information in the [AppUI documentation](./appui/index.md).
+You can get more information in the [AppUI documentation](./appui).
 
 ## Custom UI
 
