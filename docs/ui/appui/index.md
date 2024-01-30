@@ -12,6 +12,8 @@ In an iTwin.js application, the content area is usually a [Viewport](../../learn
 
 ![AppUI](../../learning/ui/appui/images/AppUiDarkTheme.png)
 
+For a high level overview of different AppUI design concepts, see [UI Glossary](../UIGlossary.md).
+
 ## Layout Features
 
 Dedicated **tool settings** area at the top of the application for components that change the operational settings of the currently executing [Tool](../../learning/frontend/Tools.md). For more information, see [Tool Settings](./configure-frontstage.md#tool-settings).
