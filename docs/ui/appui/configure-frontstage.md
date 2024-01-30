@@ -77,7 +77,7 @@ Available user interactions:
 
 - **Dock/undock a widget** - drag a widget and drop it on one of widget targets. You can drag a widget tab or a widget title bar. Widget targets are displayed when you start dragging a widget, but you can use tabs or a title bar of another widget.
 - **Float a widget** - drag and drop a widget anywhere on the page. You can drag a widget tab or a widget title bar.
-- **Popout a widget** - click on the popout icon in the widget title bar. Close the window popup to return the widget to the original widget container.
+- **Popout a widget** - click on the popout icon in the widget title bar. Close the opened browser window to return the widget to the original widget container.
 - **Resize a floating widget** - drag one of four edges or corners of a floating widget.
 - **Move a floating widget** - drag the widget by the title bar.
 - **Send back a floating widget** - click on the send back icon in the widget title bar.
@@ -104,7 +104,7 @@ Widget container to which the widget is assigned can have multiple states.
 
 **Floating** - when a widget is displayed in a dialog like component of the page.
 
-**Popout** - when a widget is displayed in a separate window popup.
+**Popout** - when a widget is displayed in a separate browser window.
 
 ## Tool Settings
 
