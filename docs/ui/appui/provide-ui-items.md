@@ -73,7 +73,7 @@ Implement [UiItemsProvider.getBackstageItems]($appui-react) to provide additiona
 
 **AppUI** provides a set of standard providers that you can register to provide standard UI elements to the application: [StandardContentToolsProvider]($appui-react), [StandardNavigationToolsProvider]($appui-react), [StandardStatusbarItemsProvider]($appui-react), [StandardContentToolsUiItemsProvider]($appui-react), [StandardNavigationToolsUiItemsProvider]($appui-react), [StandardStatusbarUiItemsProvider]($appui-react).
 
-## Update UI Items
+## Dynamic UI Item Updates
 
 To update provided UI items dynamically use conditional value types. When creating a conditional value provide a function that returns a value based on the current state of the application. Provided function is invoked whenever the specified events are raised.
 AppUI provides these conditional value types: [ConditionalBooleanValue]($appui-abstract), [ConditionalStringValue]($appui-abstract), [ConditionalIconItem]($core-react).
