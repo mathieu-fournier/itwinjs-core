@@ -379,6 +379,10 @@
       "allowedCategories": [ "frontend" ]
     },
     {
+      "name": "@typescript-eslint/parser",
+      "allowedCategories": [ "internal" ]
+    },
+    {
       "name": "@xmldom/xmldom",
       "allowedCategories": [ "backend", "common", "internal", "tools" ]
     },
@@ -529,6 +533,10 @@
     {
       "name": "eslint",
       "allowedCategories": [ "backend", "common", "edit", "extensions", "frontend", "integration-testing", "internal", "tools" ]
+    },
+    {
+      "name": "eslint-config-prettier",
+      "allowedCategories": [ "backend", "common", "frontend", "internal" ]
     },
     {
       "name": "express",
@@ -703,6 +711,10 @@
       "allowedCategories": [ "tools" ]
     },
     {
+      "name": "prettier",
+      "allowedCategories": [ "backend", "common", "frontend", "internal" ]
+    },
+    {
       "name": "raf",
       "allowedCategories": [ "frontend" ]
     },
@@ -740,11 +752,11 @@
     },
     {
       "name": "rxjs",
-      "allowedCategories": [ "frontend" ]
+      "allowedCategories": [ "backend", "frontend", "internal" ]
     },
     {
       "name": "rxjs-for-await",
-      "allowedCategories": [ "frontend" ]
+      "allowedCategories": [ "backend", "frontend" ]
     },
     {
       "name": "sanitize-filename",

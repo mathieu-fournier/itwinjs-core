@@ -1,6 +1,37 @@
 # Change Log - @itwin/core-geometry
 
-This log was last generated on Thu, 14 Dec 2023 20:24:02 GMT and should not be manually modified.
+This log was last generated on Fri, 16 Feb 2024 14:23:08 GMT and should not be manually modified.
+
+## 4.4.2
+Fri, 16 Feb 2024 14:22:01 GMT
+
+_Version update only_
+
+## 4.4.1
+Fri, 16 Feb 2024 14:17:48 GMT
+
+_Version update only_
+
+## 4.4.0
+Mon, 12 Feb 2024 18:15:58 GMT
+
+### Updates
+
+- New code for RangeTree construction and search
+- logic error in coincident segment detection
+- B-spline legacy closure conversion
+- restore open bcurve json import
+- cw region input to PolyfaceClip.drapeRegion
+- polyface silhouettes
+- ClipUtilities.rangeOfIntersectionOfLocalRanges
+- Fix spelling of deep clone in PolyfaceData.clone jsdoc
+- Slight optimization for Transform.isAlmostEqual.
+- add GeometryProps.pointString
+
+## 4.3.3
+Wed, 03 Jan 2024 19:28:38 GMT
+
+_Version update only_
 
 ## 4.3.2
 Thu, 14 Dec 2023 20:23:02 GMT

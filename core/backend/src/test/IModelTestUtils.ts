@@ -21,7 +21,7 @@ import { RequestNewBriefcaseArg } from "../BriefcaseManager";
 import { CheckpointProps, V1CheckpointManager } from "../CheckpointManager";
 import { ClassRegistry } from "../ClassRegistry";
 import {
-  AuxCoordSystem2d, BriefcaseDb, BriefcaseManager, CategorySelector, DisplayStyle2d, DisplayStyle3d, DrawingCategory, DrawingViewDefinition,
+  AuxCoordSystem2d, BriefcaseDb, BriefcaseLocalValue, BriefcaseManager, CategorySelector, DisplayStyle2d, DisplayStyle3d, DrawingCategory, DrawingViewDefinition,
   ECSqlStatement, Element, ElementAspect, ElementOwnsChildElements, ElementOwnsMultiAspects, ElementOwnsUniqueAspect, ElementUniqueAspect,
   ExternalSource, ExternalSourceIsInRepository, FunctionalModel, FunctionalSchema, GroupModel, IModelDb, IModelHost, IModelJsFs,
   InformationPartitionElement, Model, ModelSelector, OrthographicViewDefinition, PhysicalModel, PhysicalObject, PhysicalPartition,
@@ -144,8 +144,14 @@ export class HubWrappers {
   }
 
   /** Helper to open a briefcase db directly with the BriefcaseManager API */
-  public static async downloadAndOpenBriefcase(args: RequestNewBriefcaseArg): Promise<BriefcaseDb> {
+  public static async downloadAndOpenBriefcase(args: RequestNewBriefcaseArg & { noLock?: true }): Promise<BriefcaseDb> {
     const props = await BriefcaseManager.downloadBriefcase(args);
+    if (args.noLock) {
+      const briefcase = await BriefcaseDb.open({ fileName: props.fileName });
+      briefcase.nativeDb.saveLocalValue(BriefcaseLocalValue.NoLocking, "true");
+      briefcase.saveChanges();
+      briefcase.close();
+    }
     return BriefcaseDb.open({ fileName: props.fileName });
   }
 
@@ -168,6 +174,7 @@ export class HubWrappers {
     assert.isTrue(this.hubMock.isValid || openArgs.syncMode === SyncMode.PullOnly, "use HubMock to acquire briefcases");
     while (true) {
       try {
+        // eslint-disable-next-line deprecation/deprecation
         return (await RpcBriefcaseUtility.open(openArgs)) as BriefcaseDb;
       } catch (error) {
         if (!(error instanceof RpcPendingResponse)) // eslint-disable-line deprecation/deprecation
@@ -197,14 +204,14 @@ export class HubWrappers {
       args.asOf = IModelVersion.latest().toJSON();
 
     const changeset = await IModelHost.hubAccess.getChangesetFromVersion({ accessToken: args.accessToken, version: IModelVersion.fromJSON(args.asOf), iModelId: args.iModelId });
-    const openArgs: DownloadAndOpenArgs = {
+    const openArgs = {
       tokenProps: {
         iTwinId: args.iTwinId,
         iModelId: args.iModelId,
         changeset,
       },
       activity: { accessToken: args.accessToken, activityId: "", applicationId: "", applicationVersion: "", sessionId: "" },
-      syncMode: SyncMode.FixedVersion,
+      syncMode: SyncMode.FixedVersion as const,
       forceDownload: args.deleteFirst,
     };
 
