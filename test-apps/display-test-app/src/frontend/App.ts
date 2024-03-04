@@ -62,6 +62,7 @@ import { OpenRealityModelSettingsTool } from "./RealityModelDisplaySettingsWidge
 import { ElectronRendererAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronRenderer";
 import { ITwinLocalization } from "@itwin/core-i18n";
 import { getConfigurationString } from "./DisplayTestApp";
+import { QueryTool } from "./QueryTool";
 
 class DisplayTestAppAccuSnap extends AccuSnap {
   private readonly _activeSnaps: SnapMode[] = [SnapMode.NearestKeypoint];
@@ -341,6 +342,7 @@ export class DisplayTestApp {
       PullChangesTool,
       PushChangesTool,
       PurgeTileTreesTool,
+      QueryTool,
       RecordFpsTool,
       RecordTileSizesTool,
       RefreshTilesTool,

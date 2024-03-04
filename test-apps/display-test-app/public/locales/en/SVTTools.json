@@ -97,6 +97,9 @@
     "PurgeTileTrees": {
       "keyin": "dta purge tiletrees"
     },
+    "Query": {
+      "keyin": "dta query"
+    },
     "OpenIModel": {
       "keyin": "dta file open"
     },
