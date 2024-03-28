@@ -32,6 +32,9 @@ parameters:
   - name: useCurrentAuthClientsDocsArtifact
     type: boolean
     default: false
+  - name: useCurrentConnectorFrameworkDocsArtifact
+    type: boolean
+    default: false
   - name: shouldPublish
     type: boolean
     default: false
@@ -113,6 +116,7 @@ jobs:
           useCurrentPresentationDocsArtifact: ${{ parameters.useCurrentPresentationDocsArtifact }}
           useCurrentTransformerDocsArtifact: ${{ parameters.useCurrentTransformerDocsArtifact }}
           useCurrentAuthClientsDocsArtifact: ${{ parameters.useCurrentAuthClientsDocsArtifact }}
+          useCurrentConnectorFrameworkDocsArtifact: ${{ parameters.useCurrentConnectorFrameworkDocsArtifact }}
 
       # # temporary... add new babel.config.json to workingDir
       # - script: |
