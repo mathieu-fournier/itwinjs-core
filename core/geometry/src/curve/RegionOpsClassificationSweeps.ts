@@ -522,10 +522,10 @@ export class RegionBooleanContext implements RegionOpsFaceToFaceSearchCallbacks 
     this.graph.yankAndDeleteEdges((node: HalfEdge) => {
       if (!(node.edgeTag instanceof CurveLocationDetail))
         return false;
-      const detail = node.edgeTag as CurveLocationDetail;
+      const detail = node.edgeTag;
       if (!(detail.curve!.parent instanceof RegionGroupMember))
         return false;
-      const groupMember = detail.curve!.parent as RegionGroupMember;
+      const groupMember = detail.curve!.parent;
       if (groupMember.parentGroup !== this.extraGeometry)
         return false;
       return !node.findAroundFace(node.edgeMate); // remove bridge edge if adjacent faces are different

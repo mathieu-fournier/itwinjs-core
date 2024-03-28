@@ -854,7 +854,7 @@ describe("RegionBoolean", () => {
 
       // finding all loops only finds outer loop; hole loops are indistinguishable from other positive area loops
       const signedLoops = RegionOps.constructAllXYRegionLoops(inputs);
-      let exteriorLoop = undefined;
+      let exteriorLoop;
       if (ck.testExactNumber(1, signedLoops.length, "constructAllXYRegionLoops found one connected component")) {
         GeometryCoreTestIO.captureCloneGeometry(allGeometry, [...signedLoops[0].negativeAreaLoops, ...signedLoops[0].positiveAreaLoops], x0 += delta);
         if (ck.testExactNumber(1, signedLoops[0].negativeAreaLoops.length, "the component returned by constructAllXYRegionLoops has one exterior loop"))
@@ -863,7 +863,7 @@ describe("RegionBoolean", () => {
       }
 
       // subtracting inputs from outer loop discovers hole
-      let hole = undefined;
+      let hole;
       if (exteriorLoop) {
         const subtracted = RegionOps.regionBooleanXY(exteriorLoop, inputs, RegionBinaryOpType.AMinusB);
         GeometryCoreTestIO.captureCloneGeometry(allGeometry, subtracted, x0 += delta);
@@ -872,12 +872,12 @@ describe("RegionBoolean", () => {
       }
 
       // sorting hole and outer loop creates a parity region
-      let solid = undefined;
+      let solid;
       if (hole && exteriorLoop) {
-        const sorted = RegionOps.sortOuterAndHoleLoopsXY([exteriorLoop, hole]);
-        GeometryCoreTestIO.captureCloneGeometry(allGeometry, sorted, x0 += delta);
-        if (ck.testType(sorted, ParityRegion, "sortOuterAndHoleLoopsXY created a single parity region"))
-          solid = sorted;
+        const sortedLoops = RegionOps.sortOuterAndHoleLoopsXY([exteriorLoop, hole]);
+        GeometryCoreTestIO.captureCloneGeometry(allGeometry, sortedLoops, x0 += delta);
+        if (ck.testType(sortedLoops, ParityRegion, "sortOuterAndHoleLoopsXY created a single parity region"))
+          solid = sortedLoops;
       }
 
       // verify simplified union of inputs is the inputs
