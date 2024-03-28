@@ -141,6 +141,10 @@ export class ViewManager implements Iterable<ScreenViewport> {
       clearTimeout(this._idleWorkTimer);
       this._idleWorkTimer = undefined;
     }
+    this._viewports.map((viewport) => {
+      if (!viewport.isDisposed)
+        this.dropViewport(viewport, true);
+    });
     this._viewports.length = 0;
     this.decorators.length = 0;
     this.toolTipProviders.length = 0;
@@ -351,7 +355,7 @@ export class ViewManager implements Iterable<ScreenViewport> {
   }
 
   /** Force each registered [[Viewport]] to regenerate its [[FeatureSymbology.Overrides]] on the next frame.
-   * @alpha
+   * This is rarely needed - viewports keep track of their own states to detect when the overrides need to be recreated.
    */
   public invalidateSymbologyOverridesAllViews(): void {
     for (const vp of this)
@@ -378,11 +382,14 @@ export class ViewManager implements Iterable<ScreenViewport> {
       vp.setValidScene();
   }
 
-  /** @internal */
+  /** Requests that [[Viewport.createScene]] be invoked for every viewport on the next frame.
+   * This is rarely useful - viewports keep track of their own states to detect when the scene needs to be recreated.
+   */
   public invalidateScenes(): void {
     this._invalidateScenes = true;
     IModelApp.requestNextAnimation();
   }
+
   /** @internal */
   public get sceneInvalidated(): boolean { return this._invalidateScenes; }
 

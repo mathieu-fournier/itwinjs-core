@@ -8,7 +8,7 @@
 
 import { GuidString, Id64, Id64String } from "@itwin/core-bentley";
 import {
-  AngleProps, ClipVectorProps, LowAndHighXY, LowAndHighXYZ, TransformProps, XYProps, XYZProps, YawPitchRollProps,
+  AngleProps, ClipVectorProps, LowAndHighXYProps, LowAndHighXYZProps, TransformProps, XYProps, XYZProps, YawPitchRollProps,
 } from "@itwin/core-geometry";
 import { CodeProps } from "./Code";
 import { EntityProps } from "./EntityProps";
@@ -107,7 +107,7 @@ export interface GeometricElementProps extends ElementProps {
   /** The geometry stream properties */
   geom?: GeometryStreamProps;
   /** How to build the element's GeometryStream. This is used for insert and update only. It is not a persistent property. It will be undefined in the properties returned by functions that read a persistent element. It may be specified as an alternative to `geom` when inserting or updating an element.
-   * @alpha
+   * @beta
    */
   elementGeometryBuilderParams?: ElementGeometryBuilderParams;
   /** The placement properties */
@@ -121,7 +121,7 @@ export interface GeometricElementProps extends ElementProps {
 export interface Placement3dProps {
   origin: XYZProps;
   angles: YawPitchRollProps;
-  bbox?: LowAndHighXYZ;
+  bbox?: LowAndHighXYZProps;
 }
 
 /** Properties of a [[Placement2d]]
@@ -131,7 +131,7 @@ export interface Placement3dProps {
 export interface Placement2dProps {
   origin: XYProps;
   angle: AngleProps;
-  bbox?: LowAndHighXY;
+  bbox?: LowAndHighXYProps;
 }
 
 /**
@@ -231,10 +231,10 @@ export interface GeometricElement2dProps extends GeometricElementProps {
 export interface GeometryPartProps extends ElementProps {
   geom?: GeometryStreamProps;
   /** How to build the part's GeometryStream. This is used for insert and update only. It is not a persistent property. It will be undefined in the properties returned by functions that read a persistent element. It may be specified as an alternative to `geom` when inserting or updating an element.
-   * @alpha
+   * @beta
    */
   elementGeometryBuilderParams?: ElementGeometryBuilderParamsForPart;
-  bbox?: LowAndHighXYZ;
+  bbox?: LowAndHighXYZProps;
 }
 
 /** Properties for a [ViewAttachment]($backend)

@@ -8,46 +8,126 @@
  */
 
 /* eslint-disable @typescript-eslint/naming-convention, no-empty */
-import { Point3dArray } from "../geometry3d/PointHelpers";
+
 import { BagOfCurves, CurveCollection } from "../curve/CurveCollection";
 import { CurveLocationDetail } from "../curve/CurveLocationDetail";
-import { MultiChainCollector, OffsetHelpers } from "../curve/internalContexts/MultiChainCollector";
+import { CurveOps } from "../curve/CurveOps";
+import { LinearCurvePrimitive } from "../curve/CurvePrimitive";
+import { AnyChain } from "../curve/CurveTypes";
+import { MultiChainCollector } from "../curve/internalContexts/MultiChainCollector";
 import { LineSegment3d } from "../curve/LineSegment3d";
 import { LineString3d } from "../curve/LineString3d";
 import { Loop } from "../curve/Loop";
 import { StrokeOptions } from "../curve/StrokeOptions";
 import { Geometry } from "../Geometry";
 import { Angle } from "../geometry3d/Angle";
+import { BarycentricTriangle, TriangleLocationDetail } from "../geometry3d/BarycentricTriangle";
 import { FrameBuilder } from "../geometry3d/FrameBuilder";
 import { GrowableXYZArray } from "../geometry3d/GrowableXYZArray";
+import { IndexedXYZCollection } from "../geometry3d/IndexedXYZCollection";
 import { Plane3dByOriginAndUnitNormal } from "../geometry3d/Plane3dByOriginAndUnitNormal";
+import { Point3dArrayCarrier } from "../geometry3d/Point3dArrayCarrier";
 import { Point3d, Vector3d } from "../geometry3d/Point3dVector3d";
+import { Point3dArray } from "../geometry3d/PointHelpers";
 import { PolygonLocationDetail, PolygonOps } from "../geometry3d/PolygonOps";
 import { Range3d } from "../geometry3d/Range";
+import { Ray3d } from "../geometry3d/Ray3d";
 import { Matrix4d } from "../geometry4d/Matrix4d";
 import { MomentData } from "../geometry4d/MomentData";
 import { UnionFindContext } from "../numerics/UnionFind";
 import { ChainMergeContext } from "../topology/ChainMerge";
 import { HalfEdge, HalfEdgeGraph, HalfEdgeMask } from "../topology/Graph";
+import { HalfEdgeGraphFromIndexedLoopsContext } from "../topology/HalfEdgeGraphFromIndexedLoopsContext";
 import { HalfEdgeGraphSearch, HalfEdgeMaskTester } from "../topology/HalfEdgeGraphSearch";
 import { HalfEdgeGraphMerge } from "../topology/Merging";
+import { SpacePolygonTriangulation } from "../topology/SpaceTriangulation";
+import {
+  ConvexFacetLocationDetail, FacetIntersectOptions, FacetLocationDetail, NonConvexFacetLocationDetail, TriangularFacetLocationDetail,
+} from "./FacetLocationDetail";
 import { FacetOrientationFixup } from "./FacetOrientation";
 import { IndexedEdgeMatcher, SortableEdge, SortableEdgeCluster } from "./IndexedEdgeMatcher";
 import { IndexedPolyfaceSubsetVisitor } from "./IndexedPolyfaceVisitor";
 import { BuildAverageNormalsContext } from "./multiclip/BuildAverageNormalsContext";
-import { SweepLineStringToFacetContext } from "./multiclip/SweepLineStringToFacetContext";
+import { OffsetMeshContext } from "./multiclip/OffsetMeshContext";
+import { Range2dSearchInterface } from "./multiclip/Range2dSearchInterface";
+import { ClipSweptLineStringContext, EdgeClipData, SweepLineStringToFacetContext } from "./multiclip/SweepLineStringToFacetContext";
 import { XYPointBuckets } from "./multiclip/XYPointBuckets";
 import { IndexedPolyface, Polyface, PolyfaceVisitor } from "./Polyface";
 import { PolyfaceBuilder } from "./PolyfaceBuilder";
 import { RangeLengthData } from "./RangeLengthData";
-import { SpacePolygonTriangulation } from "../topology/SpaceTriangulation";
-import { HalfEdgeGraphFromIndexedLoopsContext } from "../topology/HalfEdgeGraphFromIndexedLoopsContext";
-import { OffsetMeshContext } from "./multiclip/OffsetMeshContext";
-import { Ray3d } from "../geometry3d/Ray3d";
-import { ConvexFacetLocationDetail, FacetIntersectOptions, FacetLocationDetail, NonConvexFacetLocationDetail, TriangularFacetLocationDetail } from "./FacetLocationDetail";
-import { BarycentricTriangle, TriangleLocationDetail } from "../geometry3d/BarycentricTriangle";
+
 /**
- * Options carrier for cloneWithHolesFilled
+ * Options carrier for sweeping linework onto meshes.
+ * * The create method initializes all options.
+ * @public
+ */
+export class SweepLineStringToFacetsOptions {
+  /** vector "towards the eye"
+   * * In the common case of sweeping to an XY (e.g. ground or DTM) mesh,
+   *    use the positive Z vector as an up vector.
+   * * In general case, this is a vector from the mesh towards an eye at infinity.
+   */
+  public vectorToEye: Vector3d;
+  /** true to collect edges from facets that face towards the eye */
+  public collectOnForwardFacets: boolean;
+  /** true to collect facets that are "on the side", i.e. their outward vector is perpendicular to vectorToEye. */
+  public collectOnSideFacets: boolean;
+  /** true to collect facets that face away from the eye */
+  public collectOnRearFacets: boolean;
+  /** (small) angle to use as tolerance for deciding if a facet is "on the side".  Default (if given in degrees) is Geometry.smallAngleDegrees */
+  public sideAngle: Angle;
+  /** option to assemble lines into chains */
+  public assembleChains: boolean;
+
+  /** constructor -- captures fully-checked parameters from static create method.
+  */
+  private constructor(vectorToEye: Vector3d, sideAngle: Angle, assembleChains: boolean, collectOnForwardFacets: boolean, collectOnSideFacets: boolean, collectOnRearFacets: boolean) {
+    this.vectorToEye = vectorToEye;
+    this.sideAngle = sideAngle;
+    this.assembleChains = assembleChains;
+    this.collectOnForwardFacets = collectOnForwardFacets;
+    this.collectOnSideFacets = collectOnSideFacets;
+    this.collectOnRearFacets = collectOnRearFacets;
+  }
+
+  /** Create an options structure.
+   * * Default vectorToEye is positive Z
+   * * Default sideAngle has radians value Geometry.smallAngleRadians
+   * * Default assembleChains is true
+   * * Default collectOnForwardFacets, collectOnSideFacets, collectOnRearFacets are all true.
+   */
+  public static create(vectorToEye?: Vector3d, sideAngle?: Angle, assembleChains?: boolean,
+    collectOnForwardFacets?: boolean,
+    collectOnSideFacets?: boolean,
+    collectOnRearFacets?: boolean) {
+    return new SweepLineStringToFacetsOptions(
+      vectorToEye === undefined ? Vector3d.unitZ() : vectorToEye.clone(),
+      sideAngle === undefined ? Angle.createRadians(Geometry.smallAngleRadians) : sideAngle.clone(),
+      Geometry.resolveValue(assembleChains, true),
+      Geometry.resolveValue(collectOnForwardFacets, true),
+      Geometry.resolveValue(collectOnSideFacets, true),
+      Geometry.resolveValue(collectOnRearFacets, true),
+    );
+  }
+  /** Return true if all outputs are requested */
+  public get collectAll() { return this.collectOnForwardFacets === true && this.collectOnRearFacets === true && this.collectOnRearFacets === true; }
+
+  /** Decide if the instance flags accept this facet.
+   * * Facets whose facet normal have positive, zero, or negative dot product with the vectorToEye are forward, side, and rear.
+   * * Undefined facet normal returns false
+  */
+  public collectFromThisFacetNormal(facetNormal: Vector3d | undefined): boolean {
+    if (facetNormal === undefined)
+      return false;
+    const theta = facetNormal.angleFromPerpendicular(this.vectorToEye);
+    if (theta.isMagnitudeLessThanOrEqual(this.sideAngle))
+      return this.collectOnSideFacets;
+    return facetNormal.dotProduct(this.vectorToEye) > 0 ? this.collectOnForwardFacets : this.collectOnRearFacets;
+  }
+}
+
+/**
+ * Options carrier for [[fillSimpleHoles]]
  * @public
  */
 export interface HoleFillOptions {
@@ -171,7 +251,7 @@ export class PolyfaceQuery {
     return result;
   }
   /** Return the sum of all facet areas.
-   * @param vectorToEye compute facet area projected to a view plane perpendicular to this vector
+   * @param vectorToEye compute sum of *signed* facet areas projected to a view plane perpendicular to this vector
   */
   public static sumFacetAreas(source: Polyface | PolyfaceVisitor | undefined, vectorToEye?: Vector3d): number {
     let s = 0;
@@ -184,13 +264,7 @@ export class PolyfaceQuery {
       source.reset();
       while (source.moveToNextFacet()) {
         const scaledNormal = PolygonOps.areaNormal(source.point.getPoint3dArray());
-        let area = scaledNormal.magnitude();
-        if (unitVectorToEye !== undefined) {
-          const scale = Geometry.conditionalDivideCoordinate(1.0, area);
-          if (scale !== undefined)
-            area *= scaledNormal.dotProduct(unitVectorToEye) * scale;
-        }
-        s += area;
+        s += unitVectorToEye ? scaledNormal.dotProduct(unitVectorToEye) : scaledNormal.magnitude();
       }
     }
     return s;
@@ -339,7 +413,22 @@ export class PolyfaceQuery {
     const inertiaProducts = PolyfaceQuery.sumFacetSecondVolumeMomentProducts(source, origin);
     return MomentData.inertiaProductsToPrincipalAxes(origin, inertiaProducts);
   }
-
+  /** Determine whether all facets are convex.
+   * @param source mesh to examine
+   */
+  public static areFacetsConvex(source: Polyface | PolyfaceVisitor): boolean {
+    if (source instanceof Polyface)
+      return this.areFacetsConvex(source.createVisitor(0));
+    source.setNumWrap(0);
+    source.reset();
+    while (source.moveToNextFacet()) {
+      if (source.pointCount > 3) {
+        if (!PolygonOps.isConvex(source.point))
+          return false;
+      }
+    }
+    return true;
+  }
   /**
    * Test for convex volume by dihedral angle tests on all edges.
    * * This tests if all dihedral angles are positive.
@@ -356,7 +445,6 @@ export class PolyfaceQuery {
   public static isConvexByDihedralAngleCount(source: Polyface, ignoreBoundaries: boolean = false): boolean {
     return this.dihedralAngleSummary(source, ignoreBoundaries) > 0;
   }
-
   /**
   * Compute a number summarizing the dihedral angles in the mesh.
   * @see [[isConvexByDihedralAngleCount]] for comments about ignoreBoundaries===true when there are multiple connected components.
@@ -451,34 +539,46 @@ export class PolyfaceQuery {
    * construct a CurveCollection containing boundary edges.
    *   * each edge is a LineSegment3d
    * @param source polyface or visitor
-   * @param includeDanglers true to in include typical boundary edges with a single incident facet
+   * @param includeTypical true to in include typical boundary edges with a single incident facet
    * @param includeMismatch true to include edges with more than 2 incident facets
    * @param includeNull true to include edges with identical start and end vertex indices.
-   * @returns
    */
   public static boundaryEdges(source: Polyface | PolyfaceVisitor | undefined,
-    includeDanglers: boolean = true, includeMismatch: boolean = true, includeNull: boolean = true): CurveCollection | undefined {
+    includeTypical: boolean = true, includeMismatch: boolean = true, includeNull: boolean = true): CurveCollection | undefined {
     const result = new BagOfCurves();
     const announceEdge = (pointA: Point3d, pointB: Point3d, _indexA: number, _indexB: number, _readIndex: number) => {
       result.tryAddChild(LineSegment3d.create(pointA, pointB));
     };
-    PolyfaceQuery.announceBoundaryEdges(source, announceEdge, includeDanglers, includeMismatch, includeNull);
+    PolyfaceQuery.announceBoundaryEdges(source, announceEdge, includeTypical, includeMismatch, includeNull);
     if (result.children.length === 0)
       return undefined;
     return result;
   }
   /**
-* Test if the facets in `source` occur in perfectly mated pairs, as is required for a closed manifold volume.
-* If not, extract the boundary edges as lines.
-* @param source polyface or visitor
-* @param announceEdge function to be called with each boundary edge. The announcement is start and end points, start and end indices, and facet index.
-* @param includeDanglers true to in include typical boundary edges with a single incident facet
-* @param includeMismatch true to include edges with more than 2 incident facets
-* @param includeNull true to include edges with identical start and end vertex indices.
-*/
+   * Collect boundary edges.
+   * * Return the edges as the simplest collection of chains of line segments.
+   * @param source facets
+   * @param includeTypical true to in include typical boundary edges with a single incident facet
+   * @param includeMismatch true to include edges with more than 2 incident facets
+   * @param includeNull true to include edges with identical start and end vertex indices.
+   */
+  public static collectBoundaryEdges(source: Polyface | PolyfaceVisitor, includeTypical: boolean = true, includeMismatch: boolean = true, includeNull: boolean = true): AnyChain | undefined {
+    const collector = new MultiChainCollector(Geometry.smallMetricDistance, Geometry.smallMetricDistance);
+    PolyfaceQuery.announceBoundaryEdges(source, (ptA: Point3d, ptB: Point3d) => collector.captureCurve(LineSegment3d.create(ptA, ptB)), includeTypical, includeMismatch, includeNull);
+    return collector.grabResult(true);
+  }
+  /**
+   * Test if the facets in `source` occur in perfectly mated pairs, as is required for a closed manifold volume.
+   * If not, extract the boundary edges as lines.
+   * @param source polyface or visitor
+   * @param announceEdge function to be called with each boundary edge. The announcement is start and end points, start and end indices, and facet index.
+   * @param includeTypical true to announce typical boundary edges with a single incident facet
+   * @param includeMismatch true to announce edges with more than 2 incident facets
+   * @param includeNull true to announce edges with identical start and end vertex indices.
+   */
   public static announceBoundaryEdges(source: Polyface | PolyfaceVisitor | undefined,
     announceEdge: (pointA: Point3d, pointB: Point3d, indexA: number, indexB: number, facetIndex: number) => void,
-    includeDanglers: boolean = true, includeMismatch: boolean = true, includeNull: boolean = true): void {
+    includeTypical: boolean = true, includeMismatch: boolean = true, includeNull: boolean = true): void {
     if (source === undefined)
       return undefined;
     const edges = new IndexedEdgeMatcher();
@@ -496,7 +596,7 @@ export class PolyfaceQuery {
     const bad0: SortableEdgeCluster[] = [];
     edges.sortAndCollectClusters(undefined, bad1, bad0, bad2);
     const badList = [];
-    if (includeDanglers && bad1.length > 0)
+    if (includeTypical && bad1.length > 0)
       badList.push(bad1);
     if (includeMismatch && bad2.length > 0)
       badList.push(bad2);
@@ -505,21 +605,94 @@ export class PolyfaceQuery {
     if (badList.length === 0)
       return undefined;
     const sourcePolyface = visitor.clientPolyface()!;
+    const pointA = Point3d.create();
+    const pointB = Point3d.create();
     for (const list of badList) {
       for (const e of list) {
         const e1 = e instanceof SortableEdge ? e : e[0];
         const indexA = e1.vertexIndexA;
         const indexB = e1.vertexIndexB;
-        const pointA = sourcePolyface.data.getPoint(indexA);
-        const pointB = sourcePolyface.data.getPoint(indexB);
-        if (pointA && pointB)
-          announceEdge(pointA, pointB, indexA, indexB, visitor.currentReadIndex());
+        if (sourcePolyface.data.getPoint(indexA, pointA) && sourcePolyface.data.getPoint(indexB, pointB))
+          announceEdge(pointA, pointB, indexA, indexB, e1.facetIndex);
       }
     }
   }
+  /**
+   * Invoke the callback on each manifold edge whose adjacent facet normals form vectorToEye dot products with opposite sign.
+   * * The callback is not called on boundary edges.
+   * @param source facets
+   * @param announce callback function invoked on manifold silhouette edges
+   * @param vectorToEye normal of plane in which to compute silhouette edges
+   * @param sideAngle angular tolerance for perpendicularity test
+   */
+  public static announceSilhouetteEdges(
+    source: Polyface | PolyfaceVisitor,
+    announce: (pointA: Point3d, pointB: Point3d, vertexIndexA: number, vertexIndexB: number, facetIndex: number) => void,
+    vectorToEye: Vector3d,
+    sideAngle: Angle = Angle.createSmallAngle(),
+  ): void {
+    if (source instanceof Polyface)
+      return this.announceSilhouetteEdges(source.createVisitor(1), announce, vectorToEye, sideAngle);
+    const mesh = source.clientPolyface();
+    if (undefined === mesh)
+      return;
+    source.setNumWrap(1);
+    const allEdges = this.createIndexedEdges(source);
+    const manifoldEdges: SortableEdgeCluster[] = [];
+    allEdges.sortAndCollectClusters(manifoldEdges);
+
+    const sideAngleTol = sideAngle.radians < 0.0 ? -sideAngle.radians : sideAngle.radians;
+    const pointA = Point3d.create();
+    const pointB = Point3d.create();
+    const normal = Vector3d.create();
+    const analyzeFace = (iFacet: number): { isSideFace: boolean, perpAngle: number } => {
+      if (!PolyfaceQuery.computeFacetUnitNormal(source, iFacet, normal))
+        return { isSideFace: false, perpAngle: 0.0 };
+      const perpAngle = normal.radiansFromPerpendicular(vectorToEye);
+      const isSideFace = Math.abs(perpAngle) <= sideAngleTol;
+      return { isSideFace, perpAngle };
+    };
+
+    for (const pair of manifoldEdges) {
+      if (!Array.isArray(pair) || pair.length !== 2)
+        continue;
+      const indexA = pair[0].vertexIndexA;
+      const indexB = pair[0].vertexIndexB;
+      if (!mesh.data.getPoint(indexA, pointA) || !mesh.data.getPoint(indexB, pointB))
+        continue;
+      const face0 = analyzeFace(pair[0].facetIndex);
+      if (face0.isSideFace) {
+        announce(pointA, pointB, indexA, indexB, pair[0].facetIndex);
+        continue;
+      }
+      const face1 = analyzeFace(pair[1].facetIndex);
+      if (face1.isSideFace) {
+        announce(pointB, pointA, indexB, indexA, pair[1].facetIndex);
+        continue;
+      }
+      if (face0.perpAngle * face1.perpAngle < 0.0) {  // normals straddle plane
+        announce(pointA, pointB, indexA, indexB, pair[0].facetIndex);
+        continue;
+      }
+    }
+  }
+  /**
+   * Collect manifold edges whose adjacent facet normals form vectorToEye dot products with opposite sign.
+   * * Does not return boundary edges.
+   * * Return the edges as chains of line segments.
+   * @param source facets
+   * @param vectorToEye normal of plane in which to compute silhouette edges
+   * @param sideAngle angular tolerance for perpendicularity test
+   */
+  public static collectSilhouetteEdges(source: Polyface | PolyfaceVisitor, vectorToEye: Vector3d, sideAngle: Angle = Angle.createSmallAngle()): AnyChain | undefined {
+    const collector = new MultiChainCollector(Geometry.smallMetricDistance, Geometry.smallMetricDistance);
+    PolyfaceQuery.announceSilhouetteEdges(source, (ptA: Point3d, ptB: Point3d) => collector.captureCurve(LineSegment3d.create(ptA, ptB)), vectorToEye, sideAngle);
+    return collector.grabResult(true);
+  }
+
   /** Find segments (within the linestring) which project to facets.
    * * Announce each pair of linestring segment and on-facet segment through a callback.
-   * * Facets are ASSUMED to be convex and planar.
+   * * Facets are ASSUMED to be convex and planar, and not overlap in the z direction.
    */
   public static announceSweepLinestringToConvexPolyfaceXY(linestringPoints: GrowableXYZArray, polyface: Polyface,
     announce: AnnounceDrapePanel): any {
@@ -559,7 +732,7 @@ export class PolyfaceQuery {
 
   /** Find segments (within the linestring) which project to facets.
    * * Announce each pair of linestring segment and on-facet segment through a callback.
-   * * Facets are ASSUMED to be convex and planar.
+   * * Facets are ASSUMED to be convex and planar, and not overlap in the z direction.
    * * REMARK: Although this is public, the usual use is via slightly higher level public methods, viz:
    *   * asyncSweepLinestringToFacetsXYReturnChains
    * @internal
@@ -688,13 +861,14 @@ export class PolyfaceQuery {
    *  * clusters of adjacent, coplanar facets merged into larger facets.
    *  * other facets included unchanged.
    * @param mesh existing mesh or visitor
+   * @param maxSmoothEdgeAngle maximum dihedral angle across an edge between facets deemed coplanar. If undefined, uses `Geometry.smallAngleRadians`.
    * @returns
    */
-  public static cloneWithMaximalPlanarFacets(mesh: Polyface | PolyfaceVisitor): IndexedPolyface | undefined {
+  public static cloneWithMaximalPlanarFacets(mesh: Polyface | PolyfaceVisitor, maxSmoothEdgeAngle?: Angle): IndexedPolyface | undefined {
     if (mesh instanceof Polyface)
-      return this.cloneWithMaximalPlanarFacets(mesh.createVisitor(0));
+      return this.cloneWithMaximalPlanarFacets(mesh.createVisitor(0), maxSmoothEdgeAngle);
     const numFacets = PolyfaceQuery.visitorClientFacetCount(mesh);
-    const smoothEdges = PolyfaceQuery.collectEdgesByDihedralAngle(mesh);
+    const smoothEdges = PolyfaceQuery.collectEdgesByDihedralAngle(mesh, maxSmoothEdgeAngle);
     const partitions = PolyfaceQuery.partitionFacetIndicesBySortableEdgeClusters(smoothEdges, numFacets);
     const builder = PolyfaceBuilder.create();
     const visitor = mesh;
@@ -719,7 +893,7 @@ export class PolyfaceQuery {
           edges.push(LineSegment3d.create(pointA, pointB));
           edgeStrings.push([pointA.clone(), pointB.clone()]);
         });
-      const chains = OffsetHelpers.collectChains(edges, gapTolerance, planarityTolerance);
+      const chains = CurveOps.collectChains(edges, gapTolerance, planarityTolerance);
       if (chains) {
         const frameBuilder = new FrameBuilder();
         frameBuilder.announce(chains);
@@ -745,14 +919,14 @@ export class PolyfaceQuery {
 
   /**
    * Return a mesh with "some" holes filled in with new facets.
-   *  * The candidates to be filled are all loops returned by boundaryChainsAsLineString3d
-   *  * unclosed chains are rejected.
-   *  * optionally also copy the original mesh, so the composite is a clone with holes filled.
+   *  * Candidate chains are computed by [[announceBoundaryChainsAsLineString3d]].
+   *  * Unclosed chains are rejected.
+   *  * Closed chains are triangulated and returned as a mesh.
    *  * The options structure enforces restrictions on how complicated the hole filling can be:
    *     * maxEdgesAroundHole -- holes with more edges are skipped
    *     * maxPerimeter -- holes with larger summed edge lengths are skipped.
    *     * upVector -- holes that do not have positive area along this view are skipped.
-   *     * includeOriginalMesh -- includes the original mesh in the output mesh.
+   *     * includeOriginalMesh -- includes the original mesh in the output mesh, so the composite mesh is a clone with holes filled
    * @param mesh existing mesh
    * @param options options controlling the hole fill.
    * @param unfilledChains optional array to receive the points around holes that were not filled.
@@ -782,7 +956,7 @@ export class PolyfaceQuery {
         (_loop: Point3d[], triangles: Point3d[][]) => {
           for (const t of triangles)
             builder.addPolygon(t);
-        }
+        },
       )) {
       } else {
         rejected = true;
@@ -822,10 +996,8 @@ export class PolyfaceQuery {
     }
     return polyfaces;
   }
-
-  /** Clone facets that pass an filter function
-   */
-  public static cloneFiltered(source: Polyface | PolyfaceVisitor, filter: (visitor: PolyfaceVisitor) => boolean): Polyface {
+  /** Clone facets that pass a filter function */
+  public static cloneFiltered(source: Polyface | PolyfaceVisitor, filter: (visitor: PolyfaceVisitor) => boolean): IndexedPolyface {
     if (source instanceof Polyface) {
       return this.cloneFiltered(source.createVisitor(0), filter);
     }
@@ -843,10 +1015,65 @@ export class PolyfaceQuery {
     }
     return builder.claimPolyface(true);
   }
+  /** Clone the facets with in-facet dangling edges removed. */
+  public static cloneWithDanglingEdgesRemoved(source: Polyface | PolyfaceVisitor): IndexedPolyface {
+    if (source instanceof Polyface)
+      return this.cloneWithDanglingEdgesRemoved(source.createVisitor(0));
+
+    const options = StrokeOptions.createForFacets();
+    options.needNormals = source.normal !== undefined;
+    options.needParams = source.param !== undefined;
+    options.needColors = source.color !== undefined;
+    options.needTwoSided = source.twoSided;
+    const builder = PolyfaceBuilder.create(options);
+
+    // Finds an odd palindrome in data as indexed by indices.
+    // An odd palindrome in a face loop corresponds to dangling edges in the face.
+    // If one is found, indices is mutated to excise the palindrome (data is untouched).
+    // @returns whether indices array was mutated
+    const removeFirstOddPalindrome = (indices: number[], data: number[]): boolean => {
+      const n = indices.length;
+      for (let i = 0; i < n; ++i) {
+        let palLength = 1;
+        let i0 = i; // look for odd palindrome centered at i
+        let i1 = i; // and with extents i0..i1
+        while (palLength + 2 <= n) {
+          const iPrev = (i0 === 0) ? n - 1 : i0 - 1;
+          const iNext = (i1 === n - 1) ? 0 : i1 + 1;
+          if (data[indices[iPrev]] !== data[indices[iNext]])
+            break;  // the maximal odd palindrome centered at i has length palLength and spans [i0,i1]
+          i0 = iPrev;
+          i1 = iNext;
+          palLength += 2;
+        }
+        if (palLength > 1) { // excise the palindrome (but keep i1)
+          if (i0 < i1) {
+            indices.splice(i0, palLength - 1);  // remove entries [i0,i1)
+          } else if (i0 > i1) {
+            indices.splice(i0);     // remove entries [i0,n)
+            indices.splice(0, i1);  // remove entries [0,i1)
+          }
+          return true;
+        }
+      }
+      return false;
+    };
+
+    source.setNumWrap(0);
+    source.reset();
+    while (source.moveToNextFacet()) {
+      const localIndices = [...Array(source.pointIndex.length).keys()]; // 0, 1, ... n-1;
+      while (removeFirstOddPalindrome(localIndices, source.pointIndex)) { }
+      builder.addFacetFromIndexedVisitor(source, localIndices);
+    }
+    return builder.claimPolyface(true);
+  }
   /** If the visitor's client is a polyface, simply return its point array length.
    * If not a polyface, visit all facets to find the largest index.
    */
-  public static visitorClientPointCount(visitor: PolyfaceVisitor): number {
+  public static visitorClientPointCount(visitor: Polyface | PolyfaceVisitor): number {
+    if (visitor instanceof Polyface)
+      return visitor.data.point.length;
     const polyface = visitor.clientPolyface();
     if (polyface !== undefined)
       return polyface.data.point.length;
@@ -862,7 +1089,12 @@ export class PolyfaceQuery {
   /** If the visitor's client is a polyface, simply return its facet count.
    * If not a polyface, visit all facets to accumulate a count.
    */
-  public static visitorClientFacetCount(visitor: PolyfaceVisitor): number {
+  public static visitorClientFacetCount(visitor: Polyface | PolyfaceVisitor): number {
+    if (visitor instanceof Polyface) {
+      if (visitor.facetCount !== undefined)
+        return visitor.facetCount;
+      visitor = visitor.createVisitor(0);
+    }
     const polyface = visitor.clientPolyface();
     if (polyface !== undefined && polyface.facetCount !== undefined)
       return polyface.facetCount;
@@ -935,13 +1167,13 @@ export class PolyfaceQuery {
     matcher.sortAndCollectClusters(allEdges, allEdges, allEdges, allEdges);
     return this.partitionFacetIndicesBySortableEdgeClusters(allEdges, numFacets);
   }
-  /** Find segments (within the linestring) which project to facets.
-   * * Assemble each segment pair as a facet in a new polyface
-   * * Facets are ASSUMED to be convex and planar.
+  /** Find segments (within the line string) which project to facets.
+   * * Assemble each input segment paired with its projected segment/point as a quad/triangle facet in a new polyface.
+   * * Input facets are ASSUMED to be convex and planar, and not overlap in the z direction.
    */
-  public static sweepLinestringToFacetsXYreturnSweptFacets(linestringPoints: GrowableXYZArray, polyface: Polyface): Polyface {
+  public static sweepLineStringToFacetsXYReturnSweptFacets(lineStringPoints: GrowableXYZArray, polyface: Polyface): Polyface {
     const builder = PolyfaceBuilder.create();
-    this.announceSweepLinestringToConvexPolyfaceXY(linestringPoints, polyface,
+    this.announceSweepLinestringToConvexPolyfaceXY(lineStringPoints, polyface,
       (_linestring: GrowableXYZArray, _segmentIndex: number,
         _polyface: Polyface, _facetIndex: number, points: Point3d[]) => {
         if (points.length === 4)
@@ -952,38 +1184,141 @@ export class PolyfaceQuery {
       });
     return builder.claimPolyface(true);
   }
-  /** Find segments (within the linestring) which project to facets.
-   * * Return collected line segments
-   */
-  public static sweepLinestringToFacetsXYReturnLines(linestringPoints: GrowableXYZArray, polyface: Polyface): LineSegment3d[] {
-    const drapeGeometry: LineSegment3d[] = [];
-    this.announceSweepLinestringToConvexPolyfaceXY(linestringPoints, polyface,
-      (_linestring: GrowableXYZArray, _segmentIndex: number,
-        _polyface: Polyface, _facetIndex: number, points: Point3d[], indexA: number, indexB: number) => {
-        drapeGeometry.push(LineSegment3d.create(points[indexA], points[indexB]));
-      });
-    return drapeGeometry;
+  /** @deprecated in 4.x. Use sweepLineStringToFacetsXYReturnSweptFacets instead. */
+  public static sweepLinestringToFacetsXYreturnSweptFacets(linestringPoints: GrowableXYZArray, polyface: Polyface): Polyface {
+    return this.sweepLineStringToFacetsXYReturnSweptFacets(linestringPoints, polyface);
   }
 
-  /** Find segments (within the linestring) which project to facets.
-   * * Return chains.
+  /**
+   * Sweep the line string to intersections with a mesh.
+   * * Return collected line segments.
+   * * If no options are given, the default sweep direction is the z-axis, and chains are assembled and returned.
+   * * See [[SweepLineStringToFacetsOptions]] for input and output options, including filtering by forward/side/rear facets.
+   * * Facets are ASSUMED to be convex and planar, and not overlap in the sweep direction.
    */
-  public static sweepLinestringToFacetsXYReturnChains(linestringPoints: GrowableXYZArray, polyface: Polyface): LineString3d[] {
+  public static sweepLineStringToFacets(linestringPoints: GrowableXYZArray, polyfaceOrVisitor: Polyface | PolyfaceVisitor, options?: SweepLineStringToFacetsOptions): LinearCurvePrimitive[] {
+    let result: LinearCurvePrimitive[] = [];
+    // setup default options:
+    if (options === undefined)
+      options = SweepLineStringToFacetsOptions.create(
+        Vector3d.unitZ(),
+        Angle.createRadians(Geometry.smallAngleRadians),   // tight geometry tolerance for vertical side facets
+        true,   // assemble chains
+        true, true, true); // accept all outputs
+    let chainContext: ChainMergeContext | undefined;
+    if (options.assembleChains)
+      chainContext = ChainMergeContext.create();
+    const context = ClipSweptLineStringContext.create(linestringPoints, options.vectorToEye);
+    if (context) {
+      let visitor: PolyfaceVisitor;
+      if (polyfaceOrVisitor instanceof Polyface)
+        visitor = polyfaceOrVisitor.createVisitor(0);
+      else
+        visitor = polyfaceOrVisitor;
+      const workNormal = Vector3d.createZero();
+      for (visitor.reset(); visitor.moveToNextFacet();) {
+        if (options.collectFromThisFacetNormal(PolygonOps.areaNormalGo(visitor.point, workNormal))) {
+          context.processPolygon(visitor.point.getArray(),
+            (pointA: Point3d, pointB: Point3d) => {
+              if (chainContext !== undefined)
+                chainContext.addSegment(pointA, pointB);
+              else
+                result.push(LineSegment3d.create(pointA, pointB));
+            });
+        }
+      }
+      if (chainContext !== undefined) {
+        chainContext.clusterAndMergeVerticesXYZ();
+        result = chainContext.collectMaximalChains();
+      }
+    }
+    return result;
+  }
+  /**
+   * Sweep the line string in the z-direction to intersections with a mesh, using a search object for speedup.
+   * @param lineStringPoints input line string to drape on the mesh
+   * @param polyfaceOrVisitor mesh, or mesh visitor to traverse only part of a mesh
+   * @param searchByReadIndex object for searching facet 2D ranges tagged by mesh read index
+   * @example Using a 5x5 indexed search grid:
+   * ```
+   * const xyRange = Range2d.createFrom(myPolyface.range());
+   * const searcher = GriddedRaggedRange2dSetWithOverflow.create<number>(xyRange, 5, 5)!;
+   * for (const visitor = myPolyface.createVisitor(0); visitor.moveToNextFacet();) {
+   *   searcher.addRange(visitor.point.getRange(), visitor.currentReadIndex());
+   * }
+   * const drapedLineStrings = PolyfaceQuery.sweepLineStringToFacetsXY(lineString, myPolyface, searcher);
+   * ```
+   * @returns collected line strings
+   */
+  public static sweepLineStringToFacetsXY(
+    lineStringPoints: GrowableXYZArray | Point3d[],
+    polyfaceOrVisitor: Polyface | PolyfaceVisitor,
+    searchByReadIndex: Range2dSearchInterface<number>): LineString3d[] {
     const chainContext = ChainMergeContext.create();
-
-    this.announceSweepLinestringToConvexPolyfaceXY(linestringPoints, polyface,
-      (_linestring: GrowableXYZArray, _segmentIndex: number,
-        _polyface: Polyface, _facetIndex: number, points: Point3d[], indexA: number, indexB: number) => {
-        chainContext.addSegment(points[indexA], points[indexB]);
-      });
+    const sweepVector = Vector3d.create(0, 0, 1);
+    const searchRange = Range3d.create();
+    let visitor: PolyfaceVisitor;
+    if (polyfaceOrVisitor instanceof Polyface)
+      visitor = polyfaceOrVisitor.createVisitor(0);
+    else
+      visitor = polyfaceOrVisitor;
+    let lineStringSource: IndexedXYZCollection;
+    if (Array.isArray(lineStringPoints))
+      lineStringSource = new Point3dArrayCarrier(lineStringPoints);
+    else
+      lineStringSource = lineStringPoints;
+    for (let i = 1; i < lineStringSource.length; i++) {
+      const point0 = lineStringSource.getPoint3dAtUncheckedPointIndex(i - 1);
+      const point1 = lineStringSource.getPoint3dAtUncheckedPointIndex(i);
+      const edgeClipper = EdgeClipData.createPointPointSweep(point0, point1, sweepVector);
+      if (edgeClipper !== undefined) {
+        Range3d.createNull(searchRange);
+        searchRange.extendPoint(point0);
+        searchRange.extendPoint(point1);
+        searchByReadIndex.searchRange2d(searchRange,
+          (_facetRange, readIndex) => {
+            if (visitor.moveToReadIndex(readIndex))
+              edgeClipper.processPolygon(visitor.point, (pointA, pointB) => chainContext.addSegment(pointA, pointB));
+            return true;
+          });
+      }
+    }
     chainContext.clusterAndMergeVerticesXYZ();
     return chainContext.collectMaximalChains();
   }
+
+  /** Find segments (within the linestring) which project to facets.
+    * * Return collected line segments.
+    * * This calls [[sweepLineStringToFacets]] with options created by
+    *   `const options = SweepLineStringToFacetsOptions.create(Vector3d.unitZ(), Angle.createSmallAngle(),false, true, true, true);`
+    * @deprecated in 4.x. Use [[sweepLineStringToFacets]] to get further options.
+    */
+  public static sweepLinestringToFacetsXYReturnLines(linestringPoints: GrowableXYZArray, polyface: Polyface): LineSegment3d[] {
+    const options = SweepLineStringToFacetsOptions.create(Vector3d.unitZ(), Angle.createSmallAngle(),
+      false, true, true, true);
+    const result = PolyfaceQuery.sweepLineStringToFacets(linestringPoints, polyface, options);
+    return result as LineSegment3d[];
+  }
+
+  /** Find segments (within the linestring) which project to facets.
+   * * Return chains.
+   * * This calls [[sweepLineStringToFacets]] with options created by
+   *   `const options = SweepLineStringToFacetsOptions.create(Vector3d.unitZ(), Angle.createSmallAngle(),true, true, true, true);`
+   * @deprecated in 4.x. Use [[sweepLineStringToFacets]] to get further options.
+   */
+  public static sweepLinestringToFacetsXYReturnChains(linestringPoints: GrowableXYZArray, polyface: Polyface): LineString3d[] {
+    const options = SweepLineStringToFacetsOptions.create(Vector3d.unitZ(), Angle.createSmallAngle(),
+      true, true, true, true);
+    const result = PolyfaceQuery.sweepLineStringToFacets(linestringPoints, polyface, options);
+    return result as LineString3d[];
+  }
+
   /** Find segments (within the linestring) which project to facets.
    * * This is done as a sequence of "await" steps.
    * * Each "await" step deals with approximately PolyfaceQuery.asyncWorkLimit pairings of (linestring edge) with (facet edge)
-   *  * PolyfaceQuery.setAsyncWorkLimit () to change work blocks from default
+   * * PolyfaceQuery.setAsyncWorkLimit() to change work blocks from default
    * * Return chains.
+   * * Facets are ASSUMED to be convex and planar, and not overlap in the z direction.
    */
   public static async asyncSweepLinestringToFacetsXYReturnChains(linestringPoints: GrowableXYZArray, polyface: Polyface): Promise<LineString3d[]> {
     const chainContext = ChainMergeContext.create();
@@ -1039,12 +1374,13 @@ export class PolyfaceQuery {
         let detailArray: CurveLocationDetail[] | undefined;
         edgeRange.extend(point0);
         edgeRange.extend(point1);
+        edgeRange.ensureMinLengths(Geometry.smallMetricDistance); // add some slop in case segment is axis-aligned
         rangeSearcher.announcePointsInRange(edgeRange, (index: number, _x: number, _y: number, _z: number) => {
           // x,y,z has x,y within the range of the search ... test for exact on (in full 3d!)
           polyface.data.point.getPoint3dAtUncheckedPointIndex(index, spacePoint);
           const detail = segment.closestPoint(spacePoint, false);
           if (undefined !== detail) {
-            if (detail.fraction >= 0.0 && detail.fraction < 1.0 && !detail.point.isAlmostEqual(point0) && !detail.point.isAlmostEqual(point1)
+            if (detail.fraction > 0.0 && detail.fraction < 1.0 && !detail.point.isAlmostEqual(point0) && !detail.point.isAlmostEqual(point1)
               && spacePoint.isAlmostEqual(detail.point)) {
               if (detailArray === undefined)
                 detailArray = [];
@@ -1131,7 +1467,7 @@ export class PolyfaceQuery {
       }
       facetIndexAndVertexIndices.push(entry);
     }
-    facetIndexAndVertexIndices.sort(this.compareFacetIndexAndVertexIndices);
+    facetIndexAndVertexIndices.sort((arrayA, arrayB) => this.compareFacetIndexAndVertexIndices(arrayA, arrayB));
     let i0, i1;
     const n = facetIndexAndVertexIndices.length;
     const clusterArray = [];
@@ -1401,7 +1737,7 @@ export class PolyfaceQuery {
       mesh.data.getPoint(vertexIndex, xyz);
       halfEdge.setXYZ(xyz);
       return true;
-    }
+    },
     );
     return graph;
   }

@@ -347,7 +347,7 @@ export class ViewFlags {
     return this;
   }
 
-  /** @internal */
+  /** Returns true if edges that could be occluded by other geometry are visible for the current [[RenderMode]]. */
   public hiddenEdgesVisible(): boolean {
     switch (this.renderMode) {
       case RenderMode.SolidFill:
@@ -364,7 +364,9 @@ export class ViewFlags {
     return edgesRequired(this.renderMode, this.visibleEdges);
   }
 
-  /** Convert to JSON representation. */
+  /** Convert to JSON representation.
+   * Properties are omitted if they match the default values.
+   */
   public toJSON(): ViewFlagProps {
     const out: ViewFlagProps = {};
     if (!this.constructions)
@@ -418,9 +420,7 @@ export class ViewFlags {
     return out;
   }
 
-  /** Like [[toJSON]], but no properties are omitted.
-   * @internal
-   */
+  /** Like [[toJSON]], but no properties are omitted. */
   public toFullyDefinedJSON(): Required<ViewFlagProps> {
     return {
       renderMode: this.renderMode,

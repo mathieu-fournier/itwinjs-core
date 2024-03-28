@@ -9,7 +9,7 @@
 
 import { Arc3d } from "../curve/Arc3d";
 import { ConstructCurveBetweenCurves } from "../curve/ConstructCurveBetweenCurves";
-import { AnyCurve, AnyRegion } from "../curve/CurveChain";
+import { AnyCurve, AnyRegion } from "../curve/CurveTypes";
 import { CurveChain, CurveCollection } from "../curve/CurveCollection";
 import { CurveFactory } from "../curve/CurveFactory";
 import { CurvePrimitive } from "../curve/CurvePrimitive";
@@ -59,7 +59,6 @@ import { IndexedPolyfaceSubsetVisitor } from "./IndexedPolyfaceVisitor";
 import { IndexedPolyface, PolyfaceVisitor } from "./Polyface";
 import { PolyfaceQuery } from "./PolyfaceQuery";
 
-/* eslint-disable @typescript-eslint/naming-convention, @typescript-eslint/prefer-for-of */
 /**
  * A FacetSector
  * * initially holds coordinate data for a place where xyz and sectionDerivative are known
@@ -113,8 +112,8 @@ class FacetSector {
    */
   public loadIndexedPointAndDerivativeCoordinatesFromPackedArrays(i: number, packedXYZ: GrowableXYZArray, packedDerivatives?: GrowableXYZArray, fractions?: GrowableFloat64Array, v?: number) {
     packedXYZ.getPoint3dAtCheckedPointIndex(i, this.xyz);
-    if (fractions && v !== undefined)
-      this.uv = Point2d.create(fractions.atUncheckedIndex(i), v);
+    if (this.uv && fractions && v !== undefined)
+      this.uv.set(fractions.atUncheckedIndex(i), v);
     this.xyzIndex = -1;
     this.normalIndex = -1;
     this.uvIndex = -1;
@@ -206,10 +205,14 @@ export class PolyfaceBuilder extends NullGeometryHandler {
   private _reversed: boolean;
   /** Ask if this builder is reversing vertex order as loops are received. */
   public get reversedFlag(): boolean { return this._reversed; }
-  /** extract the polyface. */
-  public claimPolyface(compress: boolean = true): IndexedPolyface {
+  /**
+   * Extract the polyface.
+   * @param compress whether to cluster vertices (default true)
+   * @param tolerance compression tolerance (default Geometry.smallMetricDistance)
+   */
+  public claimPolyface(compress: boolean = true, tolerance: number = Geometry.smallMetricDistance): IndexedPolyface {
     if (compress)
-      this._polyface.data.compress();
+      this._polyface.data.compress(tolerance);
     return this._polyface;
   }
   /** Toggle (reverse) the flag controlling orientation flips for newly added facets. */
@@ -235,6 +238,7 @@ export class PolyfaceBuilder extends NullGeometryHandler {
   }
 
   /** Add facets for a transformed range box.
+   * * For best results, the transformed range corners should define a nonzero volume or area.
    * @param transform applied to the range points before adding to the polyface
    * @param range sides become 6 quad polyface facets
    * @param faceSelector for each face in the order of BoxTopology.cornerIndexCCW, faceSelector[i]===false skips that facet.
@@ -821,8 +825,7 @@ export class PolyfaceBuilder extends NullGeometryHandler {
         this.addIndexedTriangleNormalIndexes(sectorA0.normalIndex, sectorA1.normalIndex, sectorA2.normalIndex);
       if (this._options.needParams)
         this.addIndexedTriangleParamIndexes(sectorA0.uvIndex, sectorA1.uvIndex, sectorA2.uvIndex);
-      this.addIndexedTrianglePointIndexes(sectorA0.xyzIndex, sectorA1.xyzIndex, sectorA2.xyzIndex);
-      this._polyface.terminateFacet();
+      this.addIndexedTrianglePointIndexes(sectorA0.xyzIndex, sectorA1.xyzIndex, sectorA2.xyzIndex, true);
     }
   }
   private addSectorQuadA01B01(sectorA0: FacetSector, sectorA1: FacetSector, sectorB0: FacetSector, sectorB1: FacetSector) {
@@ -836,8 +839,7 @@ export class PolyfaceBuilder extends NullGeometryHandler {
         this.addIndexedQuadNormalIndexes(sectorA0.normalIndex, sectorA1.normalIndex, sectorB0.normalIndex, sectorB1.normalIndex);
       if (this._options.needParams)
         this.addIndexedQuadParamIndexes(sectorA0.uvIndex, sectorA1.uvIndex, sectorB0.uvIndex, sectorB1.uvIndex);
-      this.addIndexedQuadPointIndexes(sectorA0.xyzIndex, sectorA1.xyzIndex, sectorB0.xyzIndex, sectorB1.xyzIndex);
-      this._polyface.terminateFacet();
+      this.addIndexedQuadPointIndexes(sectorA0.xyzIndex, sectorA1.xyzIndex, sectorB0.xyzIndex, sectorB1.xyzIndex, true);
     }
   }
 
@@ -913,14 +915,14 @@ export class PolyfaceBuilder extends NullGeometryHandler {
     for (let i = 1; i < numPoints; i++) {
       if (this.options.shouldTriangulate) {
         if (distinctIndices(pointA.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i), pointB.atUncheckedIndex(i))) {
-          this.addIndexedTrianglePointIndexes(pointA.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i), pointB.atUncheckedIndex(i));
+          this.addIndexedTrianglePointIndexes(pointA.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i), pointB.atUncheckedIndex(i), false);
           if (normalA && normalB)
             this.addIndexedTriangleNormalIndexes(normalA.atUncheckedIndex(i - 1), normalA.atUncheckedIndex(i), normalB.atUncheckedIndex(i - 1));
           if (paramA && paramB)
             this.addIndexedTriangleParamIndexes(paramA.atUncheckedIndex(i - 1), paramA.atUncheckedIndex(i), paramB.atUncheckedIndex(i - 1));
         }
         if (distinctIndices(pointB.atUncheckedIndex(i), pointB.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i - 1))) {
-          this.addIndexedTrianglePointIndexes(pointA.atUncheckedIndex(i - 1), pointB.atUncheckedIndex(i), pointB.atUncheckedIndex(i - 1));
+          this.addIndexedTrianglePointIndexes(pointA.atUncheckedIndex(i - 1), pointB.atUncheckedIndex(i), pointB.atUncheckedIndex(i - 1), false);
           if (normalA && normalB)
             this.addIndexedTriangleNormalIndexes(normalA.atUncheckedIndex(i - 1), normalB.atUncheckedIndex(i), normalB.atUncheckedIndex(i - 1));
           if (paramA && paramB)
@@ -928,14 +930,14 @@ export class PolyfaceBuilder extends NullGeometryHandler {
         }
       } else {
         if (pointA.atUncheckedIndex(i - 1) !== pointA.atUncheckedIndex(i) || pointB.atUncheckedIndex(i - 1) !== pointB.atUncheckedIndex(i)) {
-          this.addIndexedQuadPointIndexes(pointA.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i), pointB.atUncheckedIndex(i - 1), pointB.atUncheckedIndex(i));
+          this.addIndexedQuadPointIndexes(pointA.atUncheckedIndex(i - 1), pointA.atUncheckedIndex(i), pointB.atUncheckedIndex(i - 1), pointB.atUncheckedIndex(i), false);
           if (normalA && normalB)
             this.addIndexedQuadNormalIndexes(normalA.atUncheckedIndex(i - 1), normalA.atUncheckedIndex(i), normalB.atUncheckedIndex(i - 1), normalB.atUncheckedIndex(i));
           if (paramA && paramB)
             this.addIndexedQuadParamIndexes(paramA.atUncheckedIndex(i - 1), paramA.atUncheckedIndex(i), paramB.atUncheckedIndex(i - 1), paramB.atUncheckedIndex(i));
         }
-        this._polyface.terminateFacet();
       }
+      this._polyface.terminateFacet();
     }
   }
 
@@ -1033,11 +1035,14 @@ export class PolyfaceBuilder extends NullGeometryHandler {
    */
   public addTorusPipe(surface: TorusPipe, phiStrokeCount?: number, thetaStrokeCount?: number) {
     const thetaFraction = surface.getThetaFraction();
-    const numU = Geometry.clamp(Geometry.resolveNumber(phiStrokeCount, 8), 4, 64);
-    const numV = Geometry.clamp(
+    let numU = Geometry.clamp(Geometry.resolveNumber(phiStrokeCount, 8), 4, 64);
+    let numV = Geometry.clamp(
       Geometry.resolveNumber(thetaStrokeCount, Math.ceil(16 * thetaFraction)),
       2, 64);
-
+    if (this._options) {
+      numU = this._options.applyTolerancesToArc(surface.getMinorRadius());
+      numV = this._options.applyTolerancesToArc(surface.getMajorRadius(), surface.getSweepAngle().radians);
+    }
     this.toggleReversedFacetFlag();
     const sizes = surface.maxIsoParametricDistance();
     this.addUVGridBody(surface, numU, numV, Segment1d.create(0, sizes.x), Segment1d.create(0, sizes.y));
@@ -1150,10 +1155,6 @@ export class PolyfaceBuilder extends NullGeometryHandler {
    * Construct facets for any planar region
    */
   public addTriangulatedRegion(region: AnyRegion): void {
-    if (region instanceof UnionRegion) {
-      for (const child of region.children)
-        this.addTriangulatedRegion(child);
-    }
     const contour = SweepContour.createForLinearSweep(region);
     if (contour)
       contour.emitFacets(this, this.reversedFlag, undefined);
@@ -1193,7 +1194,6 @@ export class PolyfaceBuilder extends NullGeometryHandler {
     }
   }
   private createIndicesInLineString(ls: LineString3d, vParam: number, transform?: Transform) {
-
     const n = ls.numPoints();
     {
       const pointIndices = ls.ensureEmptyPointIndices();
@@ -1257,15 +1257,13 @@ export class PolyfaceBuilder extends NullGeometryHandler {
       this.createIndicesInLineString(strokeB, vB);
       this.addBetweenLineStringsWithStoredIndices(strokeA, strokeB);
     } else if (stroke0 instanceof ParityRegion) {
-      for (let i = 0; i < stroke0.children.length; i++) {  // eslint-disable-line @typescript-eslint/prefer-for-of
-        this.addBetweenRotatedStrokeSets(stroke0.children[i], transformA, vA, transformB, vB);
+      for (const child of stroke0.children) {
+        this.addBetweenRotatedStrokeSets(child, transformA, vA, transformB, vB);
       }
     } else if (stroke0 instanceof CurveChain) {
-      const chainA = stroke0.children;
-      for (let i = 0; i < chainA.length; i++) { // eslint-disable-line @typescript-eslint/prefer-for-of
-        const cpA = chainA[i];
-        if (cpA instanceof LineString3d) {
-          this.addBetweenRotatedStrokeSets(cpA, transformA, vA, transformB, vB);
+      for (const child of stroke0.children) {
+        if (child instanceof LineString3d) {
+          this.addBetweenRotatedStrokeSets(child, transformA, vA, transformB, vB);
         }
       }
     }
@@ -1303,8 +1301,8 @@ export class PolyfaceBuilder extends NullGeometryHandler {
     let stroke0: AnyCurve | undefined;
     let stroke1: AnyCurve;
     const sectionMaps = [];
-    for (let i = 0; i < contours.length; i++) { // eslint-disable-line @typescript-eslint/prefer-for-of
-      sectionMaps.push(StrokeCountSection.createForParityRegionOrChain(contours[i].curves, this._options));
+    for (const contour of contours) {
+      sectionMaps.push(StrokeCountSection.createForParityRegionOrChain(contour.curves, this._options));
     }
     if (StrokeCountSection.enforceStrokeCountCompatibility(sectionMaps)) {
       StrokeCountSection.enforceCompatibleDistanceSums(sectionMaps);
@@ -1470,11 +1468,15 @@ export class PolyfaceBuilder extends NullGeometryHandler {
     }
   }
   /** Add a polygon to the evolving facets.
-   *
-   * * Add points to the polyface
-   * * indices are added (in reverse order if indicated by the builder state)
-   * @param normals array of points.  This may contain extra points not to be used in the polygon
-   * @param numPointsToUse number of points to use.
+   * * add points to the polyface
+   * * compute each point index as the point is added
+   * * all data arrays are parallel to the point array
+   * * point indices are added in reverse order if indicated by the builder state
+   * @param points array of vertices in order around the facet
+   * @param normals optional array of normals, one per vertex
+   * @param params optional array of uv-parameters, one per vertex
+   * @param colors optional array of colors, one per vertex
+   * @param edgeVisible optional array of flags, one per vertex, true iff edge starting at corresponding vertex is visible
    */
   public addFacetFromGrowableArrays(points: GrowableXYZArray, normals: GrowableXYZArray | undefined,
     params: GrowableXYArray | undefined, colors: number[] | undefined, edgeVisible?: boolean[]) {
@@ -1540,8 +1542,48 @@ export class PolyfaceBuilder extends NullGeometryHandler {
     this.addFacetFromGrowableArrays(visitor.point, visitor.normal, visitor.param, visitor.color, visitor.edgeVisible);
   }
 
+  /** Add all visitor facets to the evolving polyface (in reverse order if indicated by the builder state) */
+  public addFacetsFromVisitor(visitor: PolyfaceVisitor) {
+    visitor.reset();
+    for (; visitor.moveToNextFacet();)
+      this.addFacetFromVisitor(visitor);
+  }
+
+  /**
+   * Add the subset of visitor data indexed by the indices.
+   * * Ideally, the subset represents a sub-facet of the visited facet.
+   * @param visitor data for the currently visited facet
+   * @param indices local indices into the visitor data arrays
+   * @returns whether the data was added successfully. Encountering an invalid index returns false.
+  */
+  public addFacetFromIndexedVisitor(visitor: PolyfaceVisitor, indices: number[]): boolean {
+    if (indices.length > visitor.pointIndex.length)
+      return false;
+    const xyz = new GrowableXYZArray(indices.length);
+    const normal = visitor.normal ? new GrowableXYZArray(indices.length) : undefined;
+    const param = visitor.param ? new GrowableXYArray(indices.length) : undefined;
+    const color = visitor.color ? new Array<number>(indices.length) : undefined;
+    const visible = visitor.edgeVisible ? new Array<boolean>(indices.length) : undefined;
+    for (let i = 0; i < indices.length; ++i) {
+      const index = indices[i];
+      if (index < 0 || index >= visitor.point.length) // all visitor arrays have the same length
+        return false;
+      xyz.pushXYZ(visitor.point.getXAtUncheckedPointIndex(index), visitor.point.getYAtUncheckedPointIndex(index), visitor.point.getZAtUncheckedPointIndex(index));
+      if (visitor.normal && normal)
+        normal.pushXYZ(visitor.normal.getXAtUncheckedPointIndex(index), visitor.normal.getYAtUncheckedPointIndex(index), visitor.normal.getZAtUncheckedPointIndex(index));
+      if (visitor.param && param)
+        param.pushXY(visitor.param.getXAtUncheckedPointIndex(index), visitor.param.getYAtUncheckedPointIndex(index));
+      if (visitor.color && color)
+        color[i] = visitor.color[index];
+      if (visitor.edgeVisible && visible)
+        visible[i] = visitor.edgeVisible[index];
+    }
+    this.addFacetFromGrowableArrays(xyz, normal, param, color, visible);
+    return true;
+  }
+
   /** Add a polyface, with optional reverse and transform. */
-  public addIndexedPolyface(source: IndexedPolyface, reversed: boolean, transform?: Transform) {
+  public addIndexedPolyface(source: IndexedPolyface, reversed: boolean = false, transform?: Transform) {
     this._polyface.addIndexedPolyface(source, reversed, transform);
   }
 
@@ -1578,20 +1620,27 @@ export class PolyfaceBuilder extends NullGeometryHandler {
   public addGeometryQuery(g: GeometryQuery) { g.dispatchToGeometryHandler(this); }
 
   /**
-   *
-   * * Visit all faces
-   * * Test each face with f(node) for any node on the face.
-   * * For each face that passes, pass its coordinates to the builder.
-   * * Rely on the builder's compress step to find common vertex coordinates
+   * Add a graph to the builder.
+   * * Visit one node per face
+   * * If `acceptFaceFunction(node)` returns true, pass face coordinates to the builder
+   * * Accepted face edge visibility is determined by `isEdgeVisibleFunction`.
+   * * Rely on the builder's compress step to find common vertex coordinates.
+   * @param graph faces to add as facets
+   * @param acceptFaceFunction optional test for whether to add a given face. Default: ignore exterior faces
+   * @param isEdgeVisibleFunction optional test for whether to hide an edge. Default: hide interior edges
    * @internal
    */
-  public addGraph(graph: HalfEdgeGraph, needParams: boolean, acceptFaceFunction: HalfEdgeToBooleanFunction = HalfEdge.testNodeMaskNotExterior,
-    isEdgeVisibleFunction: HalfEdgeToBooleanFunction | undefined = HalfEdge.testMateMaskExterior) {
+  public addGraph(
+    graph: HalfEdgeGraph,
+    acceptFaceFunction: HalfEdgeToBooleanFunction = (node) => HalfEdge.testNodeMaskNotExterior(node),
+    isEdgeVisibleFunction: HalfEdgeToBooleanFunction = (node) => HalfEdge.testMateMaskExterior(node),
+  ) {
     let index = 0;
     const needNormals = this._options.needNormals;
+    const needParams = this._options.needParams;
     let normalIndex = 0;
     if (needNormals)
-      normalIndex = this._polyface.addNormalXYZ(0, 0, 1);   // big assumption !!!!  someday check if that's where the facets actually are!!
+      normalIndex = this._polyface.addNormalXYZ(0, 0, 1);   // big assumption!!!! Is each node.z really the same?
 
     graph.announceFaceLoops(
       (_graph: HalfEdgeGraph, seed: HalfEdge) => {
@@ -1601,7 +1650,7 @@ export class PolyfaceBuilder extends NullGeometryHandler {
             index = this.addPointXYZ(node.x, node.y, node.z);
             this._polyface.addPointIndex(index, isEdgeVisibleFunction === undefined ? true : isEdgeVisibleFunction(node));
             if (needParams) {
-              index = this.addParamXY(node.x, node.y);
+              index = this.addParamXY(node.x, node.y);  // big assumption!!!!
               this._polyface.addParamIndex(index);
             }
             if (needNormals) {
@@ -1623,7 +1672,7 @@ export class PolyfaceBuilder extends NullGeometryHandler {
    *  * terminate the facet
    * @internal
    */
-  public addGraphFaces(_graph: HalfEdgeGraph, faces: HalfEdge[]) {
+  public addGraphFaces(faces: HalfEdge[]) {
     let index = 0;
     for (const seed of faces) {
       let node = seed;
@@ -1635,21 +1684,31 @@ export class PolyfaceBuilder extends NullGeometryHandler {
       this._polyface.terminateFacet();
     }
   }
-  /** Create a polyface containing the faces of a HalfEdgeGraph, with test function to filter faces.
+  /**
+   * Create a polyface containing the faces of a HalfEdgeGraph, with test functions to filter faces and hide edges.
+   * * This is a static wrapper of [[addGraph]].
+   * @param graph faces to add as facets
+   * @param acceptFaceFunction optional test for whether to add a given face. Default: ignore exterior faces
+   * @param isEdgeVisibleFunction optional test for whether to hide an edge. Default: hide interior edges
    * @internal
    */
-  public static graphToPolyface(graph: HalfEdgeGraph, options?: StrokeOptions, acceptFaceFunction: HalfEdgeToBooleanFunction = HalfEdge.testNodeMaskNotExterior): IndexedPolyface {
+  public static graphToPolyface(
+    graph: HalfEdgeGraph,
+    options?: StrokeOptions,
+    acceptFaceFunction: HalfEdgeToBooleanFunction = (node) => HalfEdge.testNodeMaskNotExterior(node),
+    isEdgeVisibleFunction: HalfEdgeToBooleanFunction = (node) => HalfEdge.testMateMaskExterior(node),
+    ): IndexedPolyface {
     const builder = PolyfaceBuilder.create(options);
-    builder.addGraph(graph, builder.options.needParams, acceptFaceFunction);
+    builder.addGraph(graph, acceptFaceFunction, isEdgeVisibleFunction);
     builder.endFace();
     return builder.claimPolyface();
   }
   /** Create a polyface containing the faces of a HalfEdgeGraph that are specified by the HalfEdge array.
    * @internal
    */
-  public static graphFacesToPolyface(graph: HalfEdgeGraph, faces: HalfEdge[]): IndexedPolyface {
+  public static graphFacesToPolyface(faces: HalfEdge[]): IndexedPolyface {
     const builder = PolyfaceBuilder.create();
-    builder.addGraphFaces(graph, faces);
+    builder.addGraphFaces(faces);
     builder.endFace();
     return builder.claimPolyface();
   }
@@ -1827,10 +1886,10 @@ export class PolyfaceBuilder extends NullGeometryHandler {
    * Triangulate the points as viewed in xy.
    * @param points
    */
-  public static pointsToTriangulatedPolyface(points: Point3d[]): IndexedPolyface | undefined {
+  public static pointsToTriangulatedPolyface(points: Point3d[], options?: StrokeOptions): IndexedPolyface | undefined {
     const graph = Triangulator.createTriangulatedGraphFromPoints(points);
     if (graph)
-      return PolyfaceBuilder.graphToPolyface(graph);
+      return PolyfaceBuilder.graphToPolyface(graph, options);
     return undefined;
   }
   /** Create (and add to the builder) triangles that bridge the gap between two linestrings.

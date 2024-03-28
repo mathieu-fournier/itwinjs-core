@@ -215,6 +215,7 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions & Mobi
     logTileLoadTimeThreshold: 3,
     logTileSizeThreshold: 500000,
     cacheDir: process.env.IMJS_BRIEFCASE_CACHE_LOCATION,
+    profileName: "display-test-app",
     hubAccess,
   };
 
@@ -246,20 +247,20 @@ export const initializeDtaBackend = async (hostOpts?: ElectronHostOptions & Mobi
   }
 };
 
-async function initializeAuthorizationClient(): Promise<ElectronMainAuthorization  | undefined> {
+async function initializeAuthorizationClient(): Promise<ElectronMainAuthorization | undefined> {
   if (
     ProcessDetector.isElectronAppBackend &&
     checkEnvVars(
       "IMJS_OIDC_ELECTRON_TEST_CLIENT_ID",
-      "IMJS_OIDC_ELECTRON_TEST_SCOPES"
+      "IMJS_OIDC_ELECTRON_TEST_SCOPES",
     )
   ) {
     return new ElectronMainAuthorization({
       clientId: process.env.IMJS_OIDC_ELECTRON_TEST_CLIENT_ID!,
-      scope: process.env.IMJS_OIDC_ELECTRON_TEST_SCOPES!,
-      redirectUri:
-        process.env.IMJS_OIDC_ELECTRON_TEST_REDIRECT_URI ??
-        "http://localhost:3000/signin-callback",
+      scopes: process.env.IMJS_OIDC_ELECTRON_TEST_SCOPES!,
+      redirectUris:
+        process.env.IMJS_OIDC_ELECTRON_TEST_REDIRECT_URI !== undefined ?
+          [process.env.IMJS_OIDC_ELECTRON_TEST_REDIRECT_URI] : ["http://localhost:3000/signin-callback"],
       issuerUrl: `https://${process.env.IMJS_URL_PREFIX ?? ""}ims.bentley.com`,
     });
   }

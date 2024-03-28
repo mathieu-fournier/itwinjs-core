@@ -7,7 +7,6 @@
  * @module Numerics
  */
 
-// import { Angle, AngleSweep, Geometry } from "../Geometry";
 import { Geometry } from "../Geometry";
 import { Angle } from "../geometry3d/Angle";
 import { AngleSweep } from "../geometry3d/AngleSweep";
@@ -20,10 +19,10 @@ import { Ray3d } from "../geometry3d/Ray3d";
 import { XAndY } from "../geometry3d/XYZProps";
 import { Point4d } from "../geometry4d/Point4d";
 
-// import { Arc3d } from "../curve/Arc3d";
 // cspell:word Cardano
 // cspell:word CCminusSS
 /* eslint-disable @typescript-eslint/naming-convention */
+
 /**
  * degree 2 (quadratic) polynomial in for y = c0 + c1*x + c2*x^2
  * @internal
@@ -1029,7 +1028,7 @@ export class AnalyticRoots {
   /**
    * * Solve the simultaneous equations in variables`c` and`s`:
    *   * A line: `alpha + beta*c + gamma*s = 0`
-   *   * The unit circle 'c*c + s*s = 1`
+   *   * The unit circle `c*c + s*s = 1`
    * * Solution values are returned as 0, 1, or 2(c, s) pairs
    * * Return value indicates one of these solution states:
    *   * -2 -- all coefficients identically 0.   The entire c, s plane-- and therefore the entire unit circle-- is a solution.
@@ -1049,21 +1048,24 @@ export class AnalyticRoots {
    * @param sinValues (caller allocated) array to receive solution `s` values
    * @param radiansValues (caller allocated) array to receive solution radians values.
    */
-  public static appendImplicitLineUnitCircleIntersections(alpha: number, beta: number, gamma: number,
-    cosValues: OptionalGrowableFloat64Array, sinValues: OptionalGrowableFloat64Array, radiansValues: OptionalGrowableFloat64Array,
-    relTol: number = 1.0e-14): number {
-
+  public static appendImplicitLineUnitCircleIntersections(
+    alpha: number,
+    beta: number,
+    gamma: number,
+    cosValues: OptionalGrowableFloat64Array,
+    sinValues: OptionalGrowableFloat64Array,
+    radiansValues: OptionalGrowableFloat64Array,
+    relTol: number = 1.0e-14,
+  ): number {
     let twoTol: number;
     const delta2 = beta * beta + gamma * gamma;
     const alpha2 = alpha * alpha;
     let solutionType = 0;
-
     if (relTol < 0.0) {
       twoTol = 0.0;
     } else {
       twoTol = 2.0 * relTol;
     }
-
     if (delta2 <= 0.0) {
       solutionType = (alpha === 0) ? -2 : -1;
     } else {
@@ -1096,12 +1098,10 @@ export class AnalyticRoots {
   }
 }
 /**
- * manipulations of polynomials with where `coff[i]` multiplies x^i
+ * Manipulations of polynomials with where `coff[i]` multiplies x^i
  * @internal
  */
-
 export class PowerPolynomial {
-
   /** Evaluate a standard basis polynomial at `x`, with `degree` possibly less than `coff.length` */
   public static degreeKnownEvaluate(coff: Float64Array, degree: number, x: number): number {
     if (degree < 0) {
@@ -1182,10 +1182,8 @@ export class TrigPolynomial {
    * @param referenceCoefficient A number which represents the size of coefficients
    *     at various stages of computation.  A small fraction of this will be used as a zero
    *     tolerance
-   * @param angles Roots are placed here. Assumed preallocated with adequate size.
-   * @param numRoots Number of roots  .  Zero roots is possible. (Passed as array of size
-   * one to pass-by-reference)
-   * Returns false if equation is all zeros.   This usually means any angle is a solution.
+   * @param radians Roots are placed here
+   * @return false if equation is all zeros. This usually means any angle is a solution.
    */
   public static solveAngles(coff: Float64Array, nominalDegree: number, referenceCoefficient: number,
     radians: number[]): boolean {
@@ -1261,7 +1259,6 @@ export class TrigPolynomial {
    * @param ay  Coefficient of y
    * @param a1  Constant coefficient
    * @param radians  solution angles
-   * @param numAngle  number of solution angles(Passed as array to make changes to reference)
    */
   public static solveUnitCircleImplicitQuadricIntersection(axx: number, axy: number, ayy: number,
     ax: number, ay: number, a1: number, radians: number[]): boolean {
@@ -1337,9 +1334,8 @@ export class TrigPolynomial {
     return status;
   }
   /**
-   * Compute intersections of unit circle x^2 + y^2 = w^2 with the ellipse
-   *         (x,y) = (cx + ux Math.Cos + vx sin, cy + uy Math.Cos + vy sin)/ (cw + uw Math.Cos + vw * Math.Sin)
-   * Solutions are returned as angles in the ellipse space.
+   * Compute intersections of unit circle `x^2 + y^2 = w^2` with the ellipse
+   * `F(t) = (cx + ux cos(t) + vx sin(t), cy + uy cos(t) + vy sin(t)) / (cw + uw cos(t) + vw sin(t))`.
    * @param cx center x
    * @param cy center y
    * @param cw center w
@@ -1352,10 +1348,12 @@ export class TrigPolynomial {
    * @param ellipseRadians solution angles in ellipse parameter space
    * @param circleRadians solution angles in circle parameter space
    */
-  public static solveUnitCircleHomogeneousEllipseIntersection(cx: number, cy: number, cw: number,
+  public static solveUnitCircleHomogeneousEllipseIntersection(
+    cx: number, cy: number, cw: number,
     ux: number, uy: number, uw: number,
     vx: number, vy: number, vw: number,
-    ellipseRadians: number[], circleRadians: number[]): boolean {
+    ellipseRadians: number[], circleRadians: number[],
+  ): boolean {
     circleRadians.length = 0;
     const acc = ux * ux + uy * uy - uw * uw;
     const acs = 2.0 * (ux * vx + uy * vy - uw * vw);
@@ -1589,8 +1587,20 @@ export class SmallSystem {
       result);
   }
   /**
-   * Return true if lines (a0,a1) to (b0, b1) have closest approach (go by each other) in 3d
+   * Return true if the given rays have closest approach (go by each other) in 3d
    * Return the fractional (not xy) coordinates as x and y parts of a Point2d.
+   * @param ax x-coordinate of the origin of the first ray
+   * @param ay y-coordinate of the origin of the first ray
+   * @param az z-coordinate of the origin of the first ray
+   * @param au x-coordinate of the direction vector of the first ray
+   * @param av y-coordinate of the direction vector of the first ray
+   * @param aw z-coordinate of the direction vector of the first ray
+   * @param bx x-coordinate of the origin of the second ray
+   * @param by y-coordinate of the origin of the second ray
+   * @param bz z-coordinate of the origin of the second ray
+   * @param bu x-coordinate of the direction vector of the second ray
+   * @param bv y-coordinate of the direction vector of the second ray
+   * @param bw z-coordinate of the direction vector of the second ray
    * @param result point to receive fractional coordinates of intersection.   result.x is fraction on line a. result.y is fraction on line b.
    */
   public static ray3dXYZUVWClosestApproachUnbounded(
@@ -1611,7 +1621,7 @@ export class SmallSystem {
   }
   /**
    * Solve the pair of linear equations
-   * * `ux * x + vx + y = cx`
+   * * `ux * x + vx * y = cx`
    * * `uy * x + vy * y = cy`
    * @param ux xx coefficient
    * @param vx xy coefficient
@@ -1619,13 +1629,14 @@ export class SmallSystem {
    * @param vy yy coefficient
    * @param cx x right hand side
    * @param cy y right hand side
-   * @param result (x,y) solution.  (MUST be preallocated by caller)
+   * @param result (x,y) solution (MUST be preallocated by caller)
    */
   public static linearSystem2d(
     ux: number, vx: number, // first row of matrix
     uy: number, vy: number, // second row of matrix
     cx: number, cy: number, // right side
-    result: Vector2d): boolean {
+    result: Vector2d,
+  ): boolean {
     const uv = Geometry.crossProductXYXY(ux, uy, vx, vy);
     const cv = Geometry.crossProductXYXY(cx, cy, vx, vy);
     const cu = Geometry.crossProductXYXY(ux, uy, cx, cy);

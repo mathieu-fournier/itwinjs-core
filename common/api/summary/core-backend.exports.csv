@@ -2,6 +2,7 @@ sep=;
 Release Tag;API Item
 public;AcquireNewBriefcaseIdArg 
 public;AnnotationElement2d 
+beta;AnyDb = IModelDb | ECDb
 public;class AuxCoordSystem 
 public;AuxCoordSystem2d 
 public;AuxCoordSystem3d 
@@ -22,13 +23,20 @@ public;class Callout
 public;Category 
 public;CategoryOwnsSubCategories 
 public;CategorySelector 
+beta;ChangedECInstance
 internal;ChangedElementsDb 
+beta;ChangeFormatArgs
+beta;ChangeInstanceKey
+beta;ChangeMetaData
 public;ChangesetArg 
+internal;ChangesetConflictArgs
+beta;ChangesetECAdaptor 
 internal;ChangesetIndexArg 
 public;ChangesetRangeArg 
 beta;ChangeSummary
 beta;ChangeSummaryManager
 internal;ChannelAdmin 
+beta;ChannelControl
 beta;ChannelControl
 beta;ChannelKey = string
 public;ChannelRootAspect 
@@ -41,7 +49,9 @@ public;CloudContainerArgs
 beta;CloudSqlite
 internal;BcvHttpLog
 internal;BcvHttpLogFilterOptions
-internal;LockAndOpenArgs
+internal;BcvStats
+internal;BcvStatsFilterOptions
+internal;LockAndOpenArgs 
 internal;transferDb(direction: TransferDirection, container: CloudContainer, props: TransferDbProps): Promise
 alpha;CodeService
 alpha;CodeService
@@ -52,6 +62,7 @@ public;ComputedProjectExtents
 public;ComputeProjectExtentsOptions
 alpha;ConcreteEntity = Element_2 | Model | ElementAspect | Relationship
 alpha;ConcreteEntityProps = ElementProps | ModelProps | ElementAspectProps | RelationshipProps
+beta;convertEC2SchemasToEC3Schemas(ec2XmlSchemas: string[], schemaContext?: ECSchemaXmlContext): string[]
 internal;CrashReportingConfig
 internal;CrashReportingConfigNameValuePair
 beta;CreateChangeSummaryArgs 
@@ -97,14 +108,15 @@ beta;class DriverBundleElement
 public;ECDb 
 public;ECDbOpenMode
 public;ECEnumValue
-internal;ECSchemaXmlContext
+beta;ECSchemaXmlContext
 public;ECSqlBinder
 public;ECSqlColumnInfo
 public;ECSqlInsertResult
 public;ECSqlStatement 
 public;ECSqlValue
 public;ECSqlValueIterator 
-internal;EditableWorkspaceDb 
+beta;EditableWorkspaceDb 
+beta;EditableWorkspaceDb
 public;ElementAspect 
 beta;ElementDrivesElement 
 beta;ElementDrivesElementProps 
@@ -231,9 +243,6 @@ public;class IpcHandler
 public;IpcHost
 public;IpcHostOpts
 public;ITwinIdArg
-internal;ITwinWorkspace 
-internal;ITwinWorkspaceContainer 
-internal;ITwinWorkspaceDb 
 public;KnownLocations
 internal;LightLocation 
 public;LineStyle 
@@ -274,8 +283,9 @@ beta;OnModelIdArg
 beta;OnModelPropsArg 
 beta;OnSubModelIdArg 
 beta;OnSubModelPropsArg 
-public;OpenBriefcaseArgs = OpenBriefcaseProps & CloudContainerArgs
+public;OpenBriefcaseArgs = OpenBriefcaseProps & CloudContainerArgs & OpenSqliteArgs
 public;OrthographicViewDefinition 
+beta;PartialECChangeUnifier
 public;class PhysicalElement 
 public;PhysicalElementAssemblesElements 
 public;PhysicalElementFulfillsFunction 
@@ -295,6 +305,7 @@ public;ProgressStatus
 beta;PropertyStore
 public;PullChangesArgs = ToChangesetArgs &
 public;PushChangesArgs 
+beta;QueryLocalChangesArgs
 beta;class RecipeDefinitionElement 
 public;Relationship 
 public;Relationships
@@ -314,6 +325,7 @@ public;SchemaImportOptions
 internal;SchemaKey = IModelJsNative.ECSchemaXmlContext.SchemaKey
 internal;SchemaMatchType = IModelJsNative.ECSchemaXmlContext.SchemaMatchType
 public;Schemas
+internal;SchemaSync
 public;SectionCallout 
 public;SectionDrawing 
 public;SectionDrawingLocation 
@@ -336,7 +348,7 @@ public;SheetModel
 public;SheetTemplate 
 public;SheetViewDefinition 
 public;SnapshotDb 
-public;SnapshotDbOpenArgs = SnapshotOpenOptions & CloudContainerArgs
+public;SnapshotDbOpenArgs = SnapshotOpenOptions & CloudContainerArgs & OpenSqliteArgs
 public;SpatialCategory 
 public;class SpatialElement 
 public;SpatialLocation 
@@ -347,11 +359,17 @@ public;SpatialLocationPartition
 public;class SpatialLocationType 
 public;class SpatialModel 
 public;SpatialViewDefinition 
+beta;SqliteChange
+beta;SqliteChangeOp = "Inserted" | "Updated" | "Deleted"
+beta;SqliteChangesetReader 
+beta;SqliteChangesetReaderArgs
 public;SQLiteDb
 public;SQLiteDb
 internal;BlobIO
 public;SqliteStatement 
+public;SqliteStatement
 public;SqliteValue
+beta;SqliteValueStage = "Old" | "New"
 public;SqliteValueType
 public;StandaloneDb 
 internal;StatementCache
@@ -370,8 +388,9 @@ internal;TemplateViewDefinition3d
 public;TextAnnotation2d 
 public;TextAnnotation3d 
 public;Texture 
-internal;TextureCreateProps 
+beta;TextureCreateProps 
 internal;throttleProgressCallback(func: ProgressFunction, checkAbort: () => ProgressStatus, progressInterval?: number): ProgressFunction
+beta;TileId
 beta;TileStorage
 public;TitleText 
 public;ToChangesetArgs 
@@ -381,6 +400,7 @@ public;TxnIdString = string
 public;TxnManager
 public;class TypeDefinitionElement 
 public;UpdateModelOptions 
+beta;upgradeCustomAttributesToEC3(xmlSchemas: string[], schemaContext?: ECSchemaXmlContext): string[]
 public;UrlLink 
 internal;V1CheckpointManager
 internal;V2CheckpointAccessProps
@@ -392,11 +412,15 @@ public;ViewAttachmentLabel
 public;class ViewDefinition 
 public;ViewDefinition2d 
 public;class ViewDefinition3d 
+beta;ViewStore
 public;VolumeElement 
 public;WebMercatorModel 
 beta;Workspace
+beta;Workspace
+internal;construct(settings: Settings, opts?: WorkspaceOpts): Workspace
 beta;WorkspaceCloudCacheProps 
 beta;WorkspaceContainer
+internal;validateVersion(version?: WorkspaceDb.Version): string
 beta;WorkspaceContainer
 beta;WorkspaceDb
 beta;WorkspaceDb

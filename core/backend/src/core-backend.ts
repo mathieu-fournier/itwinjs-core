@@ -43,6 +43,7 @@ export * from "./IModelDb";
 export * from "./IModelElementCloneContext";
 export * from "./IModelHost";
 export * from "./IModelJsFs";
+export * from "./SchemaSync";
 export * from "./IpcHost";
 export * from "./LineStyle";
 export * from "./LocalhostIpcHost";
@@ -56,15 +57,19 @@ export * from "./PropertyStore";
 export * from "./Relationship";
 export * from "./rpc/tracing";
 export * from "./Schema";
+export * from "./SchemaUtils";
 export * from "./SQLiteDb";
 export * from "./SqliteStatement";
 export * from "./Texture";
 export * from "./TileStorage";
 export * from "./TxnManager";
 export * from "./ViewDefinition";
+export * from "./ViewStore";
 export * from "./workspace/Settings";
 export * from "./workspace/SettingsSchemas";
 export * from "./workspace/Workspace";
+export * from "./SqliteChangesetReader";
+export * from "./ChangesetECAdaptor";
 
 /** @docs-package-description
  * The core-backend package always runs on the computer with a local Briefcase.

@@ -7,6 +7,7 @@
  * @module Solid
  */
 
+import { AnyCurve } from "../curve/CurveTypes";
 import { CurveCollection } from "../curve/CurveCollection";
 import { GeometryQuery } from "../curve/GeometryQuery";
 import { LineString3d } from "../curve/LineString3d";
@@ -42,11 +43,11 @@ export class LinearSweep extends SolidPrimitive {
   }
   /**
    * Create a sweep of a starting contour.
-   * @param contour contour to be swept
+   * @param contour contour to be swept, CAPTURED
    * @param direction sweep vector.  The contour is swept the full length of the vector.
    * @param capped true to include end caps
    */
-  public static create(contour: CurveCollection, direction: Vector3d, capped: boolean): LinearSweep | undefined {
+  public static create(contour: AnyCurve, direction: Vector3d, capped: boolean): LinearSweep | undefined {
     const sweepable = SweepContour.createForLinearSweep(contour, direction);
     if (!sweepable)
       return undefined;

@@ -318,11 +318,11 @@ describe("Regularize", () => {
       let axMax = 0.0;
       for (const perpendicularFactor of [0.85, -1.0, -0.5]) {
         for (const generatorFunction of [
-          Sample.createFractalSquareReversingPattern,
-          Sample.createFractalDiamondConvexPattern,
-          Sample.createFractalLReversingPattern,
-          Sample.createFractalHatReversingPattern,
-          Sample.createFractalLMildConcavePatter]) {
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalSquareReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalDiamondConvexPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalHatReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLMildConcavePatter(_numRecursion, _perpendicularFactor)]) {
           for (const degrees of [0, 10, 79]) {
             const points = generatorFunction(numRecursion, perpendicularFactor);
             const transform0 = Transform.createFixedPointAndMatrix(points[0], Matrix3d.createRotationAroundAxisIndex(2, Angle.createDegrees(degrees)));
@@ -365,9 +365,9 @@ function testRegularize(
   GeometryCoreTestIO.captureGeometry(allGeometry, mesh, dx, dy);
   const monotoneFaces: HalfEdge[] = [];
   const nonMonotoneFaces: HalfEdge[] = [];
-  RegularizationContext.collectMappedFaceRepresentatives(graph, true, RegularizationContext.isMonotoneFace, monotoneFaces, nonMonotoneFaces);
+  RegularizationContext.collectMappedFaceRepresentatives(graph, true, (_seed) => RegularizationContext.isMonotoneFace(_seed), monotoneFaces, nonMonotoneFaces);
   if (monotoneFaces.length !== 0) {
-    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(graph, monotoneFaces);
+    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(monotoneFaces);
     if (sweepUp && sweepDown) { // With both sweeps it SHOULD be a complete facet set ...
       const ex = 0.2 * range.xLength();
       const ey = 0.2 * range.yLength();
@@ -379,7 +379,7 @@ function testRegularize(
   const r0 = -0.25;
   const r1 = 1.25;    // fractions for non-monotone face annotation line.
   if (nonMonotoneFaces.length !== 0) {
-    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(graph, nonMonotoneFaces);
+    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(nonMonotoneFaces);
 
     if (sweepUp && sweepDown) { // With both sweeps this should be empty ...
       let numBad = 0;
@@ -430,7 +430,7 @@ function testFullGraphRegularize(
   GeometryCoreTestIO.captureGeometry(allGeometry, mesh, dx, dy);
   const monotoneFaces: HalfEdge[] = [];
   const nonMonotoneFaces: HalfEdge[] = [];
-  RegularizationContext.collectMappedFaceRepresentatives(graph, true, RegularizationContext.isMonotoneFace, monotoneFaces, nonMonotoneFaces);
+  RegularizationContext.collectMappedFaceRepresentatives(graph, true, (_seed) => RegularizationContext.isMonotoneFace(_seed), monotoneFaces, nonMonotoneFaces);
   const interiorMonotone = [];
   const exteriorMonotone = [];
   for (const face of monotoneFaces) {
@@ -440,7 +440,7 @@ function testFullGraphRegularize(
       exteriorMonotone.push(face);
   }
   if (interiorMonotone.length !== 0) {
-    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(graph, interiorMonotone);
+    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(interiorMonotone);
     if (sweepUp && sweepDown) { // With both sweeps it SHOULD be a complete facet set ...
       const ex = 0.2 * range.xLength();
       const ey = 0.2 * range.yLength();
@@ -452,7 +452,7 @@ function testFullGraphRegularize(
   const r0 = -0.25;
   const r1 = 1.25;    // fractions for non-monotone face annotation line.
   if (nonMonotoneFaces.length !== 0) {
-    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(graph, nonMonotoneFaces);
+    const mesh1 = PolyfaceBuilder.graphFacesToPolyface(nonMonotoneFaces);
 
     if (sweepUp && sweepDown) { // With both sweeps this should be empty ...
       let numBad = 0;
@@ -479,7 +479,7 @@ function testFullGraphRegularize(
       for (const f of component)
         if (!f.isMaskSet(HalfEdgeMask.EXTERIOR))
           interiorFaces.push(f);
-      const mesh2 = PolyfaceBuilder.graphFacesToPolyface(graph, interiorFaces);
+      const mesh2 = PolyfaceBuilder.graphFacesToPolyface(interiorFaces);
 
       GeometryCoreTestIO.captureGeometry(allGeometry, mesh2, dx + 2.0 * ax, dy, 0.0);
     }
@@ -631,7 +631,7 @@ function testFullGraphRegularizeAndTriangulate(
   GeometryCoreTestIO.captureGeometry(allGeometry, mesh, dx, dy);
   const monotoneFaces: HalfEdge[] = [];
   const nonMonotoneFaces: HalfEdge[] = [];
-  RegularizationContext.collectMappedFaceRepresentatives(graph, true, RegularizationContext.isMonotoneFace, monotoneFaces, nonMonotoneFaces);
+  RegularizationContext.collectMappedFaceRepresentatives(graph, true, (_seed) => RegularizationContext.isMonotoneFace(_seed), monotoneFaces, nonMonotoneFaces);
   for (const seed of monotoneFaces) {
     if (!seed.isMaskSet(HalfEdgeMask.EXTERIOR))
       Triangulator.triangulateSingleMonotoneFace(graph, seed);

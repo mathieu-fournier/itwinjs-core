@@ -12,7 +12,7 @@ import {
   IModelError, IModelVersion, LocalDirName, LocalFileName,
 } from "@itwin/core-common";
 import { CheckpointProps, DownloadRequest, ProgressFunction } from "./CheckpointManager";
-import { TokenArg } from "./IModelDb";
+import type { TokenArg } from "./IModelDb";
 
 /** The state of a lock.
  * @public
@@ -37,7 +37,7 @@ export class LockConflict extends IModelError {
     public readonly briefcaseId: BriefcaseId,
     /** Alias of Briefcase holding lock */
     public readonly briefcaseAlias: string,
-    msg: "shared lock is held" | "exclusive lock is already held"
+    msg: "shared lock is held" | "exclusive lock is already held",
   ) {
     super(IModelHubStatus.LockOwnedByAnotherBriefcase, msg);
   }

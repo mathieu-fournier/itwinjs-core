@@ -7,7 +7,7 @@
  */
 
 import * as Rules from "../Validation/ECRules";
-import { CustomAttribute, ECObjectsError, ECObjectsStatus, Schema, SchemaContext, SchemaItemKey, SchemaKey, SchemaMatchType } from "@itwin/ecschema-metadata";
+import { CustomAttribute, Schema, SchemaContext, SchemaItemKey, SchemaKey, SchemaMatchType } from "@itwin/ecschema-metadata";
 import { MutableSchema } from "./Mutable/MutableSchema";
 import { assert } from "@itwin/core-bentley";
 import { Constants } from "./Constants";
@@ -24,6 +24,7 @@ import { RelationshipClasses } from "./RelationshipClasses";
 import { Structs } from "./Structs";
 import { Units } from "./Units";
 import { UnitSystems } from "./UnitSystems";
+import { SchemaItems } from "./SchemaItems";
 
 // We can either add validation in Editor, or in the protected methods of Schema.
 // TODO: Add an error code so we can do something programmatic with the error.
@@ -73,6 +74,9 @@ export class SchemaContextEditor {
   public readonly propertyCategories = new PropertyCategories(this);
   public readonly invertedUnits = new InvertedUnits(this);
 
+  /** @internal */
+  public readonly schemaItems = new SchemaItems(this);
+
   /**
    * Creates a new SchemaContextEditor instance.
    * @param schemaContext The SchemaContext the Editor will use to edit in.
@@ -93,10 +97,10 @@ export class SchemaContextEditor {
    * Helper method for retrieving a schema, previously added, from the SchemaContext.
    * @param schemaKey The SchemaKey identifying the schema.
   */
-  public async getSchema(schemaKey: SchemaKey): Promise<MutableSchema> {
+  public async getSchema(schemaKey: SchemaKey): Promise<MutableSchema | undefined> {
     const schema = (await this.schemaContext.getCachedSchema<MutableSchema>(schemaKey, SchemaMatchType.Latest));
     if (schema === undefined)
-      throw new ECObjectsError(ECObjectsStatus.UnableToLocateSchema,`Schema Key ${schemaKey.toString(true)} not found in context`);
+      return undefined;
 
     return schema;
   }

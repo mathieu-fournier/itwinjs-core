@@ -6,6 +6,7 @@
  * @module WebGL
  */
 
+import { Id64String } from "@itwin/core-bentley";
 import { Transform } from "@itwin/core-geometry";
 import {
   BatchType, FeatureAppearance, FeatureAppearanceProvider, GeometryClass, HiddenLine, RealityModelDisplaySettings, RenderMode, ViewFlags,
@@ -42,6 +43,8 @@ export interface BranchStateOptions {
   readonly appearanceProvider?: FeatureAppearanceProvider;
   readonly realityModelDisplaySettings?: RealityModelDisplaySettings;
   forceViewCoords?: boolean;
+  readonly viewAttachmentId?: Id64String;
+  groupNodeId?: number;
 }
 
 /**
@@ -66,6 +69,8 @@ export class BranchState {
   public get appearanceProvider() { return this._opts.appearanceProvider; }
   public get secondaryClassifiers() { return this._opts.secondaryClassifiers; }
   public get realityModelDisplaySettings() { return this._opts.realityModelDisplaySettings; }
+  public get viewAttachmentId() { return this._opts.viewAttachmentId; }
+  public get groupNodeId() { return this._opts.groupNodeId; }
 
   public get symbologyOverrides() {
     return this._opts.symbologyOverrides;
@@ -98,6 +103,8 @@ export class BranchState {
       // The branch can augment the symbology overrides. If it doesn't want to, allow its parent to do so, unless this branch supplies its own symbology overrides.
       appearanceProvider: branch.appearanceProvider ?? (branch.branch.symbologyOverrides ? undefined : prev.appearanceProvider),
       realityModelDisplaySettings: branch.branch.realityModelDisplaySettings ?? prev.realityModelDisplaySettings,
+      viewAttachmentId: branch.viewAttachmentId ?? prev.viewAttachmentId,
+      groupNodeId: branch.branch.groupNodeId ?? prev.groupNodeId,
     });
   }
 
@@ -109,9 +116,16 @@ export class BranchState {
   }
 
   public static createForDecorations(): BranchState {
-    const vf = new ViewFlags({ renderMode: RenderMode.SmoothShade, lighting: false, whiteOnWhiteReversal: false });
-
-    return new BranchState({ viewFlags: vf, transform: Transform.createIdentity(), symbologyOverrides: new FeatureSymbology.Overrides(), edgeSettings: EdgeSettings.create(undefined), is3d: true });
+    const viewFlags = new ViewFlags({ renderMode: RenderMode.SmoothShade, lighting: false, whiteOnWhiteReversal: false });
+    const symbologyOverrides = new FeatureSymbology.Overrides();
+    symbologyOverrides.ignoreSubCategory = true;
+    return new BranchState({
+      viewFlags,
+      transform: Transform.createIdentity(),
+      symbologyOverrides,
+      edgeSettings: EdgeSettings.create(undefined),
+      is3d: true,
+    });
   }
 
   public withViewCoords(): BranchState {

@@ -17,8 +17,8 @@ import { IpcApp } from "../IpcApp";
 import { IModelConnection } from "../IModelConnection";
 import { Viewport } from "../Viewport";
 import {
-  DisclosedTileTreeSet, IModelTileTree, LRUTileList, ReadonlyTileUserSet, Tile, TileContentDecodingStatistics, TileLoadStatus, TileRequest, TileRequestChannels, TileStorage, TileTree,
-  TileTreeOwner, TileUsageMarker, TileUser, UniqueTileUserSets,
+  DisclosedTileTreeSet, FetchCloudStorage, IModelTileTree, LRUTileList, ReadonlyTileUserSet, Tile, TileContentDecodingStatistics, TileLoadStatus,
+  TileRequest, TileRequestChannels, TileStorage, TileTree, TileTreeOwner, TileUsageMarker, TileUser, UniqueTileUserSets,
 } from "./internal";
 import type { FrontendStorage } from "@itwin/object-storage-core/lib/frontend";
 
@@ -92,7 +92,7 @@ export type GpuMemoryLimit = "none" | "default" | "aggressive" | "relaxed" | num
 export interface GpuMemoryLimits {
   /** Limits applied to clients running on mobile devices. Defaults to "default" if undefined. */
   mobile?: GpuMemoryLimit;
-  /** Limits applied to clients running on non-mobile devices. Defaults to "none" if undefined. */
+  /** Limits applied to clients running on non-mobile devices. Defaults to 6,000 MB if undefined. */
   nonMobile?: GpuMemoryLimit;
 }
 
@@ -115,8 +115,8 @@ export class TileAdmin {
   private _defaultTileSizeModifier: number;
   private readonly _retryInterval: number;
   private readonly _enableInstancing: boolean;
-  private readonly _enableIndexedEdges: boolean;
-  private _generateAllPolyfaceEdges: boolean;
+  /** @internal */
+  public readonly edgeOptions: EdgeOptions;
   /** @internal */
   public readonly enableImprovedElision: boolean;
   /** @internal */
@@ -129,6 +129,8 @@ export class TileAdmin {
   public readonly enableExternalTextures: boolean;
   /** @internal */
   public readonly disableMagnification: boolean;
+  /** @internal */
+  public readonly percentGPUMemDisablePreload: number;
   /** @internal */
   public readonly alwaysRequestEdges: boolean;
   /** @internal */
@@ -222,14 +224,17 @@ export class TileAdmin {
     this._defaultTileSizeModifier = (undefined !== options.defaultTileSizeModifier && options.defaultTileSizeModifier > 0) ? options.defaultTileSizeModifier : 1.0;
     this._retryInterval = undefined !== options.retryInterval ? options.retryInterval : 1000;
     this._enableInstancing = options.enableInstancing ?? defaultTileOptions.enableInstancing;
-    this._enableIndexedEdges = options.enableIndexedEdges ?? defaultTileOptions.enableIndexedEdges;
-    this._generateAllPolyfaceEdges = options.generateAllPolyfaceEdges ?? defaultTileOptions.generateAllPolyfaceEdges;
+    this.edgeOptions = {
+      type: false === options.enableIndexedEdges ? "non-indexed" : "compact",
+      smooth: options.generateAllPolyfaceEdges ?? true,
+    };
     this.enableImprovedElision = options.enableImprovedElision ?? defaultTileOptions.enableImprovedElision;
     this.enableFrontendScheduleScripts = options.enableFrontendScheduleScripts ?? false;
     this.decodeImdlInWorker = options.decodeImdlInWorker ?? true;
     this.ignoreAreaPatterns = options.ignoreAreaPatterns ?? defaultTileOptions.ignoreAreaPatterns;
     this.enableExternalTextures = options.enableExternalTextures ?? defaultTileOptions.enableExternalTextures;
     this.disableMagnification = options.disableMagnification ?? defaultTileOptions.disableMagnification;
+    this.percentGPUMemDisablePreload = Math.max(0, Math.min((options.percentGPUMemDisablePreload === undefined ? 80 : options.percentGPUMemDisablePreload), 80));
     this.alwaysRequestEdges = true === options.alwaysRequestEdges;
     this.alwaysSubdivideIncompleteTiles = options.alwaysSubdivideIncompleteTiles ?? defaultTileOptions.alwaysSubdivideIncompleteTiles;
     this.maximumMajorTileFormatVersion = options.maximumMajorTileFormatVersion ?? defaultTileOptions.maximumMajorTileFormatVersion;
@@ -247,11 +252,10 @@ export class TileAdmin {
     else
       gpuMemoryLimit = gpuMemoryLimits;
 
-    if (undefined === gpuMemoryLimit && isMobile)
-      gpuMemoryLimit = "default";
+    if (undefined === gpuMemoryLimit)
+      gpuMemoryLimit = isMobile ? "default" : TileAdmin.nonMobileUndefinedGpuMemoryLimit;
 
-    if (undefined !== gpuMemoryLimit)
-      this.gpuMemoryLimit = gpuMemoryLimit;
+    this.gpuMemoryLimit = gpuMemoryLimit;
 
     if (undefined !== options.maximumLevelsToSkip)
       this.maximumLevelsToSkip = Math.floor(Math.max(0, options.maximumLevelsToSkip));
@@ -306,14 +310,9 @@ export class TileAdmin {
   }
 
   private _tileStorage?: TileStorage;
-  private _tileStoragePromise?: Promise<TileStorage>;
   private async getTileStorage(): Promise<TileStorage> {
     if (this._tileStorage !== undefined)
       return this._tileStorage;
-
-    // if object-storage-azure is already being dynamically loaded, just return the promise.
-    if (this._tileStoragePromise !== undefined)
-      return this._tileStoragePromise;
 
     // if custom implementation is provided, construct a new TileStorage instance and return it.
     if (this._cloudStorage !== undefined) {
@@ -321,33 +320,13 @@ export class TileAdmin {
       return this._tileStorage;
     }
 
-    // start dynamically loading default implementation and save the promise to avoid duplicate instances
-    this._tileStoragePromise = (async () => {
-      await import("reflect-metadata");
-      const objectStorage = await import(/* webpackChunkName: "object-storage-azure" */ "@itwin/object-storage-azure/lib/frontend");
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { AzureFrontendStorage, FrontendBlockBlobClientWrapperFactory } = objectStorage.default ?? objectStorage;
-      const azureStorage = new AzureFrontendStorage(new FrontendBlockBlobClientWrapperFactory());
-      this._tileStorage = new TileStorage(azureStorage);
-      return this._tileStorage;
-    })();
-    return this._tileStoragePromise;
+    const fetchStorage = new FetchCloudStorage();
+    this._tileStorage = new TileStorage(fetchStorage);
+    return this._tileStorage;
   }
 
   /** @internal */
   public get enableInstancing() { return this._enableInstancing; }
-  /** @internal */
-  public get enableIndexedEdges() { return this._enableIndexedEdges; }
-  /** @internal */
-  public get generateAllPolyfaceEdges() { return this._generateAllPolyfaceEdges; }
-  public set generateAllPolyfaceEdges(val: boolean) { this._generateAllPolyfaceEdges = val; }
-  /** @internal */
-  public get edgeOptions(): EdgeOptions {
-    return {
-      indexed: this.enableIndexedEdges,
-      smooth: this.generateAllPolyfaceEdges,
-    };
-  }
 
   /** Given a numeric combined major+minor tile format version (typically obtained from a request to the backend to query the maximum tile format version it supports),
    * return the maximum *major* format version to be used to request tile content from the backend.
@@ -424,6 +403,16 @@ export class TileAdmin {
 
     this._gpuMemoryLimit = limit;
     this._maxTotalTileContentBytes = maxBytes;
+  }
+
+  /** Returns whether or not preloading for context (reality and map tiles) is currently allowed.
+   * It is not allowed on mobile devices or if [[TileAdmin.Props.percentGPUMemDisablePreload]] is 0.
+   * Otherwise it is always allowed if [[GpuMemoryLimit]] is "none".
+   * Otherwise it is only allowed if current GPU memory utilization is less than [[TileAdmin.Props.percentGPUMemDisablePreload]] of GpuMemoryLimit.
+   * @internal
+   */
+  public get isPreloadingAllowed(): boolean {
+    return !this._isMobile && this.percentGPUMemDisablePreload > 0 && (this._maxTotalTileContentBytes === undefined || this._lruList.totalBytesUsed / this._maxTotalTileContentBytes * 100 < this.percentGPUMemDisablePreload);
   }
 
   /** Invoked from the [[ToolAdmin]] event loop to process any pending or active requests for tiles.
@@ -708,7 +697,7 @@ export class TileAdmin {
    */
   public async requestElementGraphics(iModel: IModelConnection, requestProps: ElementGraphicsRequestProps): Promise<Uint8Array | undefined> {
     if (true !== requestProps.omitEdges && undefined === requestProps.edgeType)
-      requestProps = { ...requestProps, edgeType: this.enableIndexedEdges ? 2 : 1 };
+      requestProps = { ...requestProps, edgeType: "non-indexed" !== this.edgeOptions.type ? 2 : 1 };
 
     // For backwards compatibility, these options default to true in the backend. Explicitly set them to false in (newer) frontends if not supplied.
     if (undefined === requestProps.quantizePositions || undefined === requestProps.useAbsolutePositions) {
@@ -1004,7 +993,11 @@ export namespace TileAdmin { // eslint-disable-line no-redeclare
   }
 
   /** Describes the configuration of the [[TileAdmin]].
-   * @see [[TileAdmin.create]]
+   * @see [[TileAdmin.create]] to specify the configuration at [[IModelApp.startup]] time.
+   * @note Many of these settings serve as "feature gates" introduced alongside new, potentially experimental features.
+   * Over time, as a feature is tested and proven, their relevance wanes, and the feature becomes enabled by default.
+   * Such properties should be flagged as `beta` and removed or rendered non-operational once the feature itself is considered
+   * stable.
    * @public
    */
   export interface Props {
@@ -1190,6 +1183,19 @@ export namespace TileAdmin { // eslint-disable-line no-redeclare
      */
     disableMagnification?: boolean;
 
+    /** The Percentage of GPU memory utilization at which to disable preloading for context (reality and map tiles).
+     * While GPU memory usage is at or above this percentage of the limit, preloading will be disabled.
+     * A setting of 0 will disable preloading altogether.
+     * If GpuMemoryLimit is "none", then a setting of anything above 0 is ignored.
+     * Mobile devices do not allow preloading and will ignore this setting.
+     *
+     * Default value: 80
+     * Minimum value 0.
+     * Maximum value 80.
+     * @alpha
+     */
+    percentGPUMemDisablePreload?: number;
+
     /** Preloading parents for context (reality and map tiles) will improve the user experience by making it more likely that tiles in nearly the required resolution will be
      * already loaded as the view is manipulated.  This value controls the depth above the the selected tile depth that will be preloaded. The default
      * value (2) with default contextPreloadParentDepth of one will load only grandparents and great grandparents. This generally preloads around 20% more tiles than are required.
@@ -1274,6 +1280,9 @@ export namespace TileAdmin { // eslint-disable-line no-redeclare
     aggressive: 500 * 1024 * 1024, // 500 MB
     relaxed: 2.5 * 1024 * 1024 * 1024, // 2.5 GB
   };
+
+  /** @internal exported for tests */
+  export const nonMobileUndefinedGpuMemoryLimit = 6000 * 1024 * 1024; // 6,000 MB - used when nonMobile limit is undefined
 
   /** The number of bytes of GPU memory associated with the various [[GpuMemoryLimit]]s for mobile devices.
    * @see [[TileAdmin.Props.gpuMemoryLimits]] to specify the limit at startup.

@@ -365,11 +365,11 @@ describe("Triangulation", () => {
         let yMax = 0.0;
         const baseVectorB = baseVectorA.clone();
         for (const generatorFunction of [
-          Sample.createFractalSquareReversingPattern,
-          Sample.createFractalDiamondConvexPattern,
-          Sample.createFractalLReversingPattern,
-          Sample.createFractalHatReversingPattern,
-          Sample.createFractalLMildConcavePatter]) {
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalSquareReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalDiamondConvexPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalHatReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLMildConcavePatter(_numRecursion, _perpendicularFactor)]) {
           for (const degrees of [0, 10, 79]) {
             const points = generatorFunction(numRecursion, perpendicularFactor);
             const transform0 = Transform.createFixedPointAndMatrix(points[0], Matrix3d.createRotationAroundAxisIndex(2, Angle.createDegrees(degrees)));
@@ -600,12 +600,13 @@ describe("Triangulation", () => {
         y0 += 2.0 * r;
       }
     }
-
     GeometryCoreTestIO.saveGeometry(savedMeshes, "Triangulation", "Circles");
     expect(ck.getNumErrors()).equals(0);
   });
   it("DegeneratePolygons", () => {
     const ck = new Checker();
+    const allGeometry: GeometryQuery[] = [];
+    let x = 0;
     for (const points of [
       [{ x: 5.36, y: 8.85, z: 23.78 },
       { x: 8.822141987513945, y: 6.843546977282015, z: 23.78 },
@@ -620,11 +621,14 @@ describe("Triangulation", () => {
       { x: 8.881784197001252e-16, y: 0, z: 0 }],
     ]) {
       const graph = Triangulator.createTriangulatedGraphFromSingleLoop(points);
-      if (graph) {
-        const polyface = PolyfaceBuilder.graphToPolyface(graph);
-        ck.testExactNumber(polyface.facetCount, 0, "degenerate triangle produced no facets.");
+      const polyface = graph ? PolyfaceBuilder.graphToPolyface(graph) : undefined;
+      if (!ck.testTrue(graph === undefined || polyface!.facetCount === 0, "degenerate triangle produced no facets.")) {
+        GeometryCoreTestIO.captureGeometry(allGeometry, polyface, x);
+        x += 10;
       }
     }
+    GeometryCoreTestIO.saveGeometry(allGeometry, "Triangulation", "DegeneratePolygons");
+    expect(ck.getNumErrors()).equals(0);
   });
   it("facets for ACS", () => {
     const ck = new Checker();
@@ -1100,11 +1104,11 @@ describe("Triangulation", () => {
     for (const numRecursion of [1, 2, 3]) {
       for (const perpendicularFactor of [0.85, -1.0, -0.5]) {
         for (const generatorFunction of [
-          Sample.createFractalSquareReversingPattern,
-          Sample.createFractalDiamondConvexPattern,
-          Sample.createFractalLReversingPattern,
-          Sample.createFractalHatReversingPattern,
-          Sample.createFractalLMildConcavePatter]) {
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalSquareReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalDiamondConvexPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalHatReversingPattern(_numRecursion, _perpendicularFactor),
+          (_numRecursion: number, _perpendicularFactor: number) => Sample.createFractalLMildConcavePatter(_numRecursion, _perpendicularFactor)]) {
           for (const degrees of [0, 10, 79]) {
             const points = generatorFunction(numRecursion, perpendicularFactor);
             let range = Range3d.createArray(points);

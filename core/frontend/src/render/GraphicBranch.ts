@@ -66,6 +66,17 @@ export class GraphicBranch implements IDisposable /* , RenderMemory.Consumer */ 
    */
   public animationNodeId?: AnimationNodeId | number;
 
+  /** Identifies the "group" to which this branch belongs.
+   * Groups represent cross-cutting subsets of a tile tree's contents.
+   * For example, if a tile tree contains geometry from multiple models, each model (or smaller groups of multiple models) could be considered a group.
+   * The top-level branches containing graphics from multiple tiles will each specify the group they represent, and the child branches within each
+   * tile will likewise specify the group to which they belong.
+   * When drawing, only the graphics within a tile that correlate with the current group will be drawn.
+   * Groups cannot nest.
+   * @internal
+   */
+  public groupNodeId?: number;
+
   /** Constructor
    * @param ownsEntries If true, when this branch is [[dispose]]d, all of the [[RenderGraphic]]s it contains will also be disposed.
    */
@@ -140,6 +151,10 @@ export interface GraphicBranchOptions {
   appearanceProvider?: FeatureAppearanceProvider;
   /** @internal Secondary planar classifiers (map layers) */
   secondaryClassifiers?: Map<number, RenderPlanarClassifier>;
+  /** The Id of the [ViewAttachment]($backend) from which this branch's graphics originated.
+   * @internal
+   */
+  viewAttachmentId?: Id64String;
 }
 
 /** Clip/Transform for a branch that are varied over time.

@@ -166,7 +166,8 @@ export abstract class DisplayStyleState extends ElementState implements DisplayS
   /** @internal */
   protected async queryRenderTimelineProps(timelineId: Id64String): Promise<RenderTimelineProps | undefined> {
     try {
-      return await this.iModel.elements.loadProps(timelineId, { renderTimeline: { omitScriptElementIds: true } }) as RenderTimelineProps;
+      const omitScriptElementIds = !IModelApp.tileAdmin.enableFrontendScheduleScripts;
+      return await this.iModel.elements.loadProps(timelineId, { renderTimeline: { omitScriptElementIds } }) as RenderTimelineProps;
     } catch (_) {
       return undefined;
     }
@@ -239,6 +240,18 @@ export abstract class DisplayStyleState extends ElementState implements DisplayS
       assert(model instanceof ContextRealityModelState);
       func(model);
     }
+  }
+
+  private * getRealityModels(): Iterable<ContextRealityModelState> {
+    for (const model of this.settings.contextRealityModels.models) {
+      assert(model instanceof ContextRealityModelState);
+      yield model;
+    }
+  }
+
+  /** Iterate over the reality models attached to this display style. */
+  public get realityModels(): Iterable<ContextRealityModelState> {
+    return this.getRealityModels();
   }
 
   /** @internal */
@@ -516,7 +529,7 @@ export abstract class DisplayStyleState extends ElementState implements DisplayS
    * @param mapLayerIndex the [[MapLayerIndex]] of the map layer to change the credentials of.
    * @public
    */
-  public changeMapLayerCredentials(mapLayerIndex: MapLayerIndex, userName?: string, password?: string,) {
+  public changeMapLayerCredentials(mapLayerIndex: MapLayerIndex, userName?: string, password?: string) {
     const layers = this.getMapLayers(mapLayerIndex.isOverlay);
     const index = mapLayerIndex.index;
     if (index < 0 || index >= layers.length)

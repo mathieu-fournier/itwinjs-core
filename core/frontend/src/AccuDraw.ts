@@ -303,9 +303,10 @@ export class AccuDraw {
   private _yIsNegative = false; // Last delta.y was negative
   private _xIsExplicit = false; // Sign of delta.x established from user input input, don't allow +/- side flip.
   private _yIsExplicit = false; // Sign of delta.y established from user input input, don't allow +/- side flip.
-  public dontMoveFocus = false; // Disable automatic focus change when user is entering input.
-  /** @internal */
-  public newFocus = ItemField.X_Item; // Item to move focus to (X_Item or Y_Item) for automatic focus change.
+  /** Disable automatic focus change when user is entering input. */
+  public dontMoveFocus = false;
+  /** Set input field to move focus to (X_Item or Y_Item) for automatic focus change. */
+  public newFocus = ItemField.X_Item;
   private readonly _rMatrix = new Matrix3d();
   /** @internal */
   protected _acsPickId?: string;
@@ -359,8 +360,7 @@ export class AccuDraw {
   public get isEnabled(): boolean { return (this.currentState > CurrentState.NotEnabled); }
   public get isInactive(): boolean { return (CurrentState.Inactive === this.currentState); }
   public get isDeactivated(): boolean { return (CurrentState.Deactivated === this.currentState); }
-  /** @internal */
-  protected setNewFocus(index: ItemField) { this.newFocus = index; }
+
   /** Get the current lock state for the supplied input field */
   public getFieldLock(index: ItemField): boolean { return this._fieldLocked[index]; }
   /** @internal */
@@ -879,7 +879,7 @@ export class AccuDraw {
     IModelApp.toolAdmin.setAdjustedDataPoint(ev);
   }
 
-  /** @internal */
+  /** Emulate a mouse click at the specified location in the supplied view by sending button down/up events. */
   public async sendDataPoint(pt: Point3d, viewport: ScreenViewport): Promise<void> {
     const ev = new BeButtonEvent({ point: pt, rawPoint: pt, viewPoint: viewport.worldToView(pt), viewport, inputSource: InputSource.Mouse, isDown: true });
 
@@ -1583,7 +1583,7 @@ export class AccuDraw {
     this.flags.rotationNeedsUpdate = true;
     this.flags.fixedOrg = false;
 
-    this.setNewFocus(ItemField.X_Item);
+    this.newFocus = ItemField.X_Item;
     this.unlockAllFields();
 
     if (this.rotationMode !== this.flags.baseRotation)
@@ -3307,6 +3307,11 @@ export class AccuDrawHintBuilder {
     return true;
   }
 
+  /** Adjust the location of the last data button. If dynamics are enabled on this event, [[InteractiveTool.onDynamicFrame]] is called with this location. */
+  public setLastPoint(ev: BeButtonEvent): void {
+    IModelApp.toolAdmin.setAdjustedDataPoint(ev);
+  }
+
   /** Create a [[Ray3d]] whose origin is the supplied space point and direction is into the view */
   public static getBoresite(spacePt: Point3d, vp: Viewport, checkAccuDraw: boolean = false, checkACS: boolean = false): Ray3d {
     if (checkAccuDraw && IModelApp.accuDraw.isActive)
@@ -3364,6 +3369,14 @@ export class AccuDrawHintBuilder {
   public static getCurrentRotation(vp: Viewport, checkAccuDraw: boolean, checkACS: boolean, matrix?: Matrix3d): Matrix3d | undefined {
     const current = AccuDraw.getCurrentOrientation(vp, checkAccuDraw, checkACS, matrix);
     return (undefined !== current ? current.inverse() : undefined);
+  }
+
+  /** Return a [[Matrix3d]] from a [[SnapDetail]].
+   * Uses [[SnapDetail.normal]] and [[SnapDetail.primitive]] when available to create the most well defined rotation for the given snap location.
+   */
+  public static getSnapRotation(snap: SnapDetail, matrix?: Matrix3d): Matrix3d | undefined {
+    const out = AccuDraw.getSnapRotation(snap, undefined, matrix);
+    return (undefined !== out ? out.inverse() : undefined);
   }
 
   /** Return a [[Matrix3d]] corresponding to the supplied [[ContextRotationId]].

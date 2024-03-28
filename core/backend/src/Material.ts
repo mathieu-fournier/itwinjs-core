@@ -6,12 +6,13 @@
  * @module Elements
  */
 
-import { Id64String } from "@itwin/core-bentley";
+import { Id64, Id64String } from "@itwin/core-bentley";
 import {
-  BisCodeSpec, Code, CodeScopeProps, CodeSpec, DefinitionElementProps, NormalMapProps, RenderMaterialAssetMapsProps, RenderMaterialProps, RgbFactorProps, TextureMapProps,
+  BisCodeSpec, Code, CodeScopeProps, CodeSpec, DefinitionElementProps, ElementProps, NormalMapProps, RenderMaterialAssetMapsProps, RenderMaterialProps, RgbFactorProps, TextureMapProps,
 } from "@itwin/core-common";
 import { DefinitionElement } from "./Element";
 import { IModelDb } from "./IModelDb";
+import { IModelElementCloneContext } from "./IModelElementCloneContext";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 
@@ -66,7 +67,7 @@ export class RenderMaterialElement extends DefinitionElement {
     this.paletteName = props.paletteName;
     this.description = props.description;
   }
-  /** @internal */
+
   public override toJSON(): RenderMaterialProps {
     const val = super.toJSON() as RenderMaterialProps;
     val.paletteName = this.paletteName;
@@ -79,7 +80,7 @@ export class RenderMaterialElement extends DefinitionElement {
    * @param name The RenderMaterial name
    */
   public static createCode(iModel: IModelDb, scopeModelId: CodeScopeProps, name: string): Code {
-    const codeSpec: CodeSpec = iModel.codeSpecs.getByName(BisCodeSpec.texture);
+    const codeSpec: CodeSpec = iModel.codeSpecs.getByName(BisCodeSpec.renderMaterial);
     return 0 === name.length ? Code.createEmpty() : new Code({ spec: codeSpec.id, scope: scopeModelId, value: name });
   }
   /**
@@ -114,7 +115,7 @@ export class RenderMaterialElement extends DefinitionElement {
       choose(baseProps, "pattern_scalemode");
       choose(baseProps, "pattern_mapping");
       choose(baseProps, "pattern_weight");
-      choose(baseProps, "pattern_useConstantLod");
+      choose(baseProps, "pattern_useconstantlod");
       choose(baseProps, "pattern_constantlod_repetitions");
       choose(baseProps, "pattern_constantlod_offset");
       choose(baseProps, "pattern_constantlod_mindistanceclamp");
@@ -183,6 +184,19 @@ export class RenderMaterialElement extends DefinitionElement {
   public static insert(iModelDb: IModelDb, definitionModelId: Id64String, materialName: string, params: RenderMaterialElementParams): Id64String {
     const renderMaterial = this.create(iModelDb, definitionModelId, materialName, params);
     return iModelDb.elements.insertElement(renderMaterial.toJSON());
+  }
+
+  /** @internal */
+  protected static override onCloned(context: IModelElementCloneContext, sourceProps: ElementProps, targetProps: ElementProps) {
+    super.onCloned(context, sourceProps, targetProps);
+    for (const mapName in sourceProps.jsonProperties?.materialAssets?.renderMaterial?.Map ?? {}) {
+      if (typeof mapName !== "string")
+        continue;
+      const sourceMap = sourceProps.jsonProperties.materialAssets.renderMaterial.Map[mapName];
+      if (!Id64.isValid(sourceMap.TextureId) || sourceMap.TextureId === undefined)
+        continue;
+      targetProps.jsonProperties.materialAssets.renderMaterial.Map[mapName].TextureId = context.findTargetElementId(sourceMap.TextureId ?? Id64.invalid);
+    }
   }
 }
 

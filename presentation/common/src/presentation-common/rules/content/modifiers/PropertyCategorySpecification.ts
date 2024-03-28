@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 /** @packageDocumentation
  * @module PresentationRules
  */
@@ -61,6 +61,9 @@ export interface IdCategoryIdentifier {
 
   /** ID of the category pointed to by this identifier */
   categoryId: string;
+
+  /** Controls whether a class category should be included under the category pointed to by this identifier */
+  createClassCategory?: boolean;
 }
 
 /**

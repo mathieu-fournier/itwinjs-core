@@ -10,11 +10,11 @@
 import "./IModelDb"; // DO NOT REMOVE OR MOVE THIS LINE!
 
 import * as os from "os";
+import "reflect-metadata"; // this has to be before @itwin/object-storage-* and @itwin/cloud-agnostic-core imports because those packages contain decorators that use this polyfill.
 import { IModelJsNative, NativeLibrary } from "@bentley/imodeljs-native";
 import { DependenciesConfig, Types as ExtensionTypes } from "@itwin/cloud-agnostic-core";
 import { AccessToken, assert, BeEvent, DbResult, Guid, GuidString, IModelStatus, Logger, Mutable, ProcessDetector } from "@itwin/core-bentley";
 import { AuthorizationClient, BentleyStatus, IModelError, LocalDirName, SessionProps } from "@itwin/core-common";
-import { TelemetryManager } from "@itwin/core-telemetry";
 import { AzureServerStorageBindings } from "@itwin/object-storage-azure";
 import { ServerStorage } from "@itwin/object-storage-core";
 import { BackendHubAccess } from "./BackendHubAccess";
@@ -35,7 +35,7 @@ import { initializeRpcBackend } from "./RpcBackend";
 import { TileStorage } from "./TileStorage";
 import { BaseSettings, SettingDictionary, SettingsPriority } from "./workspace/Settings";
 import { SettingsSchemas } from "./workspace/SettingsSchemas";
-import { ITwinWorkspace, Workspace, WorkspaceOpts } from "./workspace/Workspace";
+import { Workspace, WorkspaceOpts } from "./workspace/Workspace";
 import { Container } from "inversify";
 import { join, normalize as normalizeDir } from "path";
 
@@ -264,9 +264,6 @@ export class IModelHost {
   /** The AuthorizationClient used to obtain [AccessToken]($bentley)s. */
   public static authorizationClient?: AuthorizationClient;
 
-  /** @alpha */
-  public static readonly telemetry = new TelemetryManager();
-
   public static backendVersion = "";
   private static _profileName: string;
   private static _cacheDir = "";
@@ -361,11 +358,6 @@ export class IModelHost {
     }
   }
 
-  /** @internal */
-  public static flushLog() {
-    return IModelHost.platform.flushLog();
-  }
-
   private static syncNativeLogLevels() {
     this.platform.clearLogLevelCache();
   }
@@ -426,7 +418,7 @@ export class IModelHost {
   private static initializeWorkspace(configuration: IModelHostOptions) {
     const settingAssets = join(KnownLocations.packageAssetsDir, "Settings");
     SettingsSchemas.addDirectory(join(settingAssets, "Schemas"));
-    this._appWorkspace = new ITwinWorkspace(new ApplicationSettings(), configuration.workspace);
+    this._appWorkspace = Workspace.construct(new ApplicationSettings(), configuration.workspace);
 
     // Create the CloudCache for Workspaces. This will fail if another process is already using the same profile.
     try {
@@ -507,7 +499,7 @@ export class IModelHost {
   }
 
   /** This method must be called when an iTwin.js host is shut down. Raises [[onBeforeShutdown]] */
-  public static async shutdown(): Promise<void> {
+  public static async shutdown(this: void): Promise<void> {
     // Note: This method is set as a node listener where `this` is unbound. Call private method to
     // ensure `this` is correct. Don't combine these methods.
     return IModelHost.doShutdown();

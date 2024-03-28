@@ -10,8 +10,7 @@
 import { Geometry } from "../Geometry";
 import { Point3d, Vector3d, XYZ } from "./Point3dVector3d";
 import { Range3d } from "./Range";
-/* eslint-disable @typescript-eslint/naming-convention, no-empty */
-import { XYAndZ } from "./XYZProps";
+import { XAndY, XYAndZ } from "./XYZProps";
 
 class PointsIterator implements Iterator<Point3d>, Iterable<Point3d> {
   private readonly _collection: IndexedXYZCollection;
@@ -306,6 +305,31 @@ export abstract class IndexedXYZCollection {
       result.push(p);
     return result;
   }
+  /** Return the first point, or undefined if the array is empty. */
+  public front(result?: Point3d): Point3d | undefined {
+    if (this.length === 0)
+      return undefined;
+    return this.getPoint3dAtUncheckedPointIndex(0, result);
+  }
+  /** Return the last point, or undefined if the array is empty. */
+  public back(result?: Point3d): Point3d | undefined {
+    if (this.length === 0)
+      return undefined;
+    return this.getPoint3dAtUncheckedPointIndex(this.length - 1, result);
+  }
+  /**
+   * Test whether the indexed points are equal within tolerance.
+   * @param index0 index of first point
+   * @param index1 index of second point
+   * @param tolerance max coordinate difference to be considered equal. For exact test, pass 0. Defaults to `Geometry.smallMetricDistance`.
+   */
+  public almostEqualIndexIndex(index0: number, index1: number, tolerance = Geometry.smallMetricDistance): boolean | undefined {
+    if (index0 < 0 || index0 >= this.length || index1 < 0 || index1 >= this.length)
+      return undefined;
+    return Geometry.isSameCoordinate(this.getXAtUncheckedPointIndex(index0), this.getXAtUncheckedPointIndex(index1), tolerance)
+      && Geometry.isSameCoordinate(this.getYAtUncheckedPointIndex(index0), this.getYAtUncheckedPointIndex(index1), tolerance)
+      && Geometry.isSameCoordinate(this.getZAtUncheckedPointIndex(index0), this.getZAtUncheckedPointIndex(index1), tolerance);
+  }
 }
 /**
  * abstract base class extends IndexedXYZCollection, adding methods to push, peek, and pop, and rewrite.
@@ -323,10 +347,6 @@ export abstract class IndexedReadWriteXYZCollection extends IndexedXYZCollection
    * @param z z coordinate
    */
   public abstract pushXYZ(x?: number, y?: number, z?: number): void;
-  /** extract the final point */
-  public abstract back(result?: Point3d): Point3d | undefined;
-  /** extract the first point */
-  public abstract front(result?: Point3d): Point3d | undefined;
   /** remove the final point. */
   public abstract pop(): void;
   /**  clear all entries */
@@ -334,3 +354,15 @@ export abstract class IndexedReadWriteXYZCollection extends IndexedXYZCollection
   /** reverse the points in place. */
   public abstract reverseInPlace(): void;
 }
+
+/**
+ * Type for use as signature for xyz data of a single linestring appearing in a parameter list.
+ * @public
+ */
+export type LineStringDataVariant = IndexedXYZCollection | XYAndZ[] | XAndY[] | number[][];
+
+/**
+ * Type for use as signature for multiple xyz data of multiple linestrings appearing in a parameter list.
+ * @public
+ */
+export type MultiLineStringDataVariant = LineStringDataVariant | LineStringDataVariant[];

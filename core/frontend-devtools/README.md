@@ -287,7 +287,10 @@ These keysins control the planar masking of reality models.
 * `fdt clear emphasized` - Undo the effects of `fdt emphasize selection` or `fdt emphasize visible`.
 * `fdt isolate selection` - Causes all elements except those currently in the selection set to stop drawing.
 * `fdt clear isolate` - Reverse the effects of `fdt isolate selection`.
-* `fdt test clip style ON|OFF` - Toggles a ClipStyle for the active viewport with hard-coded symbology overrides.
+* `fdt test clip style ON|OFF` - Toggles a ClipStyle for the active viewport with hard-coded symbology overrides
+  * if using ON, can also optionally specify a CutStyleProps to use instead of the hard-coded default
+  * for example, to produce cut plane geometry which is unlit solid orange you can specify the following command:
+    * `fdt test clip style ON {"viewflags":{"renderMode":6,"lighting":false},"appearance":{"rgb":{"r":255,"g":128,"b":0}}}`
 * `fdt tile bounds` - Sets the type of bounding volume decorations that will be displayed for each tile displayed in the view. Accepts at most one argument; if none is specified, it defaults to "volume", unless tile bounds are already displayed, in which it toggles them back off.
   * "none": Don't display bounding volumes.
   * "volume": Bounding box representing the full range of each tile.
@@ -345,6 +348,11 @@ These keysins control the planar masking of reality models.
   * "clear": Clear all clip colors
   * "inside `<color string>` | clear": Set or clear an inside clip color
   * "outside  `<color string>` | clear": Set or clear an outside clip color
+* `fdt clip intersection` - Specify or unspecify an intersection style to be applied to geometry intersecting the defined clip planes. Geometry at this intersection will be colorized with the defined color at the defined width. `<color string>` must be in one of the following forms: "rgb(255,0,0)", "rgba(255,0,0,255)", "rgb(100%,0%,0%)", "hsl(120,50%,50%)", "#rrbbgg", "blanchedAlmond" (see possible values from `ColorByName`; case insensitive). If no argument is specified, the most recently defined intersection style will be applied (or the default style if no style has been defined). Arguments can be:
+  * "off": Turn off intersection style
+  * "default": Apply default intersection style (color: white, width: 1 pixel)
+  * "color `<color string>`": define the color to apply to the intersection style
+  * "width `<number>`": define the number of pixels considered to be intersecting the clip plane
 * `fdt sourceId from elemId` and `fdt elemId from sourceId` - Converts between the Id of an element in the iModel and the corresponding object in the source document from which it originated. Outputs the result to IModelApp.notifications.
   * * `id=`: the source aspect Id or element Id.
   * * `copy=`: (optional) 1 to copy the resultant Id to the system clipboard.

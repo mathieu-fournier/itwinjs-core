@@ -27,22 +27,21 @@ interface HitDetailProps {
 
 function makeHitDetail(vp: ScreenViewport, props?: HitDetailProps): HitDetail {
   const hitPoint = props?.hitPoint ?? [ 0, 0, 0 ];
-  return new HitDetail(
-    Point3d.fromJSON(props?.testPoint ?? hitPoint),
-    vp,
-    HitSource.AccuSnap,
-    Point3d.fromJSON(hitPoint),
-    props?.sourceId ?? "0",
-    HitPriority.Unknown,
-    0,
-    0,
-    props?.subCategoryId,
-    props?.geometryClass,
-    props?.modelId,
-    props?.iModel,
-    undefined,
-    props?.isClassifier
-  );
+  return new HitDetail({
+    testPoint: Point3d.fromJSON(props?.testPoint ?? hitPoint),
+    viewport: vp,
+    hitSource: HitSource.AccuSnap,
+    hitPoint: Point3d.fromJSON(hitPoint),
+    sourceId: props?.sourceId ?? "0",
+    priority: HitPriority.Unknown,
+    distXY: 0,
+    distFraction: 0,
+    subCategoryId: props?.subCategoryId,
+    geometryClass: props?.geometryClass,
+    modelId: props?.modelId,
+    sourceIModel: props?.iModel,
+    isClassifier: props?.isClassifier,
+  });
 }
 
 describe("AccuSnap", () => {
@@ -56,7 +55,7 @@ describe("AccuSnap", () => {
         hitPoint: props.testPoint,
         snapPoint: props.testPoint,
         normal: [0, 1, 0],
-        curve: { lineSegment: [ [0, 0, 0], [1, 0, 0] ] },
+        curve: { lineSegment: [[0, 0, 0], [1, 0, 0]] },
       });
     }
 
@@ -125,14 +124,14 @@ describe("AccuSnap", () => {
         { sourceId: "0x123", modelId: "0x123" },
         (response) => expect(response).to.equal(SnapStatus.NoSnapPossible),
         modes,
-        (vp) => vp.mapLayerFromHit = () => { return {} as any; }
+        (vp) => vp.mapLayerFromHit = () => { return [] as any; },
       );
     });
 
     it("produces expected result with no display transform", async () => {
       await testSnap(
-        { sourceId: "0x123", modelId: "0x456", hitPoint: [ 1, 2, 3 ] },
-        (response) => expectSnapDetail(response, { point: [ 1, 2, 3 ], normal: [ 0, 1, 0 ], curve: [[0, 0, 0], [1, 0, 0]] })
+        { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
+        (response) => expectSnapDetail(response, { point: [1, 2, 3], normal: [0, 1, 0], curve: [[0, 0, 0], [1, 0, 0]] }),
       );
     });
 
@@ -141,15 +140,15 @@ describe("AccuSnap", () => {
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [1, 2, 7], normal: [0, 1, 0], curve: [[0, 0, 4], [1, 0, 4]] }),
         [],
-        (vp) => vp.view.getModelElevation = () => 4
+        (vp) => vp.view.getModelElevation = () => 4,
       );
     });
 
     class Transformer {
-      public constructor(public readonly transform: Transform) { }
+      public constructor(public readonly transform: Transform, public readonly premultiply = false) { }
 
-      public getModelDisplayTransform(): Transform {
-        return this.transform.clone();
+      public getModelDisplayTransform() {
+        return { transform: this.transform, premultiply: this.premultiply };
       }
     }
 
@@ -158,21 +157,21 @@ describe("AccuSnap", () => {
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [0, 2, 4], normal: [0, 1, 0], curve: [[-1, 0, 1], [0, 0, 1]] }),
         [],
-        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createTranslationXYZ(-1, 0, 1))
+        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createTranslationXYZ(-1, 0, 1)),
       );
 
       await testSnap(
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [-1, -2, -3], normal: [0, -1, 0], curve: [[0, 0, 0], [-1, 0, 0]] }),
         [],
-        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createUniformScale(-1)))
+        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createUniformScale(-1))),
       );
 
       await testSnap(
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [2, -1, 3], normal: [1, 0, 0], curve: [[0, 0, 0], [0, -1, 0]] }),
         [],
-        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.Z, Angle.createDegrees(-90))))
+        (vp) => vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.Z, Angle.createDegrees(-90)))),
       );
     });
 
@@ -192,21 +191,21 @@ describe("AccuSnap", () => {
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [0, 2, 4], normal: [0, 1, 0], curve: [[-1, 0, 1], [0, 0, 1]] }),
         [],
-        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createTranslationXYZ(-1, 0, 1))
+        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createTranslationXYZ(-1, 0, 1)),
       );
 
       await testSnap(
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [-1, -2, -3], normal: [0, -1, 0], curve: [[0, 0, 0], [-1, 0, 0]] }),
         [],
-        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createRefs(undefined, Matrix3d.createUniformScale(-1)))
+        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createRefs(undefined, Matrix3d.createUniformScale(-1))),
       );
 
       await testSnap(
         { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
         (response) => expectSnapDetail(response, { point: [2, -1, 3], normal: [1, 0, 0], curve: [[0, 0, 0], [0, -1, 0]] }),
         [],
-        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.Z, Angle.createDegrees(-90))))
+        (vp) => vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.Z, Angle.createDegrees(-90)))),
       );
     });
 
@@ -219,7 +218,7 @@ describe("AccuSnap", () => {
           vp.view.getModelElevation = () => 10;
           vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.Z, Angle.createDegrees(-90))));
           vp.view.displayStyle.scheduleScript = makeElementTransformScript(Transform.createTranslationXYZ(0, 0, -4));
-        }
+        },
       );
     });
 
@@ -231,7 +230,34 @@ describe("AccuSnap", () => {
         (vp) => {
           vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(new Point3d(1, -1, 10), Matrix3d.createIdentity()));
           vp.view.getModelElevation = () => -4;
-        }
+        },
+      );
+    });
+
+    it("post-multiplies display transform by default", async () => {
+      await testSnap(
+        { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
+        (response) => expectSnapDetail(response, { point: [1, 3, 8], normal: [0, 0, -1], curve: [[0, 0, 10], [1, 0, 10]] }),
+        [],
+        (vp) => {
+          vp.view.getModelElevation = () => 10;
+          vp.view.modelDisplayTransformProvider = new Transformer(Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.X, Angle.createDegrees(-90))));
+        },
+      );
+    });
+
+    it("pre-multiplies display transform if specified", async () => {
+      await testSnap(
+        { sourceId: "0x123", modelId: "0x456", hitPoint: [1, 2, 3] },
+        (response) => expectSnapDetail(response, { point: [1, 13, -2], normal: [0, 0, -1], curve: [[0, 10, 0], [1, 10, 0]] }),
+        [],
+        (vp) => {
+          vp.view.getModelElevation = () => 10;
+          vp.view.modelDisplayTransformProvider = new Transformer(
+            Transform.createRefs(undefined, Matrix3d.createRotationAroundAxisIndex(AxisIndex.X, Angle.createDegrees(-90))),
+            true,
+          );
+        },
       );
     });
   });

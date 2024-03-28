@@ -5,7 +5,7 @@
 
 import { assert, expect } from "chai";
 import { restore as sinonRestore, spy as sinonSpy } from "sinon";
-import { AccessToken, Guid, GuidString, Id64, Id64Arg } from "@itwin/core-bentley";
+import { AccessToken, GuidString, Id64, Id64Arg } from "@itwin/core-bentley";
 import { Code, IModel, IModelError, LocalBriefcaseProps, PhysicalElementProps, RequestNewBriefcaseProps } from "@itwin/core-common";
 import { LockState } from "../../BackendHubAccess";
 import { BriefcaseManager } from "../../BriefcaseManager";
@@ -43,14 +43,17 @@ describe("Server-based locks", () => {
 
     const iModelProps = {
       iModelName: "server locks test",
-      iTwinId: Guid.createValue(),
+      iTwinId: HubMock.iTwinId,
       version0: await createVersion0(),
     };
 
-    iModelId = await IModelHost.hubAccess.createNewIModel(iModelProps);
+    iModelId = await HubMock.createNewIModel(iModelProps);
     const args: RequestNewBriefcaseProps = { iTwinId: iModelProps.iTwinId, iModelId };
     briefcase1Props = await BriefcaseManager.downloadBriefcase({ accessToken: "test token", ...args });
     briefcase2Props = await BriefcaseManager.downloadBriefcase({ accessToken: "test token2", ...args });
+  });
+  after(() => {
+    HubMock.shutdown();
   });
 
   const assertSharedLocks = (locks: ServerBasedLocks, ids: Id64Arg) => {
@@ -140,12 +143,14 @@ describe("Server-based locks", () => {
     assertLockCounts(bc1Locks, 4, 1);
     assertLockCounts(bc2Locks, 5, 0);
 
+    const childElJson = childEl.toJSON();
     // if we close and reopen the briefcase, the local locks database should still be intact
     bc1.close();
     bc2.close();
 
     bc1 = await BriefcaseDb.open({ fileName: briefcase1Props.fileName });
     bc2 = await BriefcaseDb.open({ fileName: briefcase2Props.fileName });
+
     bc1Locks = bc1.locks as ServerBasedLocks;
     bc2Locks = bc2.locks as ServerBasedLocks;
 
@@ -175,7 +180,7 @@ describe("Server-based locks", () => {
       classFullName: PhysicalObject.classFullName,
       model: modelId,
       parent: new ElementOwnsChildElements(parentId),
-      category: childEl.category,
+      category: childElJson.category,
       code: Code.createEmpty(),
     };
     assert.throws(() => bc1.elements.insertElement(physicalProps), IModelError, "shared lock"); // insert requires shared lock on model
@@ -183,10 +188,10 @@ describe("Server-based locks", () => {
     const newElId = bc1.elements.insertElement(physicalProps);
     assertExclusiveLocks(bc1Locks, newElId);
 
-    childEl.userLabel = "new user label";
-    assert.throws(() => bc1.elements.updateElement(childEl.toJSON()), "exclusive lock");
+    childElJson.userLabel = "new user label";
+    assert.throws(() => bc1.elements.updateElement(childElJson), "exclusive lock");
     await bc1Locks.acquireLocks({ exclusive: child1 });
-    bc1.elements.updateElement(childEl.toJSON());
+    bc1.elements.updateElement(childElJson);
     bc1.saveChanges();
 
     bc1.elements.deleteElement(child1); // make sure delete now works
@@ -204,7 +209,9 @@ describe("Server-based locks", () => {
     await bc2.pullChanges({ accessToken: accessToken2 });
     await bc2Locks.acquireLocks({ exclusive: child1, shared: child1 });
     const child2El = bc2.elements.getElement<PhysicalElement>(child1);
-    assert.equal(child2El.userLabel, childEl.userLabel);
 
+    assert.equal(child2El.userLabel, childElJson.userLabel);
+    bc1.close();
+    bc2.close();
   });
 });

@@ -7,7 +7,7 @@ import { expect } from "chai";
 import { BSplineCurve3d } from "../../bspline/BSplineCurve";
 import { InterpolationCurve3d, InterpolationCurve3dOptions } from "../../bspline/InterpolationCurve3d";
 import { Arc3d } from "../../curve/Arc3d";
-import { AnyCurve } from "../../curve/CurveChain";
+import { AnyCurve } from "../../curve/CurveTypes";
 import { GeometryQuery } from "../../curve/GeometryQuery";
 import { LineSegment3d } from "../../curve/LineSegment3d";
 import { LineString3d } from "../../curve/LineString3d";
@@ -225,7 +225,7 @@ describe("FrameBuilder", () => {
             select === AxisScaleSelect.Unit,  // and of course unitPerpendicular
             select === AxisScaleSelect.Unit,  // and of course rigid.
             true, // always invertible
-            true // always diagonal
+            true, // always diagonal
           );
           const worldCorners = range.corners();
           worldCorners.push(range.fractionToPoint(0.5, 0.5, 0.5));
@@ -262,7 +262,7 @@ describe("FrameBuilder", () => {
       x0 += 2.0 * a;
 
     }
-    ck.testUndefined(curvesToPlane(LineSegment3d.createXYZXYZ(1, 2, 4, 5, 2, 3)));
+    ck.testDefined(curvesToPlane(LineSegment3d.createXYZXYZ(1, 2, 4, 5, 2, 3)), "test CurvePrimitive input");
     GeometryCoreTestIO.saveGeometry(allGeometry, "FrameBuilder", "NonPlanarCurves");
     expect(ck.getNumErrors()).equals(0);
   });

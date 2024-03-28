@@ -16,7 +16,7 @@ import { RenderMemory } from "../render/RenderMemory";
 import { DecorateContext, SceneContext } from "../ViewContext";
 import { ScreenViewport } from "../Viewport";
 import {
-  DisclosedTileTreeSet, GeometryTileTreeReference, MapLayerFeatureInfo, TileDrawArgs, TileGeometryCollector, TileTree, TileTreeLoadStatus, TileTreeOwner,
+  DisclosedTileTreeSet, GeometryTileTreeReference, MapFeatureInfoOptions, MapLayerFeatureInfo, RenderGraphicTileTreeArgs, TileDrawArgs, TileGeometryCollector, TileTree, TileTreeLoadStatus, TileTreeOwner, tileTreeReferenceFromRenderGraphic,
 } from "./internal";
 
 /** Describes the type of graphics produced by a [[TileTreeReference]].
@@ -48,7 +48,8 @@ export abstract class TileTreeReference /* implements RenderMemory.Consumer */ {
   public abstract get treeOwner(): TileTreeOwner;
 
   /** Force a new tree owner / tile tree to be created for the current tile tree reference
-  /* @internal */
+   * @internal
+   */
   public resetTreeOwner() {}
 
   /** Disclose *all* TileTrees use by this reference. This may include things like map tiles used for draping on terrain.
@@ -73,13 +74,30 @@ export abstract class TileTreeReference /* implements RenderMemory.Consumer */ {
     args.tree.draw(args);
   }
 
-  /** Optionally return a tooltip describing the hit. */
+  /** Return a tooltip describing the hit, or `undefined` if no tooltip can be supplied.
+   * If you override this method, make sure to check that `hit` represents an entity belonging to your tile tree, e.g., by checking `hit.modelId` and `hit.sourceId`.
+   * If you *don't* override this method, override [[canSupplyToolTip]] to return false.
+   * Callers who want to obtain a tooltip should prefer [[getToolTipPromise]].
+   */
   public async getToolTip(_hit: HitDetail): Promise<HTMLElement | string | undefined> { return undefined; }
+
+  /** Return whether this TileTreeReference can supply a tooltip describing the entity represented by the specified hit.
+   * [[getToolTipPromise]] calls [[getToolTip]] if and only if `canSupplyToolTip` returns `true`.
+   * If your tile tree never supplies tooltips, override this to return `false`.
+   */
+  public canSupplyToolTip(_hit: HitDetail): boolean {
+    return true;
+  }
+
+  /** Obtain a tooltip describing the specified `hit`, or `undefined` if this tile tree reference cannot supply a tooltip for the hit. */
+  public getToolTipPromise(hit: HitDetail): Promise<HTMLElement | string | undefined> | undefined {
+    return this.canSupplyToolTip(hit) ? this.getToolTip(hit).catch(() => undefined) : undefined;
+  }
 
   /** Optionally return a MapLayerFeatureInfo object describing the hit.].
    * @alpha
    */
-  public async getMapFeatureInfo(_hit: HitDetail): Promise<MapLayerFeatureInfo[] | undefined>  { return undefined; }
+  public async getMapFeatureInfo(_hit: HitDetail, _options?: MapFeatureInfoOptions): Promise<MapLayerFeatureInfo[] | undefined>  { return undefined; }
 
   /** Optionally add any decorations specific to this reference. For example, map tile trees may add a logo image and/or copyright attributions.
    * @note This is currently only invoked for background maps and TiledGraphicsProviders - others have no decorations, but if they did implement this it would not be called.
@@ -147,11 +165,16 @@ export abstract class TileTreeReference /* implements RenderMemory.Consumer */ {
       appearanceProvider: this.getAppearanceProvider(tree),
       hiddenLineSettings: this.getHiddenLineSettings(tree),
       animationTransformNodeId: this.getAnimationTransformNodeId(tree),
+      groupNodeId: this.getGroupNodeId(tree),
     });
   }
 
   /** @internal */
   protected getAnimationTransformNodeId(_tree: TileTree): number | undefined {
+    return undefined;
+  }
+  /** @internal */
+  protected getGroupNodeId(_tree: TileTree): number | undefined {
     return undefined;
   }
 
@@ -280,5 +303,16 @@ export abstract class TileTreeReference /* implements RenderMemory.Consumer */ {
     }
 
     return this._createGeometryTreeReference();
+  }
+
+  /** Create a [[TileTreeReference]] that displays a pre-defined [[RenderGraphic]].
+   * The reference can be used by a [[TiledGraphicsProvider]] or as a [[DynamicSpatialClassifier]]. For example:
+   * ```ts
+   * [[include:TileTreeReference_createFromRenderGraphic]]
+   *```
+   * @beta
+   */
+  public static createFromRenderGraphic(args: RenderGraphicTileTreeArgs): TileTreeReference {
+    return tileTreeReferenceFromRenderGraphic(args);
   }
 }

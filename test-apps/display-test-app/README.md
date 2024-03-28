@@ -81,8 +81,8 @@ Debugging display-test-app can be accomplished using the following procedures to
 In addition, the configuration allows setting breakpoints in any dependent package that lives within this monorepo (i.e. core-frontend or core-backend).
 
 1. Make sure the backend is built `npm run build:backend`
-1. Run `npm run start:webserver`
-    * Launches the react-scripts dev server, providing hot-module reloading of the frontend
+1. Run `npm run start:webserver` (`npm run start:mobile` for Android and iOS)
+    * Launches the vite dev server, providing hot-module reloading of the frontend
 1. Launch the VSCode "display-test-app (electron)" or "display-test-app (chrome)" depending on which app type
 
 A more advanced debug experience will give you more quick turn around time for both backend and frontend changes:
@@ -90,7 +90,7 @@ A more advanced debug experience will give you more quick turn around time for b
 1. Initialize the backend build using `npm run build:backend -- --watch` in one terminal
     * The `--watch` command allows the Typescript compiler watch all of the source files and any time they change will automatically re-run the compilation
     * One caveat is you will have to restart the debugger (#3) each time you make a change. Note this is different from the frontend experience that live reloads the browser with the updated code, the backend doesn't support that currently.
-1. Run `npm run start:webserver` in a separate terminal
+1. Run `npm run start:webserver` in a separate terminal (`nmp run start:mobile` for Android and iOS)
     * Note: if the webserver and backend are run in the same terminal it will be hard to parse the output and attribute it to each one. This is why we recommend two different terminals instead of a single script to handle both.
 1. Launch the VSCode "display-test-app (electron)" or "display-test-app (chrome)" depending on which app type
 
@@ -210,15 +210,21 @@ You can use these environment variables to alter the default behavior of various
 * IMJS_IGNORE_CACHE
   * If defined, causes a locally cached copy of a a remote iModel to be deleted, forcing the iModel to always be downloaded.
 * IMJS_DEBUG_URL
-  * If defined on iOS, the URL used to open the frontend. (This is used in conjunction with `npm run start:webserver` and is the URL to the debug web server running on the developer's computer.)
+  * If defined on mobile, the URL used to open the frontend. (This is used in conjunction with `npm run start:mobile` and is the URL to the debug web server running on the developer's computer.)
 * IMJS_EXIT_AFTER_MODEL_OPENED
   * If defined on iOS, the app will exit after successfully opening an iModel. This is used for automated testing with the iOS Simulator.
 * IMJS_NO_ELECTRON_AUTH
   * If defined, the authorization client will not be initialized for the electron app, to work around a current bug that causes it to produce constant exceptions when attempting to obtain an access token.
-* IMJS_USE_FRONTEND_TILES
-  * If defined, the @itwin/frontend-tiles package will be used to obtain tile trees for spatial views, served over localhost.
+* IMJS_FRONTEND_TILES_URL_TEMPLATE
+  * If defined, specifies the url for @itwin/frontend-tiles to obtain tile trees for spatial views, served over localhost.
+  * The string can include special tokens: `{iModel.key}`, `{iModel.filename}`, and `{iModel.extension}`.
+  * These will get replaced by the value of iModel.key, just the filename of that (no path or extension), or just the extension (including .), correspondingly.
+    * e.g.: <http://localhost:8080{iModel.key}-tiles/3dft/> or <http://localhost:8080/MshX/{iModel.filename}{iModel.extension}/>
+  * Note that the contents of iModel.key will be different on different OSes.
 * IMJS_GPU_MEMORY_LIMIT
   * If defined, specifies the GpuMemoryLimit with which to initialize TileAdmin (none, relaxed, default, aggressive; or a specific number of bytes).
+* IMJS_NO_IMDL_WORKER
+  * If defined, decoding of iMdl content is performed in the main thread instead of in a web worker. This makes debugging easier.
 
 ## Key-ins
 
@@ -272,13 +278,21 @@ display-test-app has access to all key-ins defined in the `@itwin/core-frontend`
   * `background=`: Preserve background color when drawing as a raster image.
 * `dta aspect skew decorator` *apply=0|1* - Toggle a decorator that draws a simple bspline curve based on the project extents, for testing the effect of aspect ratio skew on the curve stroke tolerance. Use in conjunction with `fdt aspect skew` to adjust the skew. If `apply` is 0, then the skew will have no effect on the curve's level of detail; otherwise a higher aspect ratio skew should produce higher-resolution curve graphics.
 * `dta drape terrain` - Start a tool that demonstrates draping a linestring to either a reality mesh model or background map with terrain applied. The model is first selected and subsequent points define the linestring.
+* `dta classify` - Start a tool that demonstrates how to use dynamically-created geometry to classify a reality model. First select the reality model to classify, then enter data points to place spheres as classifiers, and finally right-click to apply the classification. Options:
+  * `radius=number` - sphere radius.
+  * `volume=0|1` - 1 to produce a volume classifier, 0 for a planar classifier.
+  * `inside=0|1|2|3|4` - SpatialClassifierInsideDisplay.
+  * `outside=0|1|2` - SpatialClassifierOutsideDisplay.
 * `dta classifyclip selected` *inside* - Color code elements from the current selection set based on their containment with the current view clip. Inside - Green, Outside - Red, Overlap - Blue. Specify optional inside arg to only determine inside or outside, not overlap. Disable clip in the view settings to select elements outside clip, use clip tool panel EDIT button to redisplay clip decoration after processing selection. Use key-in again without a clip or selection set to clear the color override.
 * `dta grid settings` - Change the grid settings for the selected viewport.
   * `spacing=number` Specify x and y grid reference line spacing in meters.
   * `ratio=number` Specify y spacing as current x * ratio.
   * `gridsPerRef=number` Specify number of grid lines to display per reference line.
   * `orientation=0|1|2|3|4` Value for GridOrientationType.
-* `dta model transform` - Apply a display transform to all models currently displayed in the selected viewport. Origin is specified like `x=1 y=2 z=3`; pitch and roll as `p=45 r=90` in degrees. Any argument can be omitted. Omitting all arguments clears the display transform. Snapping intentionally does not take the display transform into account.
+* `dta model transform` - Apply a display transform to all models currently displayed in the selected viewport. Origin is specified like `x=1 y=2 z=3`; pitch and roll as `p=45 r=90` in degrees; `s=0.5` specifies a uniform scale of 0.5. `b=1` indicates the transform should be pre-multiplied with the models' base transforms. Any argument can be omitted. Omitting all arguments clears the display transform. Snapping intentionally does not take the display transform into account.
+* `dta model transform clear` - remove any display transforms previously applied to the currently-viewed models by `dta model transform`.
+* `dta model transform disable` - remove all display transforms previously applied to any models by `dta model transform`.
+* `dta model clip` - apply the view's current clip to the currently-viewed set of models as a ModelClipGroup, and remove the view clip. If the view has no clip defined, this removes the currently-viewed models from any ModelClipGroup to which they might belong.
 * `dta viewport sync viewportIds` - Synchronize the contents of two or more viewports, specifying them by integer Id displayed in their title bars, or "all" to apply to all open viewports. Omit the Ids to disconnect previously synchronized viewports.
 * `dta frustum sync *viewportId1* *viewportId2*` - Like `dta viewport sync but synchronizes only the frusta of the viewports.
 * `dta gen tile *modelId=<modelId>* *contentId=<contentId>*` - Trigger a request to obtain tile content for the specified tile. This is chiefly useful for breaking in the debugger during that process to diagnose issues.
@@ -287,6 +301,7 @@ display-test-app has access to all key-ins defined in the `@itwin/core-frontend`
   * `tolerance=number` The log10 of the desired chord tolerance in meters. Defaults to -2 (1 centimeter).
 * `dta reality model settings` - Open a dialog in which settings controlling the display of reality models within the currently-selected viewport can be edited. Currently, it always edits the settings for the first reality model it can find. It produces an error if no reality models are found.
 * `dta clip element geometry` - Starts a tool that clips the view based on the geometry of the selected element(s).
+* `dta record tilesize [on|off|toggle]` - When turned on, begins recording the encoded size of every subsequently requested iMdl tile's content. When turned off, copies the tile sizes in CSV format to the clipboard. See TileSizeRecorder.ts for details. If no argument is supplied, it defaults to `toggle`.
 
 ## Editing
 

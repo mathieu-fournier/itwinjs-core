@@ -114,6 +114,7 @@ class ModelChangeMonitor {
     };
 
     this._removals.push(briefcase.txns.onCommitted.addListener(maybeProcess));
+    this._removals.push(briefcase.txns.onReplayedExternalTxns.addListener(maybeProcess));
     this._removals.push(briefcase.txns.onAfterUndoRedo.addListener(maybeProcess));
     this._removals.push(briefcase.txns.onChangesPulled.addListener(maybeProcess));
   }
@@ -202,7 +203,7 @@ class ModelChangeMonitor {
  * Specialized tools are free to ignore these settings.
  * @see [[BriefcaseConnection.editorToolSettings]] to query or modify the current settings for a briefcase.
  * @see [CreateElementTool]($editor-frontend) for an example of a tool that uses these settings.
- * @alpha
+ * @beta
  */
 export class BriefcaseEditorToolSettings {
   private _category?: Id64String;
@@ -233,7 +234,7 @@ export class BriefcaseEditorToolSettings {
   /** The [Model]($backend) into which new elements should be inserted by default.
    * Specialized tools are free to ignore this setting and instead use their own logic to select an appropriate model.
    * @see [[onModelChanged]] to be notified when this property is modified.
-   * @see [CreateElementTool.targetModel]($editor-frontend) for an example of a tool that uses this setting.
+   * @see [CreateElementTool.targetModelId]($editor-frontend) for an example of a tool that uses this setting.
    */
   public get model(): Id64String | undefined {
     return this._model;
@@ -255,7 +256,7 @@ export class BriefcaseConnection extends IModelConnection {
   protected _isClosed?: boolean;
   private readonly _modelsMonitor: ModelChangeMonitor;
   /** Default settings that can be used to control the behavior of [[Tool]]s that modify this briefcase.
-   * @alpha
+   * @beta
    */
   public readonly editorToolSettings = new BriefcaseEditorToolSettings();
 

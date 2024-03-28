@@ -9,9 +9,9 @@ import * as sinon from "sinon";
 import { DbResult, Guid, GuidString, Id64, Id64String, Logger, OpenMode, ProcessDetector, using } from "@itwin/core-bentley";
 import {
   AxisAlignedBox3d, BisCodeSpec, BriefcaseIdValue, ChangesetIdWithIndex, Code, CodeScopeSpec, CodeSpec, ColorByName, ColorDef, DefinitionElementProps,
-  DisplayStyleProps, DisplayStyleSettings, DisplayStyleSettingsProps, EcefLocation, EntityMetaData, EntityProps, FilePropertyProps,
+  DisplayStyleProps, DisplayStyleSettings, DisplayStyleSettingsProps, EcefLocation, ElementProps, EntityMetaData, EntityProps, FilePropertyProps,
   FontMap, FontType, GeoCoordinatesRequestProps, GeoCoordStatus, GeographicCRS, GeographicCRSProps, GeometricElementProps, GeometryParams, GeometryStreamBuilder,
-  ImageSourceFormat, IModel, IModelCoordinatesRequestProps, IModelError, IModelStatus, MapImageryProps, PhysicalElementProps,
+  ImageSourceFormat, IModel, IModelCoordinatesRequestProps, IModelError, IModelStatus, LightLocationProps, MapImageryProps, PhysicalElementProps,
   PointWithStatus, PrimitiveTypeCode, RelatedElement, RenderMode, SchemaState, SpatialViewDefinitionProps, SubCategoryAppearance, SubjectProps, TextureMapping,
   TextureMapProps, TextureMapUnits, ViewDefinitionProps, ViewFlagProps, ViewFlags,
 } from "@itwin/core-common";
@@ -28,13 +28,13 @@ import {
   Model, PhysicalElement, PhysicalModel, PhysicalObject, PhysicalPartition, RenderMaterialElement, RenderMaterialElementParams, SnapshotDb, SpatialCategory, SqliteStatement,
   SqliteValue, SqliteValueType, StandaloneDb, SubCategory, Subject, Texture, ViewDefinition,
 } from "../../core-backend";
-import { BriefcaseDb } from "../../IModelDb";
+import { BriefcaseDb, SnapshotDbOpenArgs } from "../../IModelDb";
 import { HubMock } from "../../HubMock";
 import { KnownTestLocations } from "../KnownTestLocations";
 import { IModelTestUtils } from "../IModelTestUtils";
 import { DisableNativeAssertions } from "../TestUtils";
 import { samplePngTexture } from "../imageData";
-
+import { performance } from "perf_hooks";
 // spell-checker: disable
 
 async function getIModelError<T>(promise: Promise<T>): Promise<IModelError | undefined> {
@@ -104,7 +104,7 @@ describe("iModel", () => {
 
     // make sure we can construct a new element even if we haven't loaded its metadata (will be loaded in ctor)
     assert.isUndefined(imodel1.classMetaDataRegistry.find("biscore:lightlocation"));
-    const e1 = new LightLocation({ category: "0x11", classFullName: "BisCore.LightLocation", model: "0x01", code: Code.createEmpty() }, imodel1);
+    const e1 = imodel1.constructEntity<LightLocation, LightLocationProps>({ category: "0x11", classFullName: "BisCore:LightLocation", model: "0x01", code: Code.createEmpty() });
     assert.isDefined(e1);
     assert.isDefined(imodel1.classMetaDataRegistry.find("biscore:lightlocation")); // should have been loaded in ctor
   });
@@ -803,10 +803,12 @@ describe("iModel", () => {
   });
 
   it("should be able to query for ViewDefinitionProps", () => {
+    // eslint-disable-next-line deprecation/deprecation
     const viewDefinitionProps: ViewDefinitionProps[] = imodel2.views.queryViewDefinitionProps(); // query for all ViewDefinitions
     assert.isAtLeast(viewDefinitionProps.length, 3);
     assert.isTrue(viewDefinitionProps[0].classFullName.includes("ViewDefinition"));
     assert.isFalse(viewDefinitionProps[1].isPrivate);
+    // eslint-disable-next-line deprecation/deprecation
     const spatialViewDefinitionProps = imodel2.views.queryViewDefinitionProps("BisCore.SpatialViewDefinition") as SpatialViewDefinitionProps[]; // limit query to SpatialViewDefinitions
     assert.isAtLeast(spatialViewDefinitionProps.length, 3);
     assert.exists(spatialViewDefinitionProps[2].modelSelectorId);
@@ -815,6 +817,7 @@ describe("iModel", () => {
   it("should iterate ViewDefinitions", () => {
     // imodel2 contains 3 SpatialViewDefinitions and no other views.
     let numViews = 0;
+    // eslint-disable-next-line deprecation/deprecation
     let result = imodel2.views.iterateViews(IModelDb.Views.defaultQueryParams, (_view: ViewDefinition) => {
       ++numViews;
       return true;
@@ -825,6 +828,7 @@ describe("iModel", () => {
 
     // Query specifically for spatial views
     numViews = 0;
+    // eslint-disable-next-line deprecation/deprecation
     result = imodel2.views.iterateViews({ from: "BisCore.SpatialViewDefinition" }, (view: ViewDefinition) => {
       if (view.isSpatialView())
         ++numViews;
@@ -836,6 +840,7 @@ describe("iModel", () => {
 
     // Query specifically for 2d views
     numViews = 0;
+    // eslint-disable-next-line deprecation/deprecation
     result = imodel2.views.iterateViews({ from: "BisCore.ViewDefinition2d" }, (_view: ViewDefinition) => {
       ++numViews;
       return true;
@@ -846,6 +851,7 @@ describe("iModel", () => {
 
     // Terminate iteration on first view
     numViews = 0;
+    // eslint-disable-next-line deprecation/deprecation
     result = imodel2.views.iterateViews(IModelDb.Views.defaultQueryParams, (_view: ViewDefinition) => {
       ++numViews;
       return false;
@@ -1049,6 +1055,7 @@ describe("iModel", () => {
 
   it("read view thumbnail", () => {
     const viewId = "0x24";
+    // eslint-disable-next-line deprecation/deprecation
     const thumbnail = imodel5.views.getThumbnail(viewId);
     assert.exists(thumbnail);
     if (!thumbnail)
@@ -1063,8 +1070,10 @@ describe("iModel", () => {
     thumbnail.format = "png";
     thumbnail.image = new Uint8Array(200);
     thumbnail.image.fill(12);
+    // eslint-disable-next-line deprecation/deprecation
     const stat = imodel5.views.saveThumbnail(viewId, thumbnail);
     assert.equal(stat, 0, "save thumbnail");
+    // eslint-disable-next-line deprecation/deprecation
     const thumbnail2 = imodel5.views.getThumbnail(viewId);
     assert.exists(thumbnail2);
     if (!thumbnail2)
@@ -2158,20 +2167,22 @@ describe("iModel", () => {
     iModel3.close();
   });
 
-  it("should be able to open checkpoints", async () => {
+  it("should be able to open checkpoints for RPC", async () => {
     const changeset: ChangesetIdWithIndex = { id: "fakeChangeSetId", index: 10 };
     const iTwinId = "fakeIModelId";
     const iModelId = "fakeIModelId";
     const cloudContainer = { accessToken: "sas" };
-    const fakeSnapshotDb: any = {
+    let isOpen = false;
+    const fakeSnapshotDb: any =
+    {
       cloudContainer,
       isReadonly: () => true,
-      isOpen: () => false,
+      isOpen: () => isOpen,
       getIModelId: () => iModelId,
       getITwinId: () => iTwinId,
       getCurrentChangeset: () => changeset,
       setIModelDb: () => { },
-      closeIModel: () => { },
+      closeFile: () => { },
     };
 
     const errorLogStub = sinon.stub(Logger, "logError").callsFake(() => { });
@@ -2196,8 +2207,8 @@ describe("iModel", () => {
     sinon.stub(IModelDb.prototype, "initializeIModelDb" as any);
 
     const accessToken = "token";
-    const checkpoint = await SnapshotDb.openCheckpointV2({ accessToken, iTwinId, iModelId, changeset });
-
+    const checkpoint = await SnapshotDb.openCheckpointFromRpc({ accessToken, iTwinId, iModelId, changeset });
+    isOpen = true;
     expect(openDgnDbStub.calledOnce).to.be.true;
     expect(openDgnDbStub.firstCall.firstArg.path).to.equal("fakeDb");
 
@@ -2210,7 +2221,7 @@ describe("iModel", () => {
 
     errorLogStub.resetHistory();
     expect(cloudContainer.accessToken).equal("sas");
-    await checkpoint.refreshContainerSas(accessToken);
+    await checkpoint.refreshContainerForRpc(accessToken);
     expect(cloudContainer.accessToken).equal("testSAS");
 
     assert.equal(errorLogStub.callCount, 1);
@@ -2223,7 +2234,7 @@ describe("iModel", () => {
     queryStub.callsFake(async () => {
       throw new Error("no checkpoint");
     });
-    await expect(checkpoint.refreshContainerSas(accessToken)).to.eventually.be.rejectedWith("no checkpoint");
+    await expect(checkpoint.refreshContainerForRpc(accessToken)).to.eventually.be.rejectedWith("no checkpoint");
 
     checkpoint.close();
   });
@@ -2234,14 +2245,14 @@ describe("iModel", () => {
     sinon.stub(IModelHost.hubAccess, "queryV2Checkpoint").callsFake(async () => undefined);
 
     const accessToken = "token";
-    const error = await getIModelError(SnapshotDb.openCheckpointV2({ accessToken, iTwinId: Guid.createValue(), iModelId: Guid.createValue(), changeset: IModelTestUtils.generateChangeSetId() }));
+    const error = await getIModelError(SnapshotDb.openCheckpointFromRpc({ accessToken, iTwinId: Guid.createValue(), iModelId: Guid.createValue(), changeset: IModelTestUtils.generateChangeSetId() }));
     expectIModelError(IModelStatus.NotFound, error);
   });
 
   it("attempting to re-attach a non-checkpoint snapshot should be a no-op", async () => {
     process.env.CHECKPOINT_CACHE_DIR = "/foo/";
     const accessToken = "token";
-    await imodel1.refreshContainerSas(accessToken);
+    await imodel1.refreshContainerForRpc(accessToken);
   });
 
   function hasClassView(db: IModelDb, name: string): boolean {
@@ -2251,6 +2262,36 @@ describe("iModel", () => {
       return false;
     }
   }
+
+  it("Check busyTimeout option", () => {
+    const standaloneFile = IModelTestUtils.prepareOutputFile("IModel", "StandaloneReadWrite.bim");
+    const tryOpen = (fileName: string, options?: SnapshotDbOpenArgs) => {
+      const start = performance.now();
+      let didThrow = false;
+      try {
+        StandaloneDb.openFile(fileName, OpenMode.ReadWrite, options);
+      } catch (e: any) {
+        assert.strictEqual(e.errorNumber, DbResult.BE_SQLITE_BUSY, "Expect error 'Db is busy'");
+        didThrow = true;
+      }
+      assert.isTrue(didThrow);
+      return performance.now() - start;
+    };
+    const seconds = (s: number) => s * 1000;
+
+    const db = StandaloneDb.createEmpty(standaloneFile, { rootSubject: { name: "Standalone" } });
+    db.saveChanges();
+    // lock db so another connection cannot write to it.
+    db.saveFileProperty({ name: "test", namespace: "test" }, "");
+
+    assert.isAtMost(tryOpen(standaloneFile, { busyTimeout: seconds(0) }), seconds(1), "open should fail with busy error instantly");
+    assert.isAtLeast(tryOpen(standaloneFile, { busyTimeout: seconds(1) }), seconds(1), "open should fail with atleast 1 sec delay due to retry");
+    assert.isAtLeast(tryOpen(standaloneFile, { busyTimeout: seconds(2) }), seconds(2), "open should fail with atleast 2 sec delay due to retry");
+    assert.isAtLeast(tryOpen(standaloneFile, { busyTimeout: seconds(3) }), seconds(3), "open should fail with atleast 3 sec delay due to retry");
+
+    db.abandonChanges();
+    db.close();
+  });
 
   it("Standalone iModel properties", () => {
     const standaloneRootSubjectName = "Standalone";
@@ -2771,5 +2812,56 @@ describe("iModel", () => {
     assert.equal(subject4.description, "Description4"); // should not have changed
     assert.isUndefined(subject4.federationGuid); // should not have changed
 
+  });
+
+  it('should allow untrimmed codes when using "exact" codeValueBehavior', () => {
+    const imodelPath = IModelTestUtils.prepareOutputFile("IModel", "codeValueBehavior.bim");
+    const imodel = SnapshotDb.createEmpty(imodelPath, { rootSubject: { name: "codeValueBehaviors" } });
+
+    const getNumberedCodeValAndProps = (n: number) => {
+      const trimmedCodeVal = `CodeValue${n}`;
+      const untrimmedCodeVal = `${trimmedCodeVal}\xa0`;
+      const spec = imodel.codeSpecs.getByName(SpatialCategory.getCodeSpecName()).id;
+      const props: ElementProps = {
+        // the [[Code]] class still (as it always has) trims unicode space, so avoid it
+        code: { spec, scope: IModelDb.dictionaryId, value: untrimmedCodeVal },
+        model: IModelDb.dictionaryId,
+        classFullName: SpatialCategory.classFullName,
+      };
+      return { trimmedCodeVal, untrimmedCodeVal, props };
+    };
+
+    expect(imodel.codeValueBehavior).to.equal("trim-unicode-whitespace");
+
+    const code1 = getNumberedCodeValAndProps(1);
+    const categ1Id = imodel.elements.insertElement(code1.props);
+    const categ1 = imodel.elements.getElementJson({ id: categ1Id });
+    expect(categ1.code.value).to.equal(code1.trimmedCodeVal);
+
+    imodel.codeValueBehavior = "exact";
+    const code2 = getNumberedCodeValAndProps(2);
+    const categ2Id = imodel.elements.insertElement(code2.props);
+    const categ2 = imodel.elements.getElementJson({ id: categ2Id });
+    expect(categ2.code.value).to.equal(code2.untrimmedCodeVal);
+
+    imodel.codeValueBehavior = "trim-unicode-whitespace";
+    const code3 = getNumberedCodeValAndProps(3);
+    const categ3Id = imodel.elements.insertElement(code3.props);
+    const categ3 = imodel.elements.getElement({ id: categ3Id });
+    expect(categ3.code.value).to.equal(code3.trimmedCodeVal);
+
+    imodel.close();
+  });
+
+  it("throws NotFound when attempting to access element props after closing the iModel", () => {
+    const imodelPath = IModelTestUtils.prepareOutputFile("IModel", "accessAfterClose.bim");
+    const imodel = SnapshotDb.createEmpty(imodelPath, { rootSubject: { name: "accessAfterClose" } });
+
+    const elem = imodel.elements.getElement<Subject>(IModel.rootSubjectId);
+    expect(elem.id).to.equal(IModel.rootSubjectId);
+
+    imodel.close();
+
+    expect(() => imodel.elements.getElement<Subject>(IModel.rootSubjectId)).to.throw(IModelError, "Element=0x1", "Not Found");
   });
 });

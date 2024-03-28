@@ -24,6 +24,31 @@ import { UnitSystemKey } from '@itwin/core-quantity';
 export function addFieldHierarchy(rootHierarchies: FieldHierarchy[], hierarchy: FieldHierarchy): void;
 
 // @public
+export class ArrayPropertiesField extends PropertiesField {
+    constructor(category: CategoryDescription, name: string, label: string, description: TypeDescription, itemsField: PropertiesField, isReadonly: boolean, priority: number, properties: Property[], editor?: EditorDescription, renderer?: RendererDescription);
+    // (undocumented)
+    clone(): ArrayPropertiesField;
+    static fromCompressedJSON(json: ArrayPropertiesFieldJSON<Id64String>, classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }, categories: CategoryDescription[]): ArrayPropertiesField;
+    static fromJSON(json: ArrayPropertiesFieldJSON, categories: CategoryDescription[]): ArrayPropertiesField;
+    // (undocumented)
+    isArrayPropertiesField(): this is ArrayPropertiesField;
+    // (undocumented)
+    itemsField: PropertiesField;
+    toCompressedJSON(classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }): ArrayPropertiesFieldJSON<string>;
+    toJSON(): ArrayPropertiesFieldJSON;
+}
+
+// @public
+export interface ArrayPropertiesFieldJSON<TClassInfoJSON = ClassInfo> extends PropertiesFieldJSON<TClassInfoJSON> {
+    // (undocumented)
+    itemsField: PropertiesFieldJSON<TClassInfoJSON>;
+}
+
+// @public
 export interface ArrayTypeDescription extends BaseTypeDescription {
     memberType: TypeDescription;
     valueFormat: PropertyValueFormat.Array;
@@ -108,8 +133,11 @@ export interface BooleanRulesetVariableJSON extends RulesetVariableBaseJSON {
 
 // @public
 export interface CalculatedPropertiesSpecification {
+    categoryId?: string | CategoryIdentifier;
+    editor?: PropertyEditorSpecification;
     label: string;
     priority?: number;
+    renderer?: CustomRendererSpecification;
     value: string;
 }
 
@@ -309,6 +337,7 @@ export class Content {
 
 // @public
 export interface ContentDescriptorRequestOptions<TIModel, TKeySet, TRulesetVariable = RulesetVariable> extends RequestOptionsWithRuleset<TIModel, TRulesetVariable> {
+    contentFlags?: number;
     displayType: string;
     keys: TKeySet;
     selection?: SelectionInfo;
@@ -333,9 +362,13 @@ export enum ContentFlags {
 
 // @alpha (undocumented)
 export class ContentFormatter {
-    constructor(_propertyValueFormatter: ContentPropertyValueFormatter, _unitSystem?: UnitSystemKey | undefined);
+    constructor(_propertyValueFormatter: {
+        formatPropertyValue: (field: Field, value: Value, unitSystem?: UnitSystemKey) => Promise<DisplayValue>;
+    }, _unitSystem?: UnitSystemKey | undefined);
     // (undocumented)
     formatContent(content: Content): Promise<Content>;
+    // (undocumented)
+    formatContentItems(items: Item[], descriptor: Descriptor): Promise<Item[]>;
 }
 
 // @public
@@ -384,15 +417,7 @@ export interface ContentModifiersList {
 export class ContentPropertyValueFormatter {
     constructor(_koqValueFormatter: KoqPropertyValueFormatter);
     // (undocumented)
-    formatArrayValue(type: ArrayTypeDescription, value: Value): DisplayValue[];
-    // (undocumented)
-    formatPrimitiveValue(type: PrimitiveTypeDescription, value: Value): string;
-    // (undocumented)
     formatPropertyValue(field: Field, value: Value, unitSystem?: UnitSystemKey): Promise<DisplayValue>;
-    // (undocumented)
-    formatStructValue(type: StructTypeDescription, value: Value): DisplayValuesMap;
-    // (undocumented)
-    formatValue(type: TypeDescription, value: Value): DisplayValue;
 }
 
 // @public
@@ -466,11 +491,7 @@ export type ContentUpdateInfo = typeof UPDATE_FULL;
 export function createFieldHierarchies(fields: Field[], ignoreCategories?: Boolean): FieldHierarchy[];
 
 // @public
-export type CustomizationRule = InstanceLabelOverride | CheckBoxRule | // eslint-disable-line deprecation/deprecation
-GroupingRule | ImageIdOverride | // eslint-disable-line deprecation/deprecation
-LabelOverride | // eslint-disable-line deprecation/deprecation
-SortingRule | StyleOverride | // eslint-disable-line deprecation/deprecation
-ExtendedDataRule | NodeArtifactsRule;
+export type CustomizationRule = InstanceLabelOverride | CheckBoxRule | GroupingRule | ImageIdOverride | LabelOverride | SortingRule | StyleOverride | ExtendedDataRule | NodeArtifactsRule;
 
 // @public
 export interface CustomNodeSpecification extends ChildNodeSpecificationBase {
@@ -531,10 +552,14 @@ export class Descriptor implements DescriptorSource {
     // @deprecated
     filterExpression?: string;
     static fromJSON(json: DescriptorJSON | undefined): Descriptor | undefined;
+    // @beta
+    getFieldByDescriptor(fieldDescriptor: FieldDescriptor, recurse?: boolean): Field | undefined;
     getFieldByName(name: string, recurse?: boolean): Field | undefined;
     readonly inputKeysHash?: string;
     // @beta
     instanceFilter?: InstanceFilterDefinition;
+    // @beta
+    readonly ruleset?: Ruleset;
     readonly selectClasses: SelectClassInfo[];
     readonly selectionInfo?: SelectionInfo;
     sortDirection?: SortDirection;
@@ -568,6 +593,8 @@ export interface DescriptorJSON {
     inputKeysHash: string;
     // @beta (undocumented)
     instanceFilter?: InstanceFilterDefinition;
+    // @beta (undocumented)
+    ruleset?: Ruleset;
     // (undocumented)
     selectClasses: SelectClassInfoJSON<Id64String>[];
     // (undocumented)
@@ -610,6 +637,8 @@ export interface DescriptorSource {
     readonly inputKeysHash?: string;
     // @beta
     instanceFilter?: InstanceFilterDefinition;
+    // @beta
+    readonly ruleset?: Ruleset;
     readonly selectClasses: SelectClassInfo[];
     readonly selectionInfo?: SelectionInfo;
     readonly sortDirection?: SortDirection;
@@ -827,6 +856,8 @@ export interface ECValueBinding extends BasePresentationQueryBinding {
     value: any;
     // (undocumented)
     valueType: string;
+    // (undocumented)
+    valueTypeExtended?: string;
 }
 
 // @alpha (undocumented)
@@ -837,6 +868,8 @@ export interface ECValueSetBinding extends BasePresentationQueryBinding {
     value: any[];
     // (undocumented)
     valueType: string;
+    // (undocumented)
+    valueTypeExtended?: string;
 }
 
 // @public
@@ -903,8 +936,8 @@ export interface ElementPropertiesPropertyItemBase extends ElementPropertiesItem
 // @public
 export type ElementPropertiesPropertyValueType = "primitive" | "array" | "struct";
 
-// @public
-export type ElementPropertiesRequestOptions<TIModel> = SingleElementPropertiesRequestOptions<TIModel> | MultiElementPropertiesRequestOptions<TIModel>;
+// @public @deprecated
+export type ElementPropertiesRequestOptions<TIModel, TParsedContent = ElementProperties> = SingleElementPropertiesRequestOptions<TIModel> | MultiElementPropertiesRequestOptions<TIModel, TParsedContent>;
 
 // @public
 export interface ElementPropertiesStructArrayPropertyItem extends ElementPropertiesArrayPropertyItemBase {
@@ -967,13 +1000,15 @@ export class Field {
     isPropertiesField(): this is PropertiesField;
     isReadonly: boolean;
     label: string;
+    // @beta
+    matchesDescriptor(descriptor: FieldDescriptor): boolean;
     name: string;
     get parent(): NestedContentField | undefined;
     priority: number;
     rebuildParentship(parentField?: NestedContentField): void;
     renderer?: RendererDescription;
     resetParentship(): void;
-    toCompressedJSON(classesMap: {
+    toCompressedJSON(_classesMap: {
         [id: string]: CompressedClassInfoJSON;
     }): FieldJSON<string>;
     toJSON(): FieldJSON;
@@ -1013,7 +1048,7 @@ export interface FieldHierarchy {
 }
 
 // @public
-export type FieldJSON<TClassInfoJSON = ClassInfoJSON> = BaseFieldJSON | PropertiesFieldJSON<TClassInfoJSON> | NestedContentFieldJSON<TClassInfoJSON>;
+export type FieldJSON<TClassInfoJSON = ClassInfoJSON> = BaseFieldJSON | PropertiesFieldJSON<TClassInfoJSON> | ArrayPropertiesFieldJSON<TClassInfoJSON> | StructPropertiesFieldJSON<TClassInfoJSON> | NestedContentFieldJSON<TClassInfoJSON>;
 
 // @public
 export interface FilterByInstancePathsHierarchyRequestOptions<TIModel, TRulesetVariable = RulesetVariable> extends RequestOptionsWithRuleset<TIModel, TRulesetVariable> {
@@ -1039,6 +1074,15 @@ export interface FormatOptions {
     // (undocumented)
     unitSystem?: UnitSystemKey;
 }
+
+// @public
+export interface FormatsMap {
+    // (undocumented)
+    [phenomenon: string]: UnitSystemFormat | UnitSystemFormat[];
+}
+
+// @internal (undocumented)
+export const getFieldByDescriptor: (fields: Field[], fieldDescriptor: FieldDescriptor, recurse?: boolean) => Field | undefined;
 
 // @internal (undocumented)
 export const getFieldByName: (fields: Field[], name: string | undefined, recurse?: boolean) => Field | undefined;
@@ -1234,6 +1278,7 @@ export interface IdBinding extends BasePresentationQueryBinding {
 // @public
 export interface IdCategoryIdentifier {
     categoryId: string;
+    createClassCategory?: boolean;
     type: "Id";
 }
 
@@ -1446,7 +1491,7 @@ export interface IntsRulesetVariableJSON extends RulesetVariableBaseJSON {
 export function isComputeSelectionRequestOptions<TIModel>(options: ComputeSelectionRequestOptions<TIModel> | SelectionScopeRequestOptions<TIModel>): options is ComputeSelectionRequestOptions<TIModel>;
 
 // @internal
-export function isSingleElementPropertiesRequestOptions<TIModel>(options: ElementPropertiesRequestOptions<TIModel>): options is SingleElementPropertiesRequestOptions<TIModel>;
+export function isSingleElementPropertiesRequestOptions<TIModel, TParsedContent = any>(options: SingleElementPropertiesRequestOptions<TIModel> | MultiElementPropertiesRequestOptions<TIModel, TParsedContent>): options is SingleElementPropertiesRequestOptions<TIModel>;
 
 // @public
 export class Item {
@@ -1464,6 +1509,10 @@ export class Item {
     inputKeys?: InstanceKey[];
     isFieldMerged(fieldName: string): boolean;
     label: LabelDefinition;
+    // @internal
+    static listFromJSON(json: ItemJSON[] | string): Item[];
+    // @internal
+    static listReviver(key: string, value: any): any;
     mergedFieldNames: string[];
     primaryKeys: InstanceKey[];
     // @internal
@@ -1550,7 +1599,7 @@ export interface KindOfQuantityInfo {
 
 // @alpha (undocumented)
 export class KoqPropertyValueFormatter {
-    constructor(_schemaContext: SchemaContext);
+    constructor(_schemaContext: SchemaContext, defaultFormats?: FormatsMap);
     // (undocumented)
     format(value: number, options: FormatOptions): Promise<string | undefined>;
     // (undocumented)
@@ -1649,11 +1698,21 @@ export class LocalizationHelper {
     // (undocumented)
     getLocalizedContent(content: Content): Content;
     // (undocumented)
+    getLocalizedContentDescriptor(descriptor: Descriptor): Descriptor;
+    // (undocumented)
+    getLocalizedContentItems(items: Item[]): Item[];
+    // (undocumented)
+    getLocalizedDisplayValueGroup(group: DisplayValueGroup): DisplayValueGroup;
+    // (undocumented)
     getLocalizedElementProperties(elem: ElementProperties): ElementProperties;
     // (undocumented)
     getLocalizedLabelDefinition(labelDefinition: LabelDefinition): LabelDefinition;
     // (undocumented)
     getLocalizedLabelDefinitions(labelDefinitions: LabelDefinition[]): LabelDefinition[];
+    // (undocumented)
+    getLocalizedNode(node: Node_2): Node_2;
+    // (undocumented)
+    getLocalizedNodePathElement(npe: NodePathElement): NodePathElement;
     // (undocumented)
     getLocalizedNodes(nodes: Node_2[]): Node_2[];
     // (undocumented)
@@ -1667,7 +1726,10 @@ export interface LocalizationHelperProps {
 }
 
 // @public
-export interface MultiElementPropertiesRequestOptions<TIModel> extends RequestOptions<TIModel> {
+export interface MultiElementPropertiesRequestOptions<TIModel, TParsedContent = ElementProperties> extends RequestOptions<TIModel> {
+    batchSize?: number;
+    // @beta
+    contentParser?: (descriptor: Descriptor, item: Item) => TParsedContent;
     elementClasses?: string[];
 }
 
@@ -1759,6 +1821,9 @@ export class NestedContentField extends Field {
     rebuildParentship(parentField?: NestedContentField): void;
     relationshipMeaning: RelationshipMeaning;
     resetParentship(): void;
+    toCompressedJSON(classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }): NestedContentFieldJSON<string>;
     toJSON(): NestedContentFieldJSON;
 }
 
@@ -2256,7 +2321,14 @@ export class PropertiesField extends Field {
     }, categories: CategoryDescription[]): PropertiesField | undefined;
     static fromJSON(json: PropertiesFieldJSON | undefined, categories: CategoryDescription[]): PropertiesField | undefined;
     getFieldDescriptor(): FieldDescriptor;
+    isArrayPropertiesField(): this is ArrayPropertiesField;
+    isStructPropertiesField(): this is StructPropertiesField;
+    // @beta
+    matchesDescriptor(descriptor: FieldDescriptor): boolean;
     properties: Property[];
+    toCompressedJSON(classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }): PropertiesFieldJSON<string>;
     toJSON(): PropertiesFieldJSON;
 }
 
@@ -2516,6 +2588,7 @@ export interface RelatedClassInfo {
     relationshipInfo: ClassInfo;
     sourceClassInfo: ClassInfo;
     targetClassInfo: ClassInfo;
+    targetInstanceIds?: Id64String[];
 }
 
 // @public (undocumented)
@@ -2548,6 +2621,8 @@ export interface RelatedClassInfoJSON<TClassInfoJSON = ClassInfoJSON> {
     sourceClassInfo: TClassInfoJSON;
     // (undocumented)
     targetClassInfo: TClassInfoJSON;
+    // (undocumented)
+    targetInstanceIds?: Id64String[];
 }
 
 // @public
@@ -2567,6 +2642,19 @@ export namespace RelatedClassInfoWithOptionalRelationship {
 export type RelatedClassInfoWithOptionalRelationshipJSON<TClassInfoJSON = ClassInfoJSON> = PartialBy<RelatedClassInfoJSON<TClassInfoJSON>, "relationshipInfo" | "isForwardRelationship" | "isPolymorphicRelationship">;
 
 // @public
+export interface RelatedInstanceByPathSpecification extends RelatedInstanceSpecificationBase {
+    relationshipPath: RelationshipPathSpecification;
+}
+
+// @public
+export interface RelatedInstanceByTargetInstancesSpecification extends RelatedInstanceSpecificationBase {
+    targetInstances: {
+        class: SingleSchemaClassSpecification;
+        instanceIds: Id64String[];
+    };
+}
+
+// @public
 export interface RelatedInstanceNodesSpecification extends ChildNodeSpecificationBase, DefaultGroupingPropertiesContainer {
     instanceFilter?: string;
     relationshipPaths: RepeatableRelationshipPathSpecification[];
@@ -2574,10 +2662,12 @@ export interface RelatedInstanceNodesSpecification extends ChildNodeSpecificatio
 }
 
 // @public
-export interface RelatedInstanceSpecification {
+export type RelatedInstanceSpecification = RelatedInstanceByPathSpecification | RelatedInstanceByTargetInstancesSpecification;
+
+// @public
+export interface RelatedInstanceSpecificationBase {
     alias: string;
     isRequired?: boolean;
-    relationshipPath: RelationshipPathSpecification;
 }
 
 // @public
@@ -2729,7 +2819,7 @@ export class RpcRequestsHandler {
     getPagedNodes(options: Paged<HierarchyRequestOptions<IModelRpcProps, NodeKey, RulesetVariableJSON>> & ClientDiagnosticsAttribute): Promise<PagedResponse<NodeJSON>>;
     // (undocumented)
     getSelectionScopes(options: SelectionScopeRequestOptions<IModelRpcProps> & ClientDiagnosticsAttribute): Promise<SelectionScope[]>;
-    request<TResult, TOptions extends (RequestOptions<IModelRpcProps> & ClientDiagnosticsAttribute), TArg = any>(func: (token: IModelRpcProps, options: PresentationRpcRequestOptions<TOptions>, ...args: TArg[]) => PresentationRpcResponse<TResult>, options: TOptions, ...additionalOptions: TArg[]): Promise<TResult>;
+    request<TResult, TOptions extends RequestOptions<IModelRpcProps> & ClientDiagnosticsAttribute, TArg = any>(func: (token: IModelRpcProps, options: PresentationRpcRequestOptions<TOptions>, ...args: TArg[]) => PresentationRpcResponse<TResult>, options: TOptions, ...additionalOptions: TArg[]): Promise<TResult>;
     readonly timeout: number;
 }
 
@@ -3062,6 +3152,31 @@ export interface StructFieldMemberDescription {
 }
 
 // @public
+export class StructPropertiesField extends PropertiesField {
+    constructor(category: CategoryDescription, name: string, label: string, description: TypeDescription, memberFields: PropertiesField[], isReadonly: boolean, priority: number, properties: Property[], editor?: EditorDescription, renderer?: RendererDescription);
+    // (undocumented)
+    clone(): StructPropertiesField;
+    static fromCompressedJSON(json: StructPropertiesFieldJSON<Id64String>, classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }, categories: CategoryDescription[]): StructPropertiesField;
+    static fromJSON(json: StructPropertiesFieldJSON, categories: CategoryDescription[]): StructPropertiesField;
+    // (undocumented)
+    isStructPropertiesField(): this is StructPropertiesField;
+    // (undocumented)
+    memberFields: PropertiesField[];
+    toCompressedJSON(classesMap: {
+        [id: string]: CompressedClassInfoJSON;
+    }): StructPropertiesFieldJSON<string>;
+    toJSON(): StructPropertiesFieldJSON;
+}
+
+// @public
+export interface StructPropertiesFieldJSON<TClassInfoJSON = ClassInfo> extends PropertiesFieldJSON<TClassInfoJSON> {
+    // (undocumented)
+    memberFields: PropertiesFieldJSON<TClassInfoJSON>[];
+}
+
+// @public
 export interface StructTypeDescription extends BaseTypeDescription {
     members: StructFieldMemberDescription[];
     valueFormat: PropertyValueFormat.Struct;
@@ -3103,6 +3218,14 @@ export function traverseFieldHierarchy(hierarchy: FieldHierarchy, cb: (h: FieldH
 
 // @public
 export type TypeDescription = PrimitiveTypeDescription | ArrayTypeDescription | StructTypeDescription;
+
+// @public
+export interface UnitSystemFormat {
+    // (undocumented)
+    format: FormatProps;
+    // (undocumented)
+    unitSystems: UnitSystemKey[];
+}
 
 // @internal (undocumented)
 export interface UnsetRulesetVariableParams extends CommonIpcParams {

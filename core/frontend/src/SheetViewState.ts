@@ -29,7 +29,7 @@ import { DecorateContext, SceneContext } from "./ViewContext";
 import { IModelApp } from "./IModelApp";
 import { CoordSystem } from "./CoordSystem";
 import { OffScreenViewport, Viewport } from "./Viewport";
-import { AttachToViewportArgs, ViewState, ViewState2d } from "./ViewState";
+import { AttachToViewportArgs, ComputeDisplayTransformArgs, ViewState, ViewState2d } from "./ViewState";
 import { DrawingViewState } from "./DrawingViewState";
 import { createDefaultViewFlagOverrides, DisclosedTileTreeSet, TileGraphicType } from "./tile/internal";
 import { imageBufferToPngDataUrl, openImageDataUrlInNewWindow } from "./common/ImageUtil";
@@ -132,6 +132,8 @@ interface ViewAttachmentInfo extends ViewAttachmentProps {
 class ViewAttachmentsInfo {
   private _attachments: Id64Array | ViewAttachmentInfo[];
 
+  public get attachments() { return this._attachments; }
+
   private constructor(attachments: Id64Array | ViewAttachmentInfo[]) {
     this._attachments = attachments;
   }
@@ -162,9 +164,20 @@ class ViewAttachmentsInfo {
     return this.isLoaded ? this._props.map((x) => x.id!) : [...this._ids];
   }
 
-  public clone(): ViewAttachmentsInfo {
-    // No reason to clone the array.
-    return new ViewAttachmentsInfo(this._attachments);
+  public clone(iModel: IModelConnection): ViewAttachmentsInfo {
+    let attachments = this._attachments;
+    if (this.isLoaded) {
+      // Need to clone the attached ViewStates.
+      attachments = attachments.map((attachment) => {
+        assert(typeof attachment !== "string");
+        return {
+          ...attachment,
+          attachedView: attachment.attachedView.clone(iModel),
+        };
+      });
+    }
+
+    return new ViewAttachmentsInfo(attachments);
   }
 
   public preload(options: HydrateViewStateRequestProps) {
@@ -312,6 +325,10 @@ class ViewAttachments {
     for (const attachment of this._attachments)
       attachment.addToScene(context);
   }
+
+  public findById(attachmentId: Id64String): Attachment | undefined {
+    return this._attachments.find((attachment: Attachment) => attachment.viewAttachmentProps.id === attachmentId);
+  }
 }
 
 /** A view of a [SheetModel]($backend).
@@ -360,7 +377,17 @@ export class SheetViewState extends ViewState2d {
 
   /** Strictly for testing. @internal */
   public get viewAttachmentProps(): Array<Readonly<ViewAttachmentProps>> {
-    return this._attachmentsInfo.viewAttachmentProps;
+    return this._attachmentsInfo.viewAttachmentProps.map((x) => {
+      return {
+        ...x,
+        attachedView: undefined,
+      };
+    });
+  }
+
+  /** Strictly for testing. @internal */
+  public get viewAttachmentInfos(): Id64Array | Array<{ attachedView: ViewState }> {
+    return this._attachmentsInfo.attachments;
   }
 
   /** Strictly for testing. @internal */
@@ -378,7 +405,7 @@ export class SheetViewState extends ViewState2d {
     if (categories instanceof SheetViewState) {
       // we are coming from clone...
       this.sheetSize = categories.sheetSize.clone();
-      this._attachmentsInfo = categories._attachmentsInfo.clone();
+      this._attachmentsInfo = categories._attachmentsInfo.clone(iModel);
       this._viewedExtents = categories._viewedExtents.clone();
     } else {
       this.sheetSize = Point2d.create(sheetProps.width, sheetProps.height);
@@ -407,9 +434,7 @@ export class SheetViewState extends ViewState2d {
     return extents;
   }
 
-  /** Disclose *all* TileTrees currently in use by this view. This set may include trees not reported by [[forEachTileTreeRef]] - e.g., those used by view attachments, map-draped terrain, etc.
-   * @internal override
-   */
+  /** Overrides [[ViewState.discloseTileTrees]] to include tile trees associated with [ViewAttachment]($backend)s displayed on this sheet. */
   public override discloseTileTrees(trees: DisclosedTileTreeSet): void {
     super.discloseTileTrees(trees);
     if (this._attachments)
@@ -492,14 +517,14 @@ export class SheetViewState extends ViewState2d {
     assert(undefined === this._attachments);
   }
 
-  /** @internal */
+  /** See [[ViewState.attachToViewport]]. */
   public override attachToViewport(args: AttachToViewportArgs): void {
     super.attachToViewport(args);
     assert(undefined === this._attachments);
     this._attachments = this._attachmentsInfo.createAttachments(this);
   }
 
-  /** @internal */
+  /** See [[ViewState.detachFromViewport]]. */
   public override detachFromViewport(): void {
     super.detachFromViewport();
     this._attachments = dispose(this._attachments);
@@ -533,6 +558,18 @@ export class SheetViewState extends ViewState2d {
     if (0 >= size.x || 0 >= size.y)
       return super.computeFitRange();
     return new Range3d(0, 0, -1, size.x, size.y, 1);
+  }
+
+  /** @internal */
+  public override getAttachmentViewport(id: Id64String): Viewport | undefined {
+    return this._attachments?.findById(id)?.viewport;
+  }
+
+  /** @internal */
+  public override computeDisplayTransform(args: ComputeDisplayTransformArgs): Transform | undefined {
+    // ###TODO check if the attached view has a display transform...
+    const attachment = undefined !== args.viewAttachmentId ? this._attachments?.findById(args.viewAttachmentId) : undefined;
+    return attachment && attachment instanceof OrthographicAttachment ? attachment.toSheet.clone() : undefined;
   }
 }
 
@@ -788,6 +825,7 @@ class OrthographicAttachment {
 
     // Extract scene graphics and insert into on-screen scene context.
     const options = {
+      viewAttachmentId: this._props.id,
       clipVolume: this._clipVolume,
       hline: this._hiddenLineSettings,
       frustum: {
@@ -842,6 +880,10 @@ class OrthographicAttachment {
 
   public collectStatistics(_stats: RenderMemory.Statistics): void {
     // Handled by discloseTileTrees()
+  }
+
+  public get toSheet(): Transform {
+    return this._toSheet;
   }
 }
 

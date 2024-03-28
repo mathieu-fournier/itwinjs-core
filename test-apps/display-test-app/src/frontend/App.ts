@@ -2,10 +2,10 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-
+import "@bentley/icons-generic-webfont/dist/bentley-icons-generic-webfont.css";
 import { GuidString, ProcessDetector } from "@itwin/core-bentley";
 import { ElectronApp, ElectronAppOpts } from "@itwin/core-electron/lib/cjs/ElectronFrontend";
-import { BrowserAuthorizationCallbackHandler } from "@itwin/browser-authorization";
+import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
 import { FrontendIModelsAccess } from "@itwin/imodels-access-frontend";
 import { IModelsClient } from "@itwin/imodels-client-management";
 import { FrontendDevTools } from "@itwin/frontend-devtools";
@@ -25,11 +25,13 @@ import { dtaChannel, DtaIpcInterface } from "../common/DtaIpcInterface";
 import { DtaRpcInterface } from "../common/DtaRpcInterface";
 import { ToggleAspectRatioSkewDecoratorTool } from "./AspectRatioSkewDecorator";
 import { ApplyModelDisplayScaleTool } from "./DisplayScale";
-import { ApplyModelTransformTool } from "./DisplayTransform";
+import { ApplyModelTransformTool, ClearModelTransformsTool, DisableModelTransformsTool } from "./DisplayTransform";
+import { ApplyModelClipTool } from "./ModelClipTools";
 import { GenerateElementGraphicsTool, GenerateTileContentTool } from "./TileContentTool";
 import { ViewClipByElementGeometryTool } from "./ViewClipByElementGeometryTool";
 import { DrawingAidTestTool } from "./DrawingAidTestTool";
 import { EditingScopeTool, PlaceLineStringTool } from "./EditingTools";
+import { DynamicClassifierTool } from "./DynamicClassifierTool";
 import { FenceClassifySelectedTool } from "./Fence";
 import { RecordFpsTool } from "./FpsMonitor";
 import { FrameStatsTool } from "./FrameStatsTool";
@@ -51,6 +53,7 @@ import { TimePointComparisonTool } from "./TimePointComparison";
 import { UiManager } from "./UiManager";
 import { MarkupTool, ModelClipTool, ZoomToSelectedElementsTool } from "./Viewer";
 import { MacroTool } from "./MacroTools";
+import { RecordTileSizesTool } from "./TileSizeRecorder";
 import { TerrainDrapeTool } from "./TerrainDrapeTool";
 import { SaveImageTool } from "./SaveImageTool";
 import { BingTerrainMeshProvider } from "./BingTerrainProvider";
@@ -59,6 +62,7 @@ import { MapLayersFormats } from "@itwin/map-layers-formats";
 import { OpenRealityModelSettingsTool } from "./RealityModelDisplaySettingsWidget";
 import { ElectronRendererAuthorization } from "@itwin/electron-authorization/lib/cjs/ElectronRenderer";
 import { ITwinLocalization } from "@itwin/core-i18n";
+import { getConfigurationString } from "./DisplayTestApp";
 
 class DisplayTestAppAccuSnap extends AccuSnap {
   private readonly _activeSnaps: SnapMode[] = [SnapMode.NearestKeypoint];
@@ -229,8 +233,8 @@ export class DisplayTestApp {
     const realityDataClientOptions: RealityDataClientOptions = {
       /** API Version. v1 by default */
       // version?: ApiVersion;
-      /** API Url. Used to select environment. Defaults to "https://api.bentley.com/realitydata" */
-      baseUrl: `https://${process.env.IMJS_URL_PREFIX}api.bentley.com/realitydata`,
+      /** API Url. Used to select environment. Defaults to "https://api.bentley.com/reality-management/reality-data" */
+      baseUrl: `https://${process.env.IMJS_URL_PREFIX ?? ""}api.bentley.com`,
     };
     const opts: ElectronAppOpts | LocalHostIpcAppOpts = {
       iModelApp: {
@@ -272,16 +276,23 @@ export class DisplayTestApp {
       // It makes debugging with "pause on caught exceptions" infuriating.
       // ###TODO fix that in the client and remove this
       if (!configuration.noElectronAuth)
-        opts.iModelApp!.authorizationClient = new ElectronRendererAuthorization();
+        opts.iModelApp!.authorizationClient = new ElectronRendererAuthorization({
+          clientId: getConfigurationString("oidcClientId") ?? "native-testId",
+        });
 
       await ElectronApp.startup(opts);
     } else if (ProcessDetector.isMobileAppFrontend) {
       await MobileApp.startup(opts as MobileAppOpts);
     } else {
-      const redirectUri = "http://localhost:3000/signin-callback";
+      const redirectUri = getConfigurationString("oidcRedirectUri") ?? "http://localhost:3000/signin-callback";
       const urlObj = new URL(redirectUri);
       if (urlObj.pathname === window.location.pathname) {
-        await BrowserAuthorizationCallbackHandler.handleSigninCallback(redirectUri);
+        const client = new BrowserAuthorizationClient({
+          clientId: getConfigurationString("oidcClientId") ?? "imodeljs-spa-test",
+          scope: getConfigurationString("oidcScope") ?? "projects:read realitydata:read imodels:read imodels:modify imodelaccess:read",
+          redirectUri,
+        });
+        await client.handleSigninCallback();
       }
 
       const rpcParams: BentleyCloudRpcParams = { info: { title: "ui-test-app", version: "v1.0" }, uriPrefix: configuration.customOrchestratorUri || "http://localhost:3001" };
@@ -296,14 +307,17 @@ export class DisplayTestApp {
     const svtToolNamespace = "SVTTools";
     await IModelApp.localization.registerNamespace(svtToolNamespace);
     [
+      ApplyModelClipTool,
       ApplyModelDisplayScaleTool,
       ApplyModelTransformTool,
       AttachCustomRealityDataTool,
       ChangeGridSettingsTool,
+      ClearModelTransformsTool,
       CloneViewportTool,
       CloseIModelTool,
       CloseWindowTool,
       CreateWindowTool,
+      DisableModelTransformsTool,
       DockWindowTool,
       DrawingAidTestTool,
       EditingScopeTool,
@@ -325,10 +339,12 @@ export class DisplayTestApp {
       OpenRealityModelSettingsTool,
       OutputShadersTool,
       PlaceLineStringTool,
+      DynamicClassifierTool,
       PullChangesTool,
       PushChangesTool,
       PurgeTileTreesTool,
       RecordFpsTool,
+      RecordTileSizesTool,
       RefreshTilesTool,
       ReopenIModelTool,
       ResizeWindowTool,
@@ -359,7 +375,9 @@ export class DisplayTestApp {
     await FrontendDevTools.initialize();
     await HyperModeling.initialize();
     await EditTools.initialize();
-    MapLayersFormats.initialize();
+    await MapLayersFormats.initialize();
+
+    EditTools.registerProjectLocationTools();
   }
 
   public static setActiveSnapModes(snaps: SnapMode[]): void {

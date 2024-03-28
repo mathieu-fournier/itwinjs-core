@@ -1,6 +1,302 @@
 # Change Log - @itwin/core-frontend
 
-This log was last generated on Mon, 22 May 2023 15:34:14 GMT and should not be manually modified.
+This log was last generated on Mon, 25 Mar 2024 22:24:35 GMT and should not be manually modified.
+
+## 4.4.8
+Mon, 25 Mar 2024 22:22:26 GMT
+
+_Version update only_
+
+## 4.4.7
+Fri, 15 Mar 2024 19:15:14 GMT
+
+### Updates
+
+- Disable tile preloading when under memory pressure
+
+## 4.4.6
+Fri, 08 Mar 2024 15:57:11 GMT
+
+_Version update only_
+
+## 4.4.5
+Tue, 05 Mar 2024 20:37:18 GMT
+
+### Updates
+
+- Added an iterator over the entries in a BatchTableProperties.
+
+## 4.4.4
+Fri, 01 Mar 2024 18:21:01 GMT
+
+### Updates
+
+- Change gpuMemoryLimit setting used when undefined
+- Dispose of all viewports when IModelApp.shutdown() is called to clear up WebGL resources, and avoid memory leak
+
+## 4.4.3
+Fri, 23 Feb 2024 21:26:07 GMT
+
+_Version update only_
+
+## 4.4.2
+Fri, 16 Feb 2024 14:22:01 GMT
+
+_Version update only_
+
+## 4.4.1
+Fri, 16 Feb 2024 14:17:48 GMT
+
+_Version update only_
+
+## 4.4.0
+Mon, 12 Feb 2024 18:15:58 GMT
+
+### Updates
+
+- Add SQ_KM to UNIT_DATA
+- Add support to create an EcefLocation class directly from a transformation matrix
+- Added support for recoloring geometry intersecting a clip volume
+- Bump @itwin/object-storage-core
+- Add textures to reality mesh stats
+- Promote APIs required to implement a MapLayerFormat to beta
+- Fix status code when invalid credentials are provided for an ArcGIS service.
+- Fixed an issue preventing tiles published by some specific ArcGIS MapServer to be correctly displayed in the view.
+- Fix Map Feature Info for ArcGIS map services when reprojection is needed.
+- Enable Kerberos authentication for map-layers
+- Custom query parameters can now be configured on map layers objects.
+- Expose `ParticleCollectionBuilder` for extensions
+- Improved ArcGIS feature info coordinates reprojection outside project extent.
+- Improved content type detection for 3D Tiles tilesets.
+- Updated realitydata url to new reality-management API url. Added tests for new url.
+- Add support for glTF 2.0 EXT_mesh_gpu_instancing and fix incorrectly computed glTF bounding boxes.
+- Add support for transparent gradients in thematic display and analysis styles.
+- Added Viewport.onSceneInvalidated event raised when Viewport.invalidateScene is called.
+- Fix SpatialModelState.isRealityModel returning false for reality models that don't store a tileset URL.
+- When assigning to SpatialViewState.modelSelector, notify tile tree references of the change.
+- Enable display of all subcategories for non-scene decorations.
+- Add RealityTileTree.batchTableProperties for accessing per-feature properties from 3D Tiles 1.0 tilesets.
+- Add DisplayStyleState iterator over context reality models.
+- Fix incorrect transparency for text rendered as raster glyphs.
+- Remove maximum depth constraint for reality tile trees.
+- Clone view attachments when cloning a sheet or drawing view.
+
+## 4.3.5
+Mon, 25 Mar 2024 16:54:36 GMT
+
+_Version update only_
+
+## 4.3.4
+Fri, 22 Mar 2024 13:30:31 GMT
+
+### Updates
+
+- Bump @itwin/object-storage-core
+
+## 4.3.3
+Wed, 03 Jan 2024 19:28:38 GMT
+
+### Updates
+
+- Fixed an issue preventing tiles published by some specific ArcGIS MapServer to be correctly displayed in the view.
+
+## 4.3.2
+Thu, 14 Dec 2023 20:23:02 GMT
+
+_Version update only_
+
+## 4.3.1
+Wed, 13 Dec 2023 17:25:55 GMT
+
+_Version update only_
+
+## 4.3.0
+Thu, 07 Dec 2023 17:43:09 GMT
+
+### Updates
+
+- Added support for recoloring geometry intersecting a clip volume
+- Add SQ_KM to UNIT_DATA
+- Promote APIs required to implement a MapLayerFormat to beta
+- Fix status code when invalid credentials are provided for an ArcGIS service.
+- Fix Map Feature Info for ArcGIS map services when reprojection is needed.
+- Custom query parameters can now be configured on map layers objects.
+- Improved ArcGIS feature info coordinates reprojection outside project extent.
+- Improved content type detection for 3D Tiles tilesets.
+- Updated realitydata url to new reality-management API url. Added tests for new url.
+- Add support for transparent gradients in thematic display and analysis styles.
+- Fix SpatialModelState.isRealityModel returning false for reality models that don't store a tileset URL.
+- When assigning to SpatialViewState.modelSelector, notify tile tree references of the change.
+- Enable display of all subcategories for non-scene decorations.
+- Fix incorrect transparency for text rendered as raster glyphs.
+- Remove maximum depth constraint for reality tile trees.
+- Clone view attachments when cloning a sheet or drawing view.
+
+## 4.2.4
+Mon, 20 Nov 2023 16:14:45 GMT
+
+### Updates
+
+- Add SQ_KM to UNIT_DATA
+- Fix Map Feature Info for ArcGIS map services when reprojection is needed.
+
+## 4.2.3
+Mon, 06 Nov 2023 14:01:52 GMT
+
+### Updates
+
+- When assigning to SpatialViewState.modelSelector, notify tile tree references of the change.
+
+## 4.2.2
+Thu, 02 Nov 2023 15:36:20 GMT
+
+### Updates
+
+- Fix status code when invalid credentials are provided for an ArcGIS service.
+- Remove maximum depth constraint for reality tile trees.
+- Clone view attachments when cloning a sheet or drawing view.
+
+## 4.2.1
+Tue, 24 Oct 2023 15:09:13 GMT
+
+_Version update only_
+
+## 4.2.0
+Tue, 17 Oct 2023 15:14:32 GMT
+
+### Updates
+
+- Add ECSqlExpr api
+- Fix failure to preserve name when creating a BlankConnection.
+- remove `require` call preventing pure ESM usage
+- Added parameter to specify pixel tolerance of Viewport.getMapFeatureInfo
+- Fix schedule script symbology issue
+- Fixed ignore material not using default material params
+- IModelConnection.createQueryReader is now public
+- Improved content type detection for 3D Tiles tilesets.
+- Add BriefcaseTxns events raised when applying external txns.
+- Add an option to premultiply a model display transform
+- Allow creation of cross-origin web workers
+
+## 4.1.9
+Tue, 10 Oct 2023 18:48:12 GMT
+
+_Version update only_
+
+## 4.1.8
+Fri, 06 Oct 2023 04:00:18 GMT
+
+_Version update only_
+
+## 4.1.7
+Thu, 28 Sep 2023 21:41:33 GMT
+
+_Version update only_
+
+## 4.1.6
+Tue, 12 Sep 2023 15:38:52 GMT
+
+### Updates
+
+- Allow creation of cross-origin web workers
+
+## 4.1.5
+Fri, 08 Sep 2023 13:37:23 GMT
+
+_Version update only_
+
+## 4.1.4
+Thu, 07 Sep 2023 18:26:02 GMT
+
+_Version update only_
+
+## 4.1.3
+Wed, 30 Aug 2023 15:35:27 GMT
+
+_Version update only_
+
+## 4.1.2
+Wed, 23 Aug 2023 15:25:29 GMT
+
+_Version update only_
+
+## 4.1.1
+Fri, 18 Aug 2023 13:02:53 GMT
+
+_Version update only_
+
+## 4.1.0
+Mon, 14 Aug 2023 14:36:34 GMT
+
+### Updates
+
+- Fix decoding of draco-compressed texture coordinates in glTF.
+- Take into account the aspectRatioSkew of the view inside the window area tool.
+- Fixed world decorations disappearing and asserts
+- Fixed black view caused by certain cases of going back down to one viewport.
+- Fix background map layers failing to blend with an opaque solid base layer.
+- avoid unnecessary preflight requests when loading tiles from cloud cache
+- Fix Viewport.isPixelSelectable following signature change of Viewport.mapLayerFromIds
+- Added support for UniqueValue renderer in ArcGIS feature format
+- Two map-layers instances having different formatId or subLayers set should not share the same tile tree.
+- Improved ArcGIS map-layers validation.
+- Revisited Viewport.getMapFeatureInfo, it now return graphics along with records.
+- Added logging to 'MapLayerImageryProvider.createTileTree' and added missing export in MapLayerSources.
+- Upgrade sinon to 15.0.4
+- Fix gaps in certain reprojected tiles.
+- Promoted TentativeOrAccuSnap to public
+- Ensure element Ids are loaded for RenderTimeline element when schedule scripts are applied on the frontend.
+- Promote many rendering-related APIs.
+- Introduce compact encoding scheme for edges in iMdl tiles.
+- Fix assertion when reading glTF containing a normal map.
+- Add more efficient methods for converting multiple points to and from an iModel's spatial coordinate system.
+- Support decoding point clouds from glTF.
+- Split iMdl tile decoding into two phases: parsing and graphics creation.
+- Decode iMdl tile content in a web worker.
+- Treat non-standard mimeType "image/jpg" as "image/jpeg".
+- Support snapping to elements inside of orthogonal view attachments.
+- ViewCreator3d fits to the extents of the viewed models. SpatialViewState.computeFitRange accepts an optional minimal fit range.
+- add ViewStore apis
+- Switch to ESLint new flat config system
+
+## 4.0.7
+Thu, 10 Aug 2023 13:19:24 GMT
+
+_Version update only_
+
+## 4.0.6
+Mon, 24 Jul 2023 05:07:33 GMT
+
+_Version update only_
+
+## 4.0.5
+Tue, 18 Jul 2023 12:21:56 GMT
+
+_Version update only_
+
+## 4.0.4
+Wed, 12 Jul 2023 15:50:01 GMT
+
+_Version update only_
+
+## 4.0.3
+Mon, 03 Jul 2023 15:28:41 GMT
+
+_Version update only_
+
+## 4.0.2
+Wed, 21 Jun 2023 22:04:43 GMT
+
+_Version update only_
+
+## 4.0.1
+Wed, 21 Jun 2023 20:29:13 GMT
+
+### Updates
+
+- Two map-layers instances having different formatId or subLayers set should not share the same tile tree.
+- Fix gaps in certain reprojected tiles.
+- Ensure element Ids are loaded for RenderTimeline element when schedule scripts are applied on the frontend.
 
 ## 4.0.0
 Mon, 22 May 2023 15:34:14 GMT
@@ -34,6 +330,71 @@ Mon, 22 May 2023 15:34:14 GMT
 - Add an option for ViewCreator3d to make all subcategories visible.
 - add physics-based Atmospheric scattering shader
 - Localize tooltips for view clip decorations.
+
+## 3.8.0
+Fri, 08 Dec 2023 15:23:59 GMT
+
+_Version update only_
+
+## 3.7.17
+Mon, 20 Nov 2023 18:24:23 GMT
+
+_Version update only_
+
+## 3.7.16
+Mon, 16 Oct 2023 12:49:07 GMT
+
+_Version update only_
+
+## 3.7.15
+Tue, 10 Oct 2023 19:58:35 GMT
+
+_Version update only_
+
+## 3.7.14
+Fri, 29 Sep 2023 16:57:16 GMT
+
+_Version update only_
+
+## 3.7.13
+Tue, 08 Aug 2023 19:49:18 GMT
+
+_Version update only_
+
+## 3.7.12
+Thu, 27 Jul 2023 21:50:57 GMT
+
+### Updates
+
+- Fix decoding of draco-compressed texture coordinates in glTF.
+- Fix a failure to read some glTF data with extra padding bytes.
+
+## 3.7.11
+Tue, 11 Jul 2023 17:17:21 GMT
+
+### Updates
+
+- Fix gaps in certain reprojected tiles.
+
+## 3.7.10
+Wed, 05 Jul 2023 13:41:21 GMT
+
+_Version update only_
+
+## 3.7.9
+Tue, 20 Jun 2023 12:51:02 GMT
+
+_Version update only_
+
+## 3.7.8
+Thu, 01 Jun 2023 17:00:39 GMT
+
+_Version update only_
+
+## 3.7.7
+Wed, 24 May 2023 17:27:09 GMT
+
+_Version update only_
 
 ## 3.7.6
 Mon, 15 May 2023 18:23:40 GMT

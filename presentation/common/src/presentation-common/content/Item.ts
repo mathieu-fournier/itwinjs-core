@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 /** @packageDocumentation
  * @module Content
  */
@@ -73,8 +73,16 @@ export class Item {
    * @param mergedFieldNames List of field names whose values are merged (see [Merging values]($docs/presentation/content/Terminology#value-merging))
    * @param extendedData Extended data injected into this content item
    */
-  public constructor(primaryKeys: InstanceKey[], label: string | LabelDefinition, imageId: string, classInfo: ClassInfo | undefined,
-    values: ValuesDictionary<Value>, displayValues: ValuesDictionary<DisplayValue>, mergedFieldNames: string[], extendedData?: { [key: string]: any }) {
+  public constructor(
+    primaryKeys: InstanceKey[],
+    label: string | LabelDefinition,
+    imageId: string,
+    classInfo: ClassInfo | undefined,
+    values: ValuesDictionary<Value>,
+    displayValues: ValuesDictionary<DisplayValue>,
+    mergedFieldNames: string[],
+    extendedData?: { [key: string]: any },
+  ) {
     this.primaryKeys = primaryKeys;
     this.imageId = imageId; // eslint-disable-line deprecation/deprecation
     this.classInfo = classInfo;
@@ -82,7 +90,7 @@ export class Item {
     this.displayValues = displayValues;
     this.mergedFieldNames = mergedFieldNames;
     this.extendedData = extendedData;
-    this.label = (typeof label === "string") ? LabelDefinition.fromLabelString(label) : label;
+    this.label = typeof label === "string" ? LabelDefinition.fromLabelString(label) : label;
   }
 
   /**
@@ -108,10 +116,12 @@ export class Item {
 
   /** Deserialize [[Item]] from JSON */
   public static fromJSON(json: ItemJSON | string | undefined): Item | undefined {
-    if (!json)
+    if (!json) {
       return undefined;
-    if (typeof json === "string")
-      return JSON.parse(json, Item.reviver);
+    }
+    if (typeof json === "string") {
+      return JSON.parse(json, (key, value) => Item.reviver(key, value));
+    }
     const item = Object.create(Item.prototype);
     const { labelDefinition, ...baseJson } = json;
     return Object.assign(item, baseJson, {
@@ -131,5 +141,29 @@ export class Item {
    */
   public static reviver(key: string, value: any): any {
     return key === "" ? Item.fromJSON(value) : value;
+  }
+
+  /**
+   * Deserialize items list from JSON
+   * @param json JSON or JSON serialized to string to deserialize from
+   * @returns Deserialized items list
+   * @internal
+   */
+  public static listFromJSON(json: ItemJSON[] | string): Item[] {
+    if (typeof json === "string") {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      return JSON.parse(json, Item.listReviver);
+    }
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    return json.map(Item.fromJSON).filter((item): item is Item => !!item);
+  }
+
+  /**
+   * Reviver function that can be used as a second argument for
+   * `JSON.parse` method when parsing [[Item]][] objects.
+   * @internal
+   */
+  public static listReviver(key: string, value: any): any {
+    return key === "" ? Item.listFromJSON(value) : value;
   }
 }

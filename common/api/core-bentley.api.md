@@ -277,6 +277,27 @@ export type ComputePriorityFunction<T> = (value: T) => number;
 // @public
 export type Constructor<T> = new (...args: any[]) => T;
 
+// @internal
+export enum DbConflictCause {
+    // (undocumented)
+    Conflict = 3,
+    // (undocumented)
+    Constraint = 4,
+    // (undocumented)
+    Data = 1,
+    // (undocumented)
+    ForeignKey = 5,
+    // (undocumented)
+    NotFound = 2
+}
+
+// @internal
+export enum DbConflictResolution {
+    Abort = 2,
+    Replace = 1,
+    Skip = 0
+}
+
 // @public
 export enum DbOpcode {
     Delete = 9,
@@ -785,6 +806,8 @@ export enum IModelHubStatus {
 // @public
 export enum IModelStatus {
     // (undocumented)
+    Aborted = 65608,
+    // (undocumented)
     AlreadyLoaded = 65537,
     // (undocumented)
     AlreadyOpen = 65538,
@@ -970,10 +993,10 @@ export function isIDisposable(obj: unknown): obj is IDisposable;
 // @public
 export function isInstanceOf<T>(obj: any, constructor: Constructor<T>): boolean;
 
-// @internal
+// @public
 export function isProperSubclassOf<SuperClass extends new (..._: any[]) => any, NonSubClass extends new (..._: any[]) => any, SubClass extends new (..._: any[]) => InstanceType<SuperClass>>(subclass: SubClass | NonSubClass, superclass: SuperClass): subclass is SubClass;
 
-// @internal
+// @public
 export function isSubclassOf<SuperClass extends new (..._: any[]) => any, NonSubClass extends new (..._: any[]) => any, SubClass extends new (..._: any[]) => InstanceType<SuperClass>>(subclass: SuperClass | SubClass | NonSubClass, superclass: SuperClass): subclass is SubClass | SuperClass;
 
 // @public (undocumented)
@@ -1138,6 +1161,10 @@ export type LogFunction = (category: string, message: string, metaData: LoggingM
 
 // @public
 export class Logger {
+    // @internal (undocumented)
+    static get categoryFilter(): {
+        [x: string]: LogLevel;
+    };
     static configureLevels(cfg: LoggerLevelsConfig): void;
     static getLevel(category: string): LogLevel | undefined;
     static getMetaData(metaData?: LoggingMetaData): object;
@@ -1160,6 +1187,8 @@ export class Logger {
     static logWarning(category: string, message: string, metaData?: LoggingMetaData): void;
     // (undocumented)
     protected static _logWarning: LogFunction | undefined;
+    // @internal (undocumented)
+    static get minLevel(): LogLevel | undefined;
     static parseLogLevel(str: string): LogLevel;
     static setLevel(category: string, minLevel: LogLevel): void;
     static setLevelDefault(minLevel: LogLevel): void;
@@ -1520,7 +1549,7 @@ export class SortedArray<T> extends ReadonlySortedArray<T> {
     slice(start?: number, end?: number): SortedArray<T>;
 }
 
-// @public
+// @public @deprecated
 export enum SpanKind {
     // (undocumented)
     CLIENT = 2,
@@ -1541,7 +1570,7 @@ export abstract class StatusCategory {
     // (undocumented)
     abstract error: boolean;
     // (undocumented)
-    static for(error: BentleyError): StatusCategory;
+    static for(error: Error): StatusCategory;
     // (undocumented)
     static handlers: Set<StatusCategoryHandler>;
     // (undocumented)
@@ -1549,7 +1578,7 @@ export abstract class StatusCategory {
 }
 
 // @alpha (undocumented)
-export type StatusCategoryHandler = (error: BentleyError) => StatusCategory | undefined;
+export type StatusCategoryHandler = (error: Error) => StatusCategory | undefined;
 
 // @internal
 export interface StatusCodeWithMessage<ErrorCodeType> {
@@ -1579,9 +1608,11 @@ export abstract class SuccessCategory extends StatusCategory {
     error: boolean;
 }
 
-// @public
+// @public @deprecated
 export class Tracing {
     static enableOpenTelemetry(tracer: Tracer, api: typeof Tracing._openTelemetry): void;
+    // @internal
+    static recordException(e: Error): void;
     static setAttributes(attributes: SpanAttributes): void;
     static withSpan<T>(name: string, fn: () => Promise<T>, options?: SpanOptions, parentContext?: SpanContext): Promise<T>;
 }
@@ -1688,20 +1719,17 @@ export function utf8ToString(utf8: Uint8Array): string | undefined;
 // @internal
 export function utf8ToStringPolyfill(utf8: Uint8Array): string | undefined;
 
-// @internal
+// @public
 export class YieldManager {
     constructor(options?: YieldManagerOptions);
-    // (undocumented)
+    // @internal (undocumented)
     protected actualYield(): Promise<void>;
-    // (undocumented)
     allowYield(): Promise<void>;
-    // (undocumented)
-    options: Readonly<Required<YieldManagerOptions>>;
+    readonly options: Readonly<Required<YieldManagerOptions>>;
 }
 
-// @internal
+// @public
 export interface YieldManagerOptions {
-    // (undocumented)
     iterationsBeforeYield?: number;
 }
 

@@ -12,7 +12,7 @@ import {
 } from "@itwin/core-bentley";
 import {
   Cartographic, DefaultSupportedTypes, GeoCoordStatus, PlanarClipMaskPriority, PlanarClipMaskSettings,
-  RealityDataProvider, RealityDataSourceKey, RealityModelDisplaySettings, SpatialClassifiers, ViewFlagOverrides,
+  RealityDataProvider, RealityDataSourceKey, RealityModelDisplaySettings, ViewFlagOverrides,
 } from "@itwin/core-common";
 import { Angle, Constant, Ellipsoid, Matrix3d, Point3d, Range3d, Ray3d, Transform, TransformProps, Vector3d, XYZ } from "@itwin/core-geometry";
 import { calculateEcefToDbTransformAtLocation } from "../BackgroundMapGeometry";
@@ -30,6 +30,7 @@ import {
   getGcsConverterAvailable, RealityTile, RealityTileLoader, RealityTileParams, RealityTileTree, RealityTileTreeParams, SpatialClassifierTileTreeReference, Tile,
   TileDrawArgs, TileLoadPriority, TileRequest, TileTree, TileTreeOwner, TileTreeReference, TileTreeSupplier,
 } from "./internal";
+import { SpatialClassifiersState } from "../SpatialClassifiersState";
 
 function getUrl(content: any) {
   return content ? (content.url ? content.url : content.uri) : undefined;
@@ -435,7 +436,7 @@ class RealityModelTileLoader extends RealityTileLoader {
   public get doDrapeBackgroundMap(): boolean { return this.tree.doDrapeBackgroundMap; }
   public override get wantDeduplicatedVertices() { return this._deduplicateVertices; }
 
-  public get maxDepth(): number { return 32; }  // Can be removed when element tile selector is working.
+  public get maxDepth(): number { return Number.MAX_SAFE_INTEGER; }
   public get minDepth(): number { return 0; }
   public get priority(): TileLoadPriority { return TileLoadPriority.Context; }
   public override getBatchIdMap(): BatchedTileIdMap | undefined { return this._batchedIdMap; }
@@ -555,7 +556,7 @@ export namespace RealityModelTileTree {
     modelId?: Id64String;
     tilesetToDbTransform?: TransformProps;
     name?: string;
-    classifiers?: SpatialClassifiers;
+    classifiers?: SpatialClassifiersState;
     planarClipMask?: PlanarClipMaskSettings;
     getDisplaySettings(): RealityModelDisplaySettings;
   }
@@ -699,7 +700,7 @@ export namespace RealityModelTileTree {
     iModel: IModelConnection,
     modelId: Id64String,
     tilesetToDb: Transform | undefined,
-    opts?: { deduplicateVertices?: boolean, produceGeometry?: boolean }
+    opts?: { deduplicateVertices?: boolean, produceGeometry?: boolean },
   ): Promise<TileTree | undefined> {
     const rdSource = await RealityDataSource.fromKey(rdSourceKey, iModel.iTwinId);
     // If we can get a valid connection from sourceKey, returns the tile tree
@@ -874,13 +875,36 @@ export class RealityTreeReference extends RealityModelTileTree.Reference {
     super.addToScene(context);
   }
 
-  public override async getToolTip(hit: HitDetail): Promise<HTMLElement | string | undefined> {
+  public override canSupplyToolTip(hit: HitDetail): boolean {
+    const classifier = this._classifier?.activeClassifier?.tileTreeReference;
+    if (classifier && classifier.canSupplyToolTip(hit)) {
+      return true;
+    }
+
     const tree = this.treeOwner.tileTree;
-    if (undefined === tree || hit.iModel !== tree.iModel)
+    return tree instanceof RealityTileTree && hit.iModel === tree.iModel && undefined !== tree.batchTableProperties?.getFeatureProperties(hit.sourceId);
+  }
+
+  public override async getToolTip(hit: HitDetail): Promise<HTMLElement | string | undefined> {
+    const tooltip = this._getToolTip(hit);
+    if (tooltip) {
+      return tooltip;
+    }
+
+    const classifierTree = this._classifier?.activeClassifier?.tileTreeReference;
+    if (classifierTree) {
+      return classifierTree.getToolTip(hit);
+    }
+
+    return undefined;
+  }
+
+  private _getToolTip(hit: HitDetail): HTMLElement | string | undefined {
+    const tree = this.treeOwner.tileTree;
+    if (!(tree instanceof RealityTileTree) || hit.iModel !== tree.iModel)
       return undefined;
 
-    const map = (tree as RealityTileTree).loader.getBatchIdMap();
-    const batch = undefined !== map ? map.getBatchProperties(hit.sourceId) : undefined;
+    const batch = tree.batchTableProperties?.getFeatureProperties(hit.sourceId);
     if (undefined === batch && tree.modelId !== hit.sourceId)
       return undefined;
 

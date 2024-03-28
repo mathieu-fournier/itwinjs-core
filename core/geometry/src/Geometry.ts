@@ -67,7 +67,7 @@ export enum StandardViewIndex {
   /** Negative X to right, Z up */
   Back = 6,
   /** Isometric: view towards origin from (-1,-1,1) */
-  Iso = 7, //
+  Iso = 7,
   /** Right isometric: view towards origin from (1,-1,1) */
   RightIso = 8,
 }
@@ -209,10 +209,22 @@ export type AngleSweepProps =
 /**
 * Interface for method with a clone operation.
 * @public
+* @deprecated in 4.x. Use ICloneable.
 */
 export interface Cloneable<T> {
   /** Required method to return a deep clone. */
   clone(): T | undefined;
+}
+/**
+ * Interface for an object with a clone method.
+ * @public
+ */
+export interface ICloneable<T> {
+  /**
+   * Return a deep clone of the instance.
+   * @param result optional object to populate and return
+   */
+  clone(result?: T): T;
 }
 /** Options used for methods like [[Vector2d.isPerpendicularTo]] and [[Vector3d.isParallelTo]].
  * @public
@@ -351,7 +363,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSameCoordinateXY(
-    x0: number, y0: number, x1: number, y1: number, tolerance: number = Geometry.smallMetricDistance
+    x0: number, y0: number, x1: number, y1: number, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     let d = x1 - x0;
     if (d < 0)
@@ -369,7 +381,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSameCoordinateSquared(
-    x: number, y: number, tolerance: number = Geometry.smallMetricDistance
+    x: number, y: number, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return Math.abs(Math.sqrt(x) - Math.sqrt(y)) <= tolerance;
   }
@@ -378,7 +390,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSamePoint3d(
-    dataA: Point3d, dataB: Point3d, tolerance: number = Geometry.smallMetricDistance
+    dataA: Point3d, dataB: Point3d, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distance(dataB) <= tolerance;
   }
@@ -388,7 +400,7 @@ export class Geometry {
    * * Note that Point3d and Vector3d are both derived from XYZ, so this method tolerates mixed types.
    */
   public static isSameXYZ(
-    dataA: XYZ, dataB: XYZ, tolerance: number = Geometry.smallMetricDistance
+    dataA: XYZ, dataB: XYZ, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distance(dataB) <= tolerance;
   }
@@ -397,7 +409,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSamePoint3dXY(
-    dataA: Point3d, dataB: Point3d, tolerance: number = Geometry.smallMetricDistance
+    dataA: Point3d, dataB: Point3d, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distanceXY(dataB) <= tolerance;
   }
@@ -406,7 +418,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSameVector3d(
-    dataA: Vector3d, dataB: Vector3d, tolerance: number = Geometry.smallMetricDistance
+    dataA: Vector3d, dataB: Vector3d, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distance(dataB) <= tolerance;
   }
@@ -415,7 +427,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSamePoint2d(
-    dataA: Point2d, dataB: Point2d, tolerance: number = Geometry.smallMetricDistance
+    dataA: Point2d, dataB: Point2d, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distance(dataB) <= tolerance;
   }
@@ -424,7 +436,7 @@ export class Geometry {
    * * `Geometry.smallMetricDistance` is used if tolerance is `undefined`.
    */
   public static isSameVector2d(
-    dataA: Vector2d, dataB: Vector2d, tolerance: number = Geometry.smallMetricDistance
+    dataA: Vector2d, dataB: Vector2d, tolerance: number = Geometry.smallMetricDistance,
   ): boolean {
     return dataA.distance(dataB) <= tolerance;
   }
@@ -711,7 +723,7 @@ export class Geometry {
   public static tripleProduct(
     ux: number, uy: number, uz: number,
     vx: number, vy: number, vz: number,
-    wx: number, wy: number, wz: number
+    wx: number, wy: number, wz: number,
   ): number {
     return ux * (vy * wz - vz * wy)
       + uy * (vz * wx - vx * wz)
@@ -722,7 +734,7 @@ export class Geometry {
     xx: number, xy: number, xz: number, xw: number,
     yx: number, yy: number, yz: number, yw: number,
     zx: number, zy: number, zz: number, zw: number,
-    wx: number, wy: number, wz: number, ww: number
+    wx: number, wy: number, wz: number, ww: number,
   ): number {
     return xx * this.tripleProduct(yy, yz, yw, zy, zz, zw, wy, wz, ww)
       - yx * this.tripleProduct(xy, xz, xw, zy, zz, zw, wy, wz, ww)
@@ -739,12 +751,12 @@ export class Geometry {
   public static tripleProductXYW(
     columnA: XAndY, weightA: number,
     columnB: XAndY, weightB: number,
-    columnC: XAndY, weightC: number
+    columnC: XAndY, weightC: number,
   ): number {
     return Geometry.tripleProduct(
       columnA.x, columnB.x, columnC.x,
       columnA.y, columnB.y, columnC.y,
-      weightA, weightB, weightC
+      weightA, weightB, weightC,
     );
   }
   /**
@@ -757,35 +769,47 @@ export class Geometry {
     return Geometry.tripleProduct(
       columnA.x, columnB.x, columnC.x,
       columnA.y, columnB.y, columnC.y,
-      columnA.w, columnB.w, columnC.w
+      columnA.w, columnB.w, columnC.w,
     );
   }
-  /** 2D cross product of vectors with the vectors presented as numbers. */
+  /**
+   * 2D cross product of vectors with the vectors presented as numbers.
+   * * Sign of 2d cross product is positive <=> sweeping from first vector to second vector is ccw orientation.
+   * * Sign of 2d cross product is negative <=> sweeping from first vector to second vector is clockwise orientation.
+   * * 2d cross product is 0 <=> parallel/antiparallel vectors.
+   */
   public static crossProductXYXY(ux: number, uy: number, vx: number, vy: number): number {
     return ux * vy - uy * vx;
   }
   /** 3D cross product of vectors with the vectors presented as numbers. */
   public static crossProductXYZXYZ(
-    ux: number, uy: number, uz: number, vx: number, vy: number, vz: number, result?: Vector3d
+    ux: number, uy: number, uz: number, vx: number, vy: number, vz: number, result?: Vector3d,
   ): Vector3d {
     return Vector3d.create(
       uy * vz - uz * vy,
       uz * vx - ux * vz,
       ux * vy - uy * vx,
-      result
+      result,
     );
   }
   /** Magnitude of 3D cross product of vectors with the vectors presented as numbers. */
   public static crossProductMagnitude(
-    ux: number, uy: number, uz: number, vx: number, vy: number, vz: number
+    ux: number, uy: number, uz: number, vx: number, vy: number, vz: number,
   ): number {
     return Geometry.hypotenuseXYZ(
       uy * vz - uz * vy,
       uz * vx - ux * vz,
-      ux * vy - uy * vx
+      ux * vy - uy * vx,
     );
   }
-  /** 2D dot product of vectors with the vectors presented as numbers. */
+  /**
+   * 2D dot product of vectors with the vectors presented as numbers.
+   * * Sign of dot product is positive <=> vectorA points into the same half-space as vectorB.
+   * * Sign of dot product is negative <=> vectorA points into opposite half-space as vectorB.
+   * * Dot product is 0 <=> perpendicular vectors.
+   * * **Note:** half-space is defined in terms of a vector, by the perpendicular plane at its origin (it splits
+   * the universe into two halves).
+   */
   public static dotProductXYXY(ux: number, uy: number, vx: number, vy: number): number {
     return ux * vx + uy * vy;
   }
@@ -817,7 +841,7 @@ export class Geometry {
    */
   public static curvatureMagnitude(
     ux: number, uy: number, uz: number,
-    vx: number, vy: number, vz: number
+    vx: number, vy: number, vz: number,
   ): number {
     let q = uy * vz - uz * vy;
     let sum = q * q;
@@ -877,6 +901,33 @@ export class Geometry {
    */
   public static interpolate(a: number, f: number, b: number): number {
     return f <= 0.5 ? a + f * (b - a) : b - (1.0 - f) * (b - a);
+  }
+  /**
+   * Interpolate the specified byte of two integers (e.g., colors).
+   * * Extract a single byte from each integer by shifting to the right by `shiftBits`, then masking off the low 8 bits.
+   * * Interpolate the number, truncate to floor, and mask off the low 8 bits.
+   * * Move interpolated byte back into position by shifting to the left by `shiftBits`.
+   * @internal
+   */
+  private static interpolateByte(color0: number, fraction: number, color1: number, shiftBits: number): number {
+    color0 = (color0 >>> shiftBits) & 0xFF;
+    color1 = (color1 >>> shiftBits) & 0xFF;
+    const color = Math.floor(color0 + fraction * (color1 - color0)) & 0xFF;   // in range [0,255]
+    return color << shiftBits;
+  }
+  /**
+   * Interpolate each byte of color0 and color1 as integers.
+   * @param color0 32-bit RGBA color0
+   * @param fraction fractional position. This is clamped to 0..1 to prevent byte values outside their 0..255 range.
+   * @param color1 32-bit RGBA color1
+   */
+  public static interpolateColor(color0: number, fraction: number, color1: number): number {
+    fraction = Geometry.clamp(fraction, 0, 1); // do not allow fractions outside the individual byte ranges
+    const byte0 = this.interpolateByte(color0, fraction, color1, 0); // red
+    const byte1 = this.interpolateByte(color0, fraction, color1, 8); // green
+    const byte2 = this.interpolateByte(color0, fraction, color1, 16); // blue
+    const byte3 = this.interpolateByte(color0, fraction, color1, 24); // alpha
+    return (byte0 | byte1 | byte2 | byte3);
   }
   /**
    * Given an `axisOrder` (e.g. XYZ, YZX, etc) and an `index`, return the `axis` at the given index.
@@ -955,7 +1006,7 @@ export class Geometry {
    * @returns return `numerator/denominator` but if the ratio exceeds `largestResult`, return `undefined`.
    */
   public static conditionalDivideCoordinate(
-    numerator: number, denominator: number, largestResult: number = Geometry.largeCoordinateResult
+    numerator: number, denominator: number, largestResult: number = Geometry.largeCoordinateResult,
   ): number | undefined {
     if (Math.abs(denominator * largestResult) > Math.abs(numerator))
       return numerator / denominator;
@@ -994,9 +1045,10 @@ export class Geometry {
       // (c0,s0) is the closest approach of the line to the circle center (origin)
       const c0 = da2b2 * cosCoff; // -ad/(a^2+b^2)
       const s0 = da2b2 * sinCoff; // -bd/(a^2+b^2)
-      if (criterion <= 0.0) { // nSolution = 1
-        // We observed criterion = -2.22e-16 in a rotated tangent system, therefore for negative criteria near
-        // zero, return the near-tangency; for tiny positive criteria, fall through to return both solutions.
+      if (criterion <= Geometry.smallMetricDistanceSquared) { // nSolution = 1
+        // We observed criterion = -2.22e-16 in a rotated tangent system, and criterion = 4.44e-16 in a
+        // transverse line-arc intersectXYZ near-tangency, therefore for criteria near zero (on either side),
+        // return the (near) tangency; any larger criteria fall through to return both solutions.
         result = [Vector2d.create(c0, s0)];
       } else { // nSolution = 2
         const s = Math.sqrt(criterion * a2b2r); // sqrt(a^2+b^2-d^2)) / (a^2+b^2)
@@ -1009,11 +1061,11 @@ export class Geometry {
     return result;
   }
   /**
-   * For a line `f(x)` where `f(x0) = f0` and `f(x1) = f1`, return the `x` value at which `f(x) = fTarget`
-   * Return `defaultResult` if `(fTarget - f0) / (f1 - f0)` exceeds `Geometry.largeFractionResult`
+   * For a line `f(x)` where `f(x0) = f0` and `f(x1) = f1`, return the `x` value at which `f(x) = fTarget`.
+   * Return `defaultResult` if `(fTarget - f0) / (f1 - f0)` exceeds `Geometry.largeFractionResult`.
    */
   public static inverseInterpolate(
-    x0: number, f0: number, x1: number, f1: number, fTarget: number = 0, defaultResult?: number
+    x0: number, f0: number, x1: number, f1: number, fTarget: number = 0, defaultResult?: number,
   ): number | undefined {
     /**
      * Line equation is "fTarget-f0 = (f1-f0)/(x1-x0) * (x-x0)" or "(fTarget-f0)/(f1-f0) = (x-x0)/(x1-x0)".
@@ -1030,16 +1082,14 @@ export class Geometry {
    * Return `undefined` if `(fTarget - f0) / (f1 - f0)` exceeds `Geometry.largeFractionResult`
    */
   public static inverseInterpolate01(f0: number, f1: number, fTarget: number = 0): number | undefined {
-    /**
-     * Line equation is "fTarget-f0 = (f1-f0)*x" so "x = (fTarget-f0)/(f1-f0)"
-     */
-    return Geometry.conditionalDivideFraction(fTarget - f0, f1 - f0); // x = (fTarget-f0)/(f1-f0)
+    // Line equation is fTarget-f0 = (f1-f0)*x so x = (fTarget-f0)/(f1-f0)
+    return Geometry.conditionalDivideFraction(fTarget - f0, f1 - f0);
   }
   /**
    * Return `true` if `json` is an array with at least `minEntries` entries and all entries are numbers (including
    * those beyond minEntries).
    */
-  public static isNumberArray(json: any, minEntries: number = 0): boolean {
+  public static isNumberArray(json: any, minEntries: number = 0): json is number[] {
     if (Array.isArray(json) && json.length >= minEntries) {
       let entry;
       for (entry of json) {
@@ -1054,7 +1104,7 @@ export class Geometry {
    * Return `true` if `json` is an array of at least `minArrays` arrays with at least `minEntries` entries in
    * each array and all entries are numbers (including those beyond minEntries).
    */
-  public static isArrayOfNumberArray(json: any, minArrays: number, minEntries: number = 0): boolean {
+  public static isArrayOfNumberArray(json: any, minArrays: number, minEntries: number = 0): json is number[][] {
     if (Array.isArray(json) && json.length >= minArrays) {
       let entry;
       for (entry of json)
@@ -1162,7 +1212,7 @@ export class Geometry {
    * Returns `true` if both arrays have the same length and have the same entries (or both are empty arrays).
    */
   public static almostEqualArrays<T>(
-    a: T[] | undefined, b: T[] | undefined, testFunction: (p: T, q: T) => boolean
+    a: T[] | undefined, b: T[] | undefined, testFunction: (p: T, q: T) => boolean,
   ): boolean {
     if (Array.isArray(a) && a.length === 0)
       a = undefined;
@@ -1187,7 +1237,7 @@ export class Geometry {
    */
   public static almostEqualNumberArrays(
     a: number[] | Float64Array | undefined, b: number[] | Float64Array | undefined,
-    testFunction: (p: number, q: number) => boolean
+    testFunction: (p: number, q: number) => boolean,
   ): boolean {
     if (Array.isArray(a) && a.length === 0)
       a = undefined;
@@ -1215,7 +1265,7 @@ export class Geometry {
    * but not equal or if one is defined and the other undefined.
    */
   public static areEqualAllowUndefined<T>(
-    a: T | undefined, b: T | undefined, resultIfBothUndefined: boolean = true
+    a: T | undefined, b: T | undefined, resultIfBothUndefined: boolean = true,
   ): boolean {
     if (a === undefined && b === undefined)
       return resultIfBothUndefined;
@@ -1226,13 +1276,27 @@ export class Geometry {
   /**
    * Clone an array whose members have type `T`, which implements the clone method.
    * * If the clone method returns `undefined`, then `undefined` is forced into the cloned array.
+   * @deprecated in 4.x. Use cloneArray.
    */
+  // eslint-disable-next-line deprecation/deprecation
   public static cloneMembers<T extends Cloneable<T>>(array: T[] | undefined): T[] | undefined {
     if (array === undefined)
       return undefined;
     const clonedArray: T[] = [];
     for (const element of array) {
       clonedArray.push(element.clone()!);
+    }
+    return clonedArray;
+  }
+  /**
+   * Clone an array whose members have the cloneable type `T`.
+   */
+  public static cloneArray<T extends ICloneable<T>>(array: T[] | undefined): T[] | undefined {
+    if (array === undefined)
+      return undefined;
+    const clonedArray: T[] = [];
+    for (const element of array) {
+      clonedArray.push(element.clone());
     }
     return clonedArray;
   }

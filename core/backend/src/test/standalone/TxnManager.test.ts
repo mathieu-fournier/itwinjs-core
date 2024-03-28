@@ -10,6 +10,7 @@ import {
   Code, ColorByName, DomainOptions, EntityIdAndClassId, EntityIdAndClassIdIterable, GeometryStreamBuilder, IModel, IModelError, SubCategoryAppearance, TxnAction, UpgradeOptions,
 } from "@itwin/core-common";
 import {
+  ChangeInstanceKey,
   IModelHost, IModelJsFs, PhysicalModel, setMaxEntitiesPerEvent, SpatialCategory, StandaloneDb, TxnChangedEntities, TxnManager,
 } from "../../core-backend";
 import { IModelTestUtils, TestElementDrivesElement, TestPhysicalObject, TestPhysicalObjectProps } from "../IModelTestUtils";
@@ -18,6 +19,7 @@ import { IModelTestUtils, TestElementDrivesElement, TestPhysicalObject, TestPhys
 
 describe("TxnManager", () => {
   let imodel: StandaloneDb;
+  let roImodel: StandaloneDb;
   let props: TestPhysicalObjectProps;
   let testFileName: string;
 
@@ -29,10 +31,10 @@ describe("TxnManager", () => {
     };
     nativeDb.openIModel(pathname, OpenMode.ReadWrite, upgradeOptions);
     nativeDb.deleteAllTxns();
-    nativeDb.closeIModel();
+    nativeDb.closeFile();
   };
 
-  before(async () => {
+  beforeEach(async () => {
     IModelTestUtils.registerTestBimSchema();
     // make a unique name for the output file so this test can be run in parallel
     testFileName = IModelTestUtils.prepareOutputFile("TxnManager", `${Guid.createValue()}.bim`);
@@ -61,9 +63,11 @@ describe("TxnManager", () => {
 
     imodel.saveChanges("schema change");
     imodel.nativeDb.deleteAllTxns();
+    roImodel = StandaloneDb.openFile(testFileName, OpenMode.Readonly);
   });
 
-  after(() => {
+  afterEach(() => {
+    roImodel.close();
     imodel.close();
     IModelJsFs.removeSync(testFileName);
   });
@@ -123,6 +127,10 @@ describe("TxnManager", () => {
     assert.isFalse(txns.hasUnsavedChanges);
     assert.isTrue(txns.hasPendingTxns);
     assert.isTrue(txns.hasLocalChanges);
+
+    expect(imodel.nativeDb.getCurrentTxnId()).not.equal(roImodel.nativeDb.getCurrentTxnId());
+    roImodel.nativeDb.restartDefaultTxn();
+    expect(imodel.nativeDb.getCurrentTxnId()).equal(roImodel.nativeDb.getCurrentTxnId());
 
     const classId = imodel.nativeDb.classNameToId(props.classFullName);
     assert.isTrue(Id64.isValid(classId));
@@ -532,6 +540,12 @@ describe("TxnManager", () => {
       accum.expectNumValidations(1);
       accum.expectChanges({ inserted: [physicalModelEntity(newModelId)] });
     });
+
+    EventAccumulator.testModels(roImodel, (accum) => {
+      roImodel.nativeDb.restartDefaultTxn();
+      accum.expectChanges({ inserted: [physicalModelEntity(newModelId)] });
+    });
+
     await BeDuration.wait(10); // we rely on updating the lastMod of the newly inserted element, make sure it will be different
 
     // NB: Updates to existing models never produce events. I don't think I want to change that as part of this PR.
@@ -561,6 +575,11 @@ describe("TxnManager", () => {
       accum.expectChanges({ deleted: [physicalModelEntity(newModelId)] });
 
       accum.expectNumApplyChanges(0);
+    });
+
+    EventAccumulator.testModels(roImodel, (accum) => {
+      roImodel.nativeDb.restartDefaultTxn();
+      accum.expectChanges({ deleted: [physicalModelEntity(newModelId)] });
     });
 
     // Undo
@@ -687,6 +706,22 @@ describe("TxnManager", () => {
       imodel.elements.deleteElement(newElemId);
       return true;
     });
+
+    imodel.saveChanges();
+
+    // now test that all the changes we just made are seen by the readonly connection when we call `restartDefaultTxn`
+    let numRoEvents = 0;
+    const guid1 = imodel.models.getModel<PhysicalModel>(modelId).geometryGuid;
+
+    const dropper = roImodel.txns.onModelGeometryChanged.addListener((changes) => {
+      ++numRoEvents;
+      expect(changes.length).to.equal(1);
+      expect(changes[0].id).to.equal(modelId);
+      expect(changes[0].guid).to.equal(guid1);
+    });
+    roImodel.nativeDb.restartDefaultTxn();
+    expect(numRoEvents).equal(4);
+    dropper();
   });
 
   it("dispatches events in batches", async () => {
@@ -811,5 +846,75 @@ describe("TxnManager", () => {
     imodel.txns.reverseSingleTxn();
 
     imodel.nativeDb.setGeometricModelTrackingEnabled(false);
+  });
+  it("get local changes", async () => {
+    const elements = imodel.elements;
+    const txns = imodel.txns;
+
+    const el1 = elements.insertElement(props);
+    elements.insertElement(props);
+
+    // Should not return any changes
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: false })), []);
+
+    // Should return change that are not saved yet
+    const e0: ChangeInstanceKey[] = [
+      {
+        changeType: "inserted",
+        classFullName: "TestBim:TestPhysicalObject",
+        id: "0x40",
+      },
+      {
+        changeType: "inserted",
+        classFullName: "TestBim:TestPhysicalObject",
+        id: "0x3f",
+      },
+    ];
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: true })), e0);
+
+    // Saved changes cause change propagation
+    imodel.saveChanges("2 inserts");
+    const e1: ChangeInstanceKey[] = [
+      {
+        changeType: "inserted",
+        classFullName: "TestBim:TestPhysicalObject",
+        id: "0x40",
+      },
+      {
+        changeType: "inserted",
+        classFullName: "TestBim:TestPhysicalObject",
+        id: "0x3f",
+      },
+      {
+        changeType: "updated",
+        classFullName: "BisCore:PhysicalModel",
+        id: "0x3c",
+      },
+    ];
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: false })), e1);
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: true })), e1);
+
+    // delete the element.
+    elements.deleteElement(el1);
+
+    // Delete element (0x40) should never show up as it was inserted/deleted locally
+    const e3 = [
+      {
+        changeType: "inserted",
+        classFullName: "TestBim:TestPhysicalObject",
+        id: "0x40",
+      },
+      {
+        changeType: "updated",
+        classFullName: "BisCore:PhysicalModel",
+        id: "0x3c",
+      },
+    ];
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: true })), e3);
+
+    // Saved changes
+    imodel.saveChanges("1 deleted");
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: false })), e3);
+    assert.deepEqual(Array.from(txns.queryLocalChanges({ includeUnsavedChanges: true })), e3);
   });
 });

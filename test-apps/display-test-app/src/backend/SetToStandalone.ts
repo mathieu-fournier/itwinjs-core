@@ -54,7 +54,7 @@ function setToStandalone(iModelName: string) {
     nativeDb.deleteAllTxns(); // necessary before resetting briefcaseId
     nativeDb.resetBriefcaseId(BriefcaseIdValue.Unassigned); // standalone iModels should always have BriefcaseId unassigned
     nativeDb.saveChanges(); // save change to briefcaseId
-    nativeDb.closeIModel();
+    nativeDb.closeFile();
   } catch (err: any) {
     log(err.message);
   }
@@ -93,7 +93,7 @@ async function run() {
     return;
   }
 
-  await IModelHost.startup();
+  await IModelHost.startup({ profileName: "display-test-app" });
 
   const rootPath = process.argv[2];
   if (fs.statSync(rootPath).isDirectory())

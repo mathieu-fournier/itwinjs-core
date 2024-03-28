@@ -11,7 +11,7 @@ import {
   IModelApp, IModelTile, IModelTileContent, IModelTileTree, IpcApp, RenderGraphic, RenderMemory, SnapshotConnection, Tile, TileLoadStatus,
   TileRequestChannel, TileStorage, Viewport,
 } from "@itwin/core-frontend";
-import { FrontendStorage, TransferConfig } from "@itwin/object-storage-core/lib/frontend";
+import type { FrontendStorage, TransferConfig } from "@itwin/object-storage-core/lib/frontend";
 import { TestUtility } from "../../TestUtility";
 import { TILE_DATA_2_0 } from "./data/TileIO.data.2.0";
 import { fakeViewState } from "./TileIO.test";
@@ -346,14 +346,14 @@ describe("TileStorage", () => {
   } as unknown as FrontendStorage;
 
   function stubTileRpcInterface(
-    getTileCacheConfigReturns: TransferConfig | undefined
+    getTileCacheConfigReturns: TransferConfig | undefined,
   ): sinon.SinonStub<[], IModelTileRpcInterface> {
     return sinon.stub(IModelTileRpcInterface, "getClient").returns(
       {
         async getTileCacheConfig(): Promise<TransferConfig | undefined> {
           return Promise.resolve(getTileCacheConfigReturns);
         },
-      } as unknown as IModelTileRpcInterface
+      } as unknown as IModelTileRpcInterface,
     );
   }
 

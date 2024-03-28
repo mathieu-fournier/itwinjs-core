@@ -1,6 +1,5 @@
 sep=;
 Release Tag;API Item
-internal;class AbstractNewtonIterator
 public;AkimaCurve3d 
 public;AkimaCurve3dOptions
 public;AkimaCurve3dProps
@@ -14,6 +13,7 @@ public;AnnounceCurvePrimitive = (cp: CurvePrimitive) => void
 public;AnnounceDrapePanel = (linestring: GrowableXYZArray, segmentIndex: number, polyface: Polyface, facetIndex: number, points: Point3d[], indexAOnFacet: number, indexBOnFacet: number) => any
 public;AnnounceNumberNumber = (a0: number, a1: number) => void
 public;AnnounceNumberNumberCurvePrimitive = (a0: number, a1: number, cp: CurvePrimitive) => void
+public;AnyChain = CurvePrimitive | Path | BagOfCurves | Loop
 public;AnyCurve = CurvePrimitive | CurveCollection
 public;AnyCurvePrimitive = Arc3d | LineSegment3d | LineString3d | BSplineCurve3d | BezierCurve3d | DirectSpiral3d | IntegratedSpiral3d | CurveChainWithDistanceIndex | InterpolationCurve3d | AkimaCurve3d
 public;AnyGeometryQuery = Polyface | CurvePrimitive | CurveCollection | SolidPrimitive | CoordinateXYZ | PointString3d | BSpline2dNd
@@ -33,13 +33,12 @@ public;BarycentricTriangle
 public;BeJSONFunctions
 public;BentleyGeometryFlatBuffer
 public;Bezier1dNd
-internal;BezierBezierIntersectionXYRRToRRD 
 internal;class BezierCoffs
 public;BezierCurve3d 
 public;BezierCurve3dH 
 public;class BezierCurveBase 
 internal;BezierPolynomialAlgebra
-internal;BilinearPatch 
+public;BilinearPatch 
 internal;BilinearPolynomial
 public;BlockComparisonFunction = (data: Float64Array, blockSize: number, index0: number, index1: number) => number
 public;BooleanClipFactory
@@ -57,6 +56,7 @@ public;BSplineSurface3dH
 public;BSplineSurface3dQuery
 public;BSplineWrapMode
 public;ChainTypes = CurvePrimitive | Path | BagOfCurves | Loop | undefined
+deprecated;ChainTypes = CurvePrimitive | Path | BagOfCurves | Loop | undefined
 public;ClipMaskXYZRangePlanes
 public;ClippedPolyfaceBuilders
 public;Clipper
@@ -74,6 +74,7 @@ public;ClipUtilities
 public;ClipVector 
 public;ClipVectorProps = ClipPrimitiveProps[]
 public;Cloneable
+deprecated;Cloneable
 internal;ClusterableArray 
 internal;compareRange1dLexicalLowHigh(a: Range1d, b: Range1d): number
 internal;Complex 
@@ -87,21 +88,20 @@ public;ConvexFacetLocationDetail
 internal;ConvexPolygon2d
 public;CoordinateXYZ 
 public;class CurveChain 
-internal;CurveChainWireOffsetContext
 public;CurveChainWithDistanceIndex 
 public;class CurveCollection 
 public;CurveCollectionType = "loop" | "path" | "unionRegion" | "parityRegion" | "bagOfCurves"
 public;CurveCurve
 public;CurveCurveApproachType
-internal;CurveCurveIntersectXY 
-internal;CurveCurveIntersectXYZ 
 public;CurveExtendMode
 public;CurveExtendOptions
 public;CurveFactory
 public;CurveIntervalRole
 public;CurveLocationDetail
 public;CurveLocationDetailArrayPair
+deprecated;CurveLocationDetailArrayPair
 public;CurveLocationDetailPair
+public;CurveOps
 public;class CurvePrimitive 
 public;CurvePrimitiveMutator = (primitiveA: CurvePrimitive, primitiveB: CurvePrimitive) => CurvePrimitive | undefined
 public;CurvePrimitiveType = "arc" | "lineSegment" | "lineString" | "bsplineCurve" | "bezierCurve" | "transitionSpiral" | "curveChainWithDistanceIndex" | "interpolationCurve" | "akimaCurve"
@@ -121,6 +121,7 @@ public;FacetFaceData
 public;FacetIntersectCallback = (detail: FacetLocationDetail, visitor: PolyfaceVisitor) => boolean
 public;FacetIntersectOptions
 public;FacetLocationDetail
+public;FacetLocationDetailPair
 public;FacetProjectedVolumeSums
 public;FrameBuilder
 internal;GaussMapper
@@ -131,19 +132,15 @@ public;class GeometryHandler
 public;class GeometryQuery
 public;GeometryQueryCategory = "polyface" | "curvePrimitive" | "curveCollection" | "solid" | "point" | "pointCollection" | "bsurf"
 internal;GraphCheckPointFunction = (name: string, graph: HalfEdgeGraph, properties: string, extraData?: any) => any
-internal;GraphNodeFunction = (graph: HalfEdgeGraph, node: HalfEdge) => boolean
+public;GriddedRaggedRange2dSet
+public;GriddedRaggedRange2dSetWithOverflow
 public;GrowableBlockedArray
 public;GrowableFloat64Array
 public;GrowableXYArray 
 public;GrowableXYZArray 
-internal;HalfEdge 
-internal;HalfEdgeAndMaskToBooleanFunction = (node: HalfEdge, mask: HalfEdgeMask) => boolean
-internal;HalfEdgeGraph
-internal;HalfEdgeMask
-internal;HalfEdgeToBooleanFunction = (node: HalfEdge) => boolean
-internal;HalfEdgeUserData
 public;HasZ = Readonly
 public;HoleFillOptions
+public;ICloneable
 public;IModelJson
 internal;ImplicitLineXY
 public;IndexedCollectionInterval
@@ -157,7 +154,6 @@ public;IndexedXYZCollectionInterval
 public;IndexedXYZCollectionPolygonOps
 public;IntegratedSpiral3d 
 public;IntegratedSpiralTypeName = "clothoid" | "bloss" | "biquadratic" | "cosine" | "sine"
-internal;interpolateColor(color0: number, fraction: number, color1: number): number
 public;InterpolationCurve3d 
 public;InterpolationCurve3dOptions
 public;InterpolationCurve3dProps
@@ -165,30 +161,28 @@ public;InverseMatrixState
 public;IStrokeHandler
 public;JointOptions
 public;KnotVector
+public;LinearCurvePrimitive = LineSegment3d | LineString3d
 public;LinearSweep 
 public;LineSegment3d 
 public;LineString3d 
+public;LineString3dRangeTreeContext
 public;LineStringDataVariant = IndexedXYZCollection | XYAndZ[] | XAndY[] | number[][]
 public;LongitudeLatitudeNumber 
 public;Loop 
 public;LoopCurveLoopCurve
 public;LowAndHighXY = Readonly
+public;LowAndHighXYProps
 public;LowAndHighXYZ = Readonly
+public;LowAndHighXYZProps
 public;Map4d 
 public;Matrix3d 
 public;Matrix3dProps = number[][] | number[]
 public;Matrix4d 
 public;Matrix4dProps = Point4dProps[]
+public;MiteredSweepOptions
+public;MiteredSweepOutputSelect
 public;MomentData
 public;MultiLineStringDataVariant = LineStringDataVariant | LineStringDataVariant[]
-internal;Newton1dUnbounded 
-internal;Newton1dUnboundedApproximateDerivative 
-internal;Newton2dUnboundedWithDerivative 
-internal;class NewtonEvaluatorRRtoRRD
-internal;class NewtonEvaluatorRtoR
-internal;class NewtonEvaluatorRtoRD
-internal;NodeFunction = (node: HalfEdge) => any
-internal;NodeToNumberFunction = (node: HalfEdge) => number
 public;NonConvexFacetLocationDetail 
 public;NullGeometryHandler 
 public;NumberArray
@@ -196,6 +190,7 @@ public;OffsetMeshOptions
 public;OffsetMeshSelectiveOutputOptions
 public;OffsetOptions
 public;OptionalGrowableFloat64Array = GrowableFloat64Array | undefined
+internal;OptionalRange2dSearchInterface
 internal;Order2Bezier 
 internal;Order3Bezier 
 internal;Order4Bezier 
@@ -220,6 +215,7 @@ public;Point3d
 public;Point3dArray
 public;Point3dArrayCarrier 
 public;Point3dArrayPolygonOps
+public;Point3dArrayRangeTreeContext
 public;Point4d 
 public;Point4dArray
 public;Point4dProps = number[]
@@ -230,12 +226,13 @@ public;PolyfaceBuilder
 public;PolyfaceClip
 public;PolyfaceData
 public;PolyfaceQuery
+public;PolyfaceRangeTreeContext
 public;PolyfaceVisitor 
 public;PolygonClipper
 public;PolygonLocation
 public;PolygonLocationDetail
+public;PolygonLocationDetailPair
 public;PolygonOps
-internal;PolygonWireOffsetContext
 public;PolylineOps
 internal;PowerPolynomial
 public;class ProxyCurve 
@@ -244,11 +241,11 @@ public;Range1d
 internal;Range1dArray
 public;Range1dProps =
 public;Range2d 
-public;Range2dProps =
+public;Range2dProps = LowAndHighXYProps | XYProps[]
 public;Range3d 
-public;Range3dProps =
+public;Range3dProps = LowAndHighXYZProps | XYZProps[]
 public;class RangeBase
-internal;Ray2d
+public;Ray2d
 public;Ray3d 
 public;RecurseToCurvesGeometryHandler 
 public;class RecursiveCurveProcessor
@@ -259,9 +256,9 @@ public;RegionOps
 public;RotationalSweep 
 public;RuledSweep 
 alpha;Sample
+public;SectionSequenceWithPlanes
 public;Segment1d
 public;SignedLoops
-internal;SimpleNewton
 internal;SineCosinePolynomial
 public;SmallSystem
 public;SmoothTransformBetweenFrusta
@@ -278,6 +275,7 @@ alpha;StringifiedClipVector
 public;StrokeCountMap
 public;StrokeOptions
 public;SweepContour
+public;SweepLineStringToFacetsOptions
 public;TaggedNumericConstants
 public;TaggedNumericData
 internal;TorusImplicit
@@ -287,7 +285,6 @@ public;TransformProps = number[][] | number[] |
 public;class TransitionSpiral3d 
 public;TriangleLocationDetail
 public;TriangularFacetLocationDetail 
-internal;Triangulator
 internal;TriDiagonalSystem
 internal;TrigPolynomial
 public;TrigValues
