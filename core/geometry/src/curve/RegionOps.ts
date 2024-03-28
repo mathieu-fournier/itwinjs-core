@@ -667,9 +667,9 @@ export class RegionOps {
    * * A common use case of this method is to assemble the bounding "exterior" loop (or loops) containing the
    * input curves.
    * * This method does not add bridge edges to connect outer loops to inner loops. Each disconnected loop,
-   * regardless of its containment, is returned as its own SignedLoops object. Pre-process with [[regionBooleanXY]]
-   * to add bridge edges so that [[constructAllXYRegionLoops]] will return outer and inner loops in the same
-   * SignedLoops object.
+   * regardless of its containment, is returned as its own SignedLoops object. To return outer and inner loops
+   * in the same SignedLoops object, pre-process with [[regionBooleanXY]] (union) to intersect the loops and add
+   * bridge edges.
    * @param curvesAndRegions Any collection of curves. Each Loop/ParityRegion/UnionRegion contributes its curve
    * primitives.
    * @param tolerance optional distance tolerance for coincidence
