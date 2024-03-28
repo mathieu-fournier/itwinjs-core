@@ -246,17 +246,18 @@ export class CurveCurveIntersectXY extends RecurseToCurvesGeometryHandler {
     // Problem: Normal practice is to do the (quick, simple) transverse intersection first
     // But the transverse intersector notion of coincidence is based on the determinant ratios, which are hard
     // to relate to physical tolerance.
-    //  So do the overlap first.  This should do a quick exit in non-coincident case.
-    const overlap = this._coincidentGeometryContext.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, false);
-    if (overlap) { // the lines are coincident
+    // So do the unbounded overlap first.  This should do a quick exit in non-colinear case.
+    const result = this._coincidentGeometryContext.coincidentSegmentRangeXY(pointA0, pointA1, pointB0, pointB1, false);
+    if (result.colinear) {
+      assert(result.overlap !== undefined);
       if (this._coincidentGeometryContext.clampCoincidentOverlapToSegmentBounds(
-        overlap, pointA0, pointA1, pointB0, pointB1,
+        result.overlap, pointA0, pointA1, pointB0, pointB1,
         extendA0, extendA1, extendB0, extendB1,
       )) {
         this.recordPointWithLocalFractions(
-          overlap.detailA.fraction, cpA, fractionA0, fractionA1,
-          overlap.detailB.fraction, cpB, fractionB0, fractionB1,
-          reversed, overlap,
+          result.overlap.detailA.fraction, cpA, fractionA0, fractionA1,
+          result.overlap.detailB.fraction, cpB, fractionB0, fractionB1,
+          reversed, result.overlap,
         );
       }
     } else if (SmallSystem.lineSegment3dXYTransverseIntersectionUnbounded(pointA0, pointA1, pointB0, pointB1, uv)) {

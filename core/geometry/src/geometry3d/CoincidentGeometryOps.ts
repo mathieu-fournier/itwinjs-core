@@ -78,7 +78,7 @@ export class CoincidentGeometryQuery {
    * @param extendB1 whether to extend segment B beyond its end
    * @return reference to the modified input, or undefined (leaving input untouched) if clamping would result in empty interval.
    */
-  private clampCoincidentOverlapToSegmentBounds(overlap: CurveLocationDetailPair,
+  public clampCoincidentOverlapToSegmentBounds(overlap: CurveLocationDetailPair,
     pointA0: Point3d, pointA1: Point3d, pointB0: Point3d, pointB1: Point3d,
     extendA0: boolean = false, extendA1: boolean = false, extendB0: boolean = false, extendB1: boolean = false,
   ): CurveLocationDetailPair | undefined {
