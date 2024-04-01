@@ -1,8 +1,8 @@
 {
   "index.html": {
     "filename": "index.html",
-    "hash": "285d967e1631c927954a25ea1102ab560176df79",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "a0273c9a840c0a21b131e218baf99d14948c81b9",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "bis\\.vscode\\settings.json": {
     "filename": "bis\\.vscode\\settings.json",
@@ -9156,8 +9156,8 @@
   },
   "reference/index/index.html": {
     "filename": "reference/index/index.html",
-    "hash": "99301da46e452311fba4c1e1a7bdc37e27eec06e",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "789f391277f2d3d5071f9a104ad9c53fa047a0c4",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "reference/leftnav/index.html": {
     "filename": "reference/leftnav/index.html",
@@ -9221,8 +9221,8 @@
   },
   "bis/domains/standard-schemas/index.html": {
     "filename": "bis/domains/standard-schemas/index.html",
-    "hash": "5fb79759efe4924372b4348c04b7af5737d3fafd",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "18249963cc299ba0964db04af12836437997c3c1",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "bis/ec/customattribute-container-types/index.html": {
     "filename": "bis/ec/customattribute-container-types/index.html",
@@ -9661,8 +9661,8 @@
   },
   "presentation/relatedinstancespecification/index.html": {
     "filename": "presentation/relatedinstancespecification/index.html",
-    "hash": "d14d65b806a2ea1e4da582fc920e9bf324ed48b5",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "31b3d241adfec268d51916b3ae7bb9a1860e902b",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "presentation/relationshippathspecification/index.html": {
     "filename": "presentation/relationshippathspecification/index.html",
@@ -9711,8 +9711,8 @@
   },
   "presentation/advanced/localization/index.html": {
     "filename": "presentation/advanced/localization/index.html",
-    "hash": "82d2b6b2d9c198b5c28a7bcd26fb3d2409dd2d14",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "438be04f0f7e644a374c12e681073809d121c347",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "presentation/advanced/performance/index.html": {
     "filename": "presentation/advanced/performance/index.html",
@@ -9796,8 +9796,8 @@
   },
   "presentation/content/propertyspecification/index.html": {
     "filename": "presentation/content/propertyspecification/index.html",
-    "hash": "8e62d9cc954b7513ad4431e8136565927f232c56",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "265363077167ee774602f3d587c80913c4d71909",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "presentation/content/propertyvaluerenderers/index.html": {
     "filename": "presentation/content/propertyvaluerenderers/index.html",
@@ -9901,8 +9901,8 @@
   },
   "presentation/hierarchies/filteringlimiting/index.html": {
     "filename": "presentation/hierarchies/filteringlimiting/index.html",
-    "hash": "9a01053bbdf9630c816856a4d40f7af47bcdac1e",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "16ae53f60756893edfd85ed30e1a92f0f68f03e2",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "presentation/hierarchies/groupingrule/index.html": {
     "filename": "presentation/hierarchies/groupingrule/index.html",
@@ -9956,8 +9956,8 @@
   },
   "presentation/motivation/index/index.html": {
     "filename": "presentation/motivation/index/index.html",
-    "hash": "4987eca45ec4247efbe4ccfb43fdcd02c67d35c2",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "1a227d91e35960479c691801008ca9b30958c286",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "presentation/setup/index/index.html": {
     "filename": "presentation/setup/index/index.html",
@@ -10236,8 +10236,8 @@
   },
   "changehistory/nextversion/index.html": {
     "filename": "changehistory/nextversion/index.html",
-    "hash": "489a43739f0e68934116527ea60dc9c913bf30a9",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "98371cc9148a3bde81789f8c179de5312329e1d6",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "changehistory/roadmap/index.html": {
     "filename": "changehistory/roadmap/index.html",
@@ -10251,8 +10251,8 @@
   },
   "changehistory/leftnav/index.html": {
     "filename": "changehistory/leftnav/index.html",
-    "hash": "eee9621927bb95c202cb90d8ec67e684da6377e3",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "2a9c3c1eb7b64ff1572b55b3e3ad0141f7138ae2",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "changehistory/migration-guides/migratingbuildsystems/index.html": {
     "filename": "changehistory/migration-guides/migratingbuildsystems/index.html",
@@ -10316,8 +10316,8 @@
   },
   "learning/ecsqltutorial/builtinfunctions/index.html": {
     "filename": "learning/ecsqltutorial/builtinfunctions/index.html",
-    "hash": "d1d931ad24bc7b5e44a0bb8f17f2b8837847ab66",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "31ca685e7d526f9c08e73fbf9f658555ef062c9f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/changesummaryqueries/index.html": {
     "filename": "learning/ecsqltutorial/changesummaryqueries/index.html",
@@ -10326,8 +10326,8 @@
   },
   "learning/ecsqltutorial/classfilter/index.html": {
     "filename": "learning/ecsqltutorial/classfilter/index.html",
-    "hash": "b420396654dda4bf3f70282f3e61a1644dcdd882",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "9cb1b34d4073eed6763ecc8674688013664bd779",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/conditionalexpr/index.html": {
     "filename": "learning/ecsqltutorial/conditionalexpr/index.html",
@@ -10336,38 +10336,38 @@
   },
   "learning/ecsqltutorial/ecsqldatatypes/index.html": {
     "filename": "learning/ecsqltutorial/ecsqldatatypes/index.html",
-    "hash": "685c6109e29508feb7208ba5fc76b8b2fbdd0119",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "818f1e21675fae84a04151daa1971a1a34a99c1f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/ecsqlsyntax/index.html": {
     "filename": "learning/ecsqltutorial/ecsqlsyntax/index.html",
-    "hash": "607e147869c6db184f0830acc2141ecbcd0e4303",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "0a49a08d986a34bd4a4714b19c4d666fb097220c",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/firstexamples/index.html": {
     "filename": "learning/ecsqltutorial/firstexamples/index.html",
-    "hash": "3759c8a61c3d285fd1067d4ea6dde0c490614362",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "781278e1c4f4889619cd72f5537e63d618180876",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/instanceprops/index.html": {
     "filename": "learning/ecsqltutorial/instanceprops/index.html",
-    "hash": "18e1236238fff7969db6a64aba1263f438ee8ca3",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "715b29bd26085a0b6364962358c868af8a4f2475",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/joins/index.html": {
     "filename": "learning/ecsqltutorial/joins/index.html",
-    "hash": "fe7f5c60779324277430bd6aaeb6e5030e5edf7f",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "4e5761023051a22ae6b8b01783e463bbcf31b242",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/keytoecsql/index.html": {
     "filename": "learning/ecsqltutorial/keytoecsql/index.html",
-    "hash": "f2aae7eada8839640658a772970ad8a2a88a1269",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "b46b70f6b480ff7b03ba2e55800d45b9648a6540",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/metaqueries/index.html": {
     "filename": "learning/ecsqltutorial/metaqueries/index.html",
-    "hash": "5e1fd122d73b666b57df226706c25d6c1bf446ce",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "972eba6e58b625d2cfd5347b6e5d757c898b0ff7",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/mydomain.ecschema/index.html": {
     "filename": "learning/ecsqltutorial/mydomain.ecschema/index.html",
@@ -10376,18 +10376,18 @@
   },
   "learning/ecsqltutorial/polymorphicqueries/index.html": {
     "filename": "learning/ecsqltutorial/polymorphicqueries/index.html",
-    "hash": "6d82a72c0a4293bbf4086b03296e5ed6eeab70c1",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "b3e8660a2108eb038d9fdeddbf9422ba8fa0805a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/spatialqueries/index.html": {
     "filename": "learning/ecsqltutorial/spatialqueries/index.html",
-    "hash": "8b433116e44eda96d9e4f6177e3b4aa9f35cba77",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "6b28bca4d28456837b05f8b4fe42e85b787b48b2",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ecsqltutorial/index/index.html": {
     "filename": "learning/ecsqltutorial/index/index.html",
-    "hash": "b001eef730ff5c69bc29c295b36f12fb3236b376",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "97106e06ab4f7101c82bc182161aff7a4398e091",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/geolocation/index.html": {
     "filename": "learning/geolocation/index.html",
@@ -10401,8 +10401,8 @@
   },
   "learning/glossary/index.html": {
     "filename": "learning/glossary/index.html",
-    "hash": "ab65aaf26d31005e7732b7bb700dca43b195e906",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "51a1820d8261592bf50637733cb26d7107aeca3f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/imodelchange.ecschema/index.html": {
     "filename": "learning/imodelchange.ecschema/index.html",
@@ -10466,8 +10466,8 @@
   },
   "learning/writeaconnector/index.html": {
     "filename": "learning/writeaconnector/index.html",
-    "hash": "4a0f9ab26957b0f221664fbdb87aab86f275bf2b",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "fa2a020bd84f7b5ff5b539f6e6c863036e56bfc7",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/writeawebagent/index.html": {
     "filename": "learning/writeawebagent/index.html",
@@ -10626,8 +10626,8 @@
   },
   "learning/backend/workspace/index.html": {
     "filename": "learning/backend/workspace/index.html",
-    "hash": "eb42c69c5cd31317705c58191d961045ef5d194c",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "65e3c2a679f1603307e0744e26caf72e6f0c2b88",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/backend/index/index.html": {
     "filename": "learning/backend/index/index.html",
@@ -10751,8 +10751,8 @@
   },
   "learning/display/index/index.html": {
     "filename": "learning/display/index/index.html",
-    "hash": "f67fe2f5ff443b7a762bb4438c18f2b87d5aefa9",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "b2d08513a5277fb38d08087b94635a4e49c2594e",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/frontend/blankconnection/index.html": {
     "filename": "learning/frontend/blankconnection/index.html",
@@ -10786,8 +10786,8 @@
   },
   "learning/frontend/imodelconnection/index.html": {
     "filename": "learning/frontend/imodelconnection/index.html",
-    "hash": "b45e1631999cb3b7f4b2a68801b70db20276df2e",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "589544fe5d6089376376a7008d90907bd1a7bca0",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/frontend/localization/index.html": {
     "filename": "learning/frontend/localization/index.html",
@@ -10811,8 +10811,8 @@
   },
   "learning/frontend/primitivetools/index.html": {
     "filename": "learning/frontend/primitivetools/index.html",
-    "hash": "9de51c842889e85caf8ed21ff92e410b06b7370c",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "a171dd1c30a26bd652b3997d54cfdfc108203bec",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/frontend/quantityformatting/index.html": {
     "filename": "learning/frontend/quantityformatting/index.html",
@@ -10926,8 +10926,8 @@
   },
   "learning/geometry/polyfacequery/index.html": {
     "filename": "learning/geometry/polyfacequery/index.html",
-    "hash": "8d005f7876eadd8090aca74452370b6ab8b74201",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "ab17605e92b13d4b9dc79a384ba8556a65d52293",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/geometry/regionops/index.html": {
     "filename": "learning/geometry/regionops/index.html",
@@ -11052,7 +11052,7 @@
   "learning/index/index.html": {
     "filename": "learning/index/index.html",
     "hash": "2bd43793d8f1416074d85b61cf0ebb14b95afdc6",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "updated": "2024-03-29T15:32:06.285Z"
   },
   "learning/leftnav/index.html": {
     "filename": "learning/leftnav/index.html",
@@ -11106,8 +11106,8 @@
   },
   "learning/tutorials/development-prerequisites/index.html": {
     "filename": "learning/tutorials/development-prerequisites/index.html",
-    "hash": "52bf47abf839ca62a987bdec88d9ee7de1ee9547",
-    "updated": "2023-12-15T20:34:55.950Z"
+    "hash": "4d0bb5b00788fe61127e0e88a7767ddd677ccee0",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/tutorials/explore-imodel-console/index.html": {
     "filename": "learning/tutorials/explore-imodel-console/index.html",
@@ -11171,33 +11171,33 @@
   },
   "learning/ui/abstract/dialogitem/index.html": {
     "filename": "learning/ui/abstract/dialogitem/index.html",
-    "hash": "ee7a0bfaf3631eca6d3aa2279ccf748cb92c81d0",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "4cca738547fe35da96790b274e22e4f22234ae5e",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/item/index.html": {
     "filename": "learning/ui/abstract/item/index.html",
-    "hash": "4721aa5a31bd2d2a7627f7f90243165a4b8f8a2b",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "f1645ca3ff7c34ea2ea6a03213f7919825ff99d5",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/properties/index.html": {
     "filename": "learning/ui/abstract/properties/index.html",
-    "hash": "8ed22ecb02f5b121600600c4f7a84328455a4fab",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "b1f97e2985fee281478e99e98042215ebc2e6b77",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/uiadmin/index.html": {
     "filename": "learning/ui/abstract/uiadmin/index.html",
-    "hash": "42104b78b13af142cd85ff1f5c59e2a40fa272bb",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "1a2197bd4bc3e96ddade788894fbefe92cc4d49b",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/uidataprovider/index.html": {
     "filename": "learning/ui/abstract/uidataprovider/index.html",
-    "hash": "9bd697643c49634b82a2e747aea7720f65d34d77",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "d277dfe2c326c4a9e984762e12f6831edc3e38ae",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/utilities/index.html": {
     "filename": "learning/ui/abstract/utilities/index.html",
-    "hash": "a2cc36636c6acbf9e3f61d5c6cd2a30f5a3a905d",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "1c5923f2332bcbe89c80d08f8f2ac79478ae777a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/abstract/index/index.html": {
     "filename": "learning/ui/abstract/index/index.html",
@@ -11206,13 +11206,13 @@
   },
   "learning/ui/appui-react/accudraw/index.html": {
     "filename": "learning/ui/appui-react/accudraw/index.html",
-    "hash": "df5ed499fdc6faec720cc19219f887082cc4333f",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "1f909084e9fa50a922c83f093054463abf5b92b0",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/backstage/index.html": {
     "filename": "learning/ui/appui-react/backstage/index.html",
-    "hash": "38abee1e4276436b899126302ad2c61040e838e4",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "b00bc4371784df64bd20ee071c5e98e79c0e5601",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/childwindows/index.html": {
     "filename": "learning/ui/appui-react/childwindows/index.html",
@@ -11221,18 +11221,18 @@
   },
   "learning/ui/appui-react/contentviews/index.html": {
     "filename": "learning/ui/appui-react/contentviews/index.html",
-    "hash": "5eb96f3fea6cac6b6faeb42a6247a7abd3c8c52b",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "846b146ce74aedbb66b86e02e55714393d65035a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/dialogs/index.html": {
     "filename": "learning/ui/appui-react/dialogs/index.html",
-    "hash": "bae295f74bc09e988ee0e63073c0f2d4d280b04d",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "270effcd0219e2708d5e889f789ac4e69382666b",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/frontstages/index.html": {
     "filename": "learning/ui/appui-react/frontstages/index.html",
-    "hash": "03e63ea6f8f5f8f9ec4f25637c9caee068d05552",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "c433845a026436fb90eb278ac65a7276d8e06263",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/imodelviewportcontrol/index.html": {
     "filename": "learning/ui/appui-react/imodelviewportcontrol/index.html",
@@ -11241,13 +11241,13 @@
   },
   "learning/ui/appui-react/modalfrontstage/index.html": {
     "filename": "learning/ui/appui-react/modalfrontstage/index.html",
-    "hash": "921836adb965b78b106ff23d83204aba49f58829",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "71d8852532476812c81bc8fc1275b89d2b00c24b",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/navigationaids/index.html": {
     "filename": "learning/ui/appui-react/navigationaids/index.html",
-    "hash": "c48ccd44af7d018ff7d3a191b1910f620b7b1773",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "8449029d21c73e0ae4d39777226d4aba5b419afd",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/nestedfrontstage/index.html": {
     "filename": "learning/ui/appui-react/nestedfrontstage/index.html",
@@ -11256,8 +11256,8 @@
   },
   "learning/ui/appui-react/notifications/index.html": {
     "filename": "learning/ui/appui-react/notifications/index.html",
-    "hash": "f5a76dd3b2e32bc9037a62c52d9e521acd3b8ea2",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "2d3eb5b622004749fb4fa92a57c189ae63a5d5aa",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/state/index.html": {
     "filename": "learning/ui/appui-react/state/index.html",
@@ -11266,8 +11266,8 @@
   },
   "learning/ui/appui-react/statusbar/index.html": {
     "filename": "learning/ui/appui-react/statusbar/index.html",
-    "hash": "55430b5b0e2705ca1159cdf77b6f13fd0841233f",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "33cf3ee37af3a01b07271ac21e6ab055a5d1ada7",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/syncui/index.html": {
     "filename": "learning/ui/appui-react/syncui/index.html",
@@ -11276,18 +11276,18 @@
   },
   "learning/ui/appui-react/toolsettings/index.html": {
     "filename": "learning/ui/appui-react/toolsettings/index.html",
-    "hash": "24ba8941d14648e165802539e18fb92636475a00",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "284e4f3d1d8e2399cd4bf6cafec0bcfe0595743f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/toolbar/index.html": {
     "filename": "learning/ui/appui-react/toolbar/index.html",
-    "hash": "4d20c54cd082b0fdffe6e18c743e6c669532ab16",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "00b3f203a920ade2462e7db00c479928eed257a0",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/uiitemsprovider/index.html": {
     "filename": "learning/ui/appui-react/uiitemsprovider/index.html",
-    "hash": "071ebbe993fd28becc4f7cfb1dfec4ae1349a3bd",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "4122db9f7fe28a0cc223d4221ea7de2986dc8c6a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/uisettings/index.html": {
     "filename": "learning/ui/appui-react/uisettings/index.html",
@@ -11296,8 +11296,8 @@
   },
   "learning/ui/appui-react/widgets/index.html": {
     "filename": "learning/ui/appui-react/widgets/index.html",
-    "hash": "5a125aab1f1300e3a6f7ea5cd519b8fe700cc7a7",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "2a859948352a9549554f2ae34138a1f79fc1b4f4",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/appui-react/index/index.html": {
     "filename": "learning/ui/appui-react/index/index.html",
@@ -11311,33 +11311,33 @@
   },
   "learning/ui/components/common/index.html": {
     "filename": "learning/ui/components/common/index.html",
-    "hash": "e47d24224af830c152baa10ef9959b5d2eb7dc8d",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "581f15a2b8cafb544737f14053cb17a8ec47254f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/propertyeditors/index.html": {
     "filename": "learning/ui/components/propertyeditors/index.html",
-    "hash": "ba9bb78d7b9b888c4d0d648c4344d49e1c9a8e26",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "40938b6b5bd64bc89f9def8788eaa8c0681254c1",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/propertygrid/index.html": {
     "filename": "learning/ui/components/propertygrid/index.html",
-    "hash": "2134704c3e7355c8bed913828ca07ab7c4e6ac0c",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "19f076958bf61af0208d0f20a649c655fa3f2e07",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/toolbar/index.html": {
     "filename": "learning/ui/components/toolbar/index.html",
-    "hash": "ac377df7865e30a0afcabb733cddf369a64499fe",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "5158271263ea633742896d77d784fc1b1b631293",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/tree/index.html": {
     "filename": "learning/ui/components/tree/index.html",
-    "hash": "32dd474a34e277d1febf9645b028e5a3353471f3",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "07f93e93e689a3f6f52b152526d6d7529a88494f",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/typeconverters/index.html": {
     "filename": "learning/ui/components/typeconverters/index.html",
-    "hash": "dd974a29d9dc9ce2e29b15f77159729bb733fc6a",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "166d885c6e821065f17309054145e60e63d90c40",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/components/index/index.html": {
     "filename": "learning/ui/components/index/index.html",
@@ -11346,73 +11346,73 @@
   },
   "learning/ui/core/autosuggest/index.html": {
     "filename": "learning/ui/core/autosuggest/index.html",
-    "hash": "89832a8ad5bc7caa91d74126a9015760c27407e6",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "0fdb05a7022b9e881b332ea9ea07503a0df59bea",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/base/index.html": {
     "filename": "learning/ui/core/base/index.html",
-    "hash": "cc6afabefb09d0b77a2c67a447d1041ffc956487",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "035931ff3f98dfd6e89ad568940cfc7f0057eafb",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/checklistbox/index.html": {
     "filename": "learning/ui/core/checklistbox/index.html",
-    "hash": "e8ac173c838eb9097bf7909017cc37fe7df67d39",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "d63c8d7115ea88a86349c949ade592b6b5abf493",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/common/index.html": {
     "filename": "learning/ui/core/common/index.html",
-    "hash": "24fee10f949f6de40f52026ad11ea24c26965bf5",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "cc6b149875d633a62cb70e5a6ca20fd4c908fedc",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/contextmenu/index.html": {
     "filename": "learning/ui/core/contextmenu/index.html",
-    "hash": "66bf1ce97349f9e73d872494bb8244fcc00a072a",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "fc12876faf0cc9bb4f50e005e4802e68e6c45fb0",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/dialog/index.html": {
     "filename": "learning/ui/core/dialog/index.html",
-    "hash": "a286b506424603b6332c9b40ab1eac21bb0d6fe2",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "a898d0d1738b92d3ef88000ffc060f1c99949d5d",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/expandable/index.html": {
     "filename": "learning/ui/core/expandable/index.html",
-    "hash": "e90a1751d7a51fe52b8828188d28288c12409a7f",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "3c9cd167d4d9cb7a45507acd0e43f01c43d7026a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/icon/index.html": {
     "filename": "learning/ui/core/icon/index.html",
-    "hash": "c9de287b8c2c417c9339a37e7beca557fa653212",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "12345cd52d4e452cc663f9f426e91ea95d25667d",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/loading/index.html": {
     "filename": "learning/ui/core/loading/index.html",
-    "hash": "a3c052420e852d4fcfc0207ee6ed1f2d4005a3c4",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "106af262e417837038475b048b379bc57c13d38d",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/notification/index.html": {
     "filename": "learning/ui/core/notification/index.html",
-    "hash": "a4bada08c649b93e1c4838af54adc316ce237d4e",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "0c3c70553db46bab79ab8260b4817b2410ceec87",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/popup/index.html": {
     "filename": "learning/ui/core/popup/index.html",
-    "hash": "d2b9044a908971ef3767d8059d1cdbcb090cc266",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "35d166d8e0085191b8857bb05106efb11a0ec53a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/radialmenu/index.html": {
     "filename": "learning/ui/core/radialmenu/index.html",
-    "hash": "6425ad27ef22a4f8bef1ef80cdfd51bd2ad13e3a",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "734145c3703aa933df713b85cbe7bd503e46a221",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/searchbox/index.html": {
     "filename": "learning/ui/core/searchbox/index.html",
-    "hash": "5b82d65c1bb7379226e3c7f1c0e80ab2627679d1",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "e17a18a98fd4862d25775380b03de71b68324ff3",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/settings/index.html": {
     "filename": "learning/ui/core/settings/index.html",
-    "hash": "74b3428b7143ba05a710734d5b09bb2e9da0b73d",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "75e76a267ddf21957250dfe1183c3c5a0ca9fbd4",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/style/index.html": {
     "filename": "learning/ui/core/style/index.html",
@@ -11421,23 +11421,23 @@
   },
   "learning/ui/core/text/index.html": {
     "filename": "learning/ui/core/text/index.html",
-    "hash": "d4d4080770c4123f9d733e6ac0137e010c80c422",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "7e543e6e670a4df37eb4d60b6222b2501a145176",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/tree/index.html": {
     "filename": "learning/ui/core/tree/index.html",
-    "hash": "858d9f37dcc8b90df1273c8e7086fd6ff482a62e",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "9fb5caee70dd1fa18ff59f32dc73d37c017850b9",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/uistatestorage/index.html": {
     "filename": "learning/ui/core/uistatestorage/index.html",
-    "hash": "3774aadc253029ce21b13af26da681ab64d99df8",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "3db5ea4a8199f27c2b20cfc97f054907ccba397e",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/utilities/index.html": {
     "filename": "learning/ui/core/utilities/index.html",
-    "hash": "79c3f6a509f2094769b0f9e67eb1995a0fb6a819",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "1598f590cfedd2676ea6241e33d029f7269a4b44",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/core/index/index.html": {
     "filename": "learning/ui/core/index/index.html",
@@ -11446,18 +11446,18 @@
   },
   "learning/ui/imodel-components/color/index.html": {
     "filename": "learning/ui/imodel-components/color/index.html",
-    "hash": "52005b348d0ba8fc74b9d2f067ac139e4f99b919",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "0ab24d1776df0a5428d10df4459154d8008e295b",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/imodel-components/lineweight/index.html": {
     "filename": "learning/ui/imodel-components/lineweight/index.html",
-    "hash": "bab14f4342058f3ec5fac013155b501b29913d03",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "11be8dfe8a7403f95832820ce124b73018755c76",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/imodel-components/viewport/index.html": {
     "filename": "learning/ui/imodel-components/viewport/index.html",
-    "hash": "3579fe5e91175c4407ff66c833ae850623f17c20",
-    "updated": "2023-12-15T22:53:23.878Z"
+    "hash": "7addb5e4db6100b68638625ce49e00414ce2fdfc",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "learning/ui/imodel-components/index/index.html": {
     "filename": "learning/ui/imodel-components/index/index.html",
@@ -11531,32 +11531,87 @@
   },
   "ui/appui/define-content/index.html": {
     "filename": "ui/appui/define-content/index.html",
-    "hash": "b6f6162591a194e83e1b531fa5fc02b89585abbd",
-    "updated": "2023-12-18T19:30:38.457Z"
+    "hash": "1816361a0867c4e3528444d25ebebe5e0f96d730",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "ui/appui/get-started/index.html": {
     "filename": "ui/appui/get-started/index.html",
-    "hash": "454f9d320f05680398eadd7096fe88f97cdfd3ae",
-    "updated": "2023-12-18T19:30:30.096Z"
+    "hash": "162152c0d8f9172a5cbfb24974308ff0a652f82a",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "ui/appui/index/index.html": {
     "filename": "ui/appui/index/index.html",
-    "hash": "bda61f189b0b1dda61f4e463ed7ff951093a848a",
-    "updated": "2023-12-15T22:59:13.455Z"
+    "hash": "ec6d35674e6fa7bf875e164c4bac9d544d58b8ec",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "ui/appui/provide-ui-items/index.html": {
     "filename": "ui/appui/provide-ui-items/index.html",
-    "hash": "16a9034fb0b7252bf8035d73575d67689e76f400",
-    "updated": "2023-12-15T22:59:13.455Z"
+    "hash": "0c92cfdeb212ecd924523a26cab93febffd9d815",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "ui/index/index.html": {
     "filename": "ui/index/index.html",
-    "hash": "1f374f3455d944b72e1bfceb2f4aba891b6caeb4",
-    "updated": "2023-12-15T22:59:13.455Z"
+    "hash": "28b88a82bfe6d82242698e19dcb4e209994c95ed",
+    "updated": "2024-03-29T15:28:14.663Z"
   },
   "ui/leftnav/index.html": {
     "filename": "ui/leftnav/index.html",
-    "hash": "3233738c7da909173e7b4683d94dd8853c67e67c",
-    "updated": "2023-12-20T19:32:31.650Z"
+    "hash": "3c1a5e8fd0f4981f227f626fbdd7a9e98d1e9784",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "bis/.ds_store": {
+    "filename": "bis/.ds_store",
+    "hash": "a70d1e202b2dead93545ea297d41779aabb3d7c2",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "bis/domains/.ds_store": {
+    "filename": "bis/domains/.ds_store",
+    "hash": "1c7947eb57456e285de3f146c3daf622e830767b",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "bis/guide/.ds_store": {
+    "filename": "bis/guide/.ds_store",
+    "hash": "b9a1a045470df2824f0b6b7e192f8196fde387b0",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "changehistory/assets/baythymetric_terrain.jpg": {
+    "filename": "changehistory/assets/baythymetric_terrain.jpg",
+    "hash": "13ca3125a61ae142b18b563adaec6b6285f1a397",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "learning/frontend/accudraw-nearest-axis.png": {
+    "filename": "learning/frontend/accudraw-nearest-axis.png",
+    "hash": "2ded6c987d33db0e7d2f3933c625321a4c50db36",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "learning/frontend/accudraw-nearest-distance.png": {
+    "filename": "learning/frontend/accudraw-nearest-distance.png",
+    "hash": "8bbcbbef6ce4e8995135980691faa49506838b8e",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "learning/frontend/accusnap-indicators.png": {
+    "filename": "learning/frontend/accusnap-indicators.png",
+    "hash": "a22de40b20ea129fdb32a0460a61b16e23118698",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "learning/frontend/rotated-acs.png": {
+    "filename": "learning/frontend/rotated-acs.png",
+    "hash": "ff22918393f7710ca99bdc0beb8f45f49eed2fe4",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "learning/frontend/tentative-intersection.png": {
+    "filename": "learning/frontend/tentative-intersection.png",
+    "hash": "ae873c5ce2a541f37ee1d22cb37f52088079139c",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "ui/appui/configure-frontstage/index.html": {
+    "filename": "ui/appui/configure-frontstage/index.html",
+    "hash": "857007d57852ce28dac2b72961012619b0df76e2",
+    "updated": "2024-03-29T15:28:14.663Z"
+  },
+  "changehistory/4.4.0/index.html": {
+    "filename": "changehistory/4.4.0/index.html",
+    "hash": "5dcaa28d9c4c10af5c9f67e99f55694d3af35dc2",
+    "updated": "2024-03-29T15:28:14.663Z"
   }
 }

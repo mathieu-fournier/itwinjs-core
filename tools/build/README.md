@@ -49,6 +49,8 @@ This script runs a TypeDoc command, with specific parameters, to generate html T
   - Each of the provided to exclude is added to a glob pattern which checks all directories within the source.
     - i.e `--excludes=test,docs/*.md` will translate to `**/{test,docs/*.md}/**/*`
 
+Set `NODE_PROJECT_ROOT_DIRECTORY` if your package.json cannot be found
+
 #### extract.js
 
 This is a script designed to extract sample code from test.ts files in a specific directory. The sample code should be surrounded by comments containing "\_\_PUBLISH_EXTRACT_START\_\_" and "\_\_PUBLISH_EXTRACT_END\_\_" directives.
