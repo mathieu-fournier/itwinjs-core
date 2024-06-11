@@ -3,6 +3,8 @@
 # Steps currently include
 #   1. Updating master changelogs using JS script
 
+# TRY detect tag, or get ver num from tag
+
 name: Finalize Release
 
 on:
