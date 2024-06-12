@@ -1,0 +1,42 @@
+trigger:
+  branches:
+    include:
+      - mikeN/*
+
+pool:
+  vmImage: ubuntu-latest
+
+jobs:
+  - job: Fake release
+    displayName: Add small change to Changelog
+    steps:
+      - checkout: self
+
+      - task: NodeTool@0
+        displayName: Use Node 20.x
+        inputs:
+          versionSpec: 20.x
+          checkLatest: true
+
+      - bash: |
+          git config --local user.email 38288322+imodeljs-admin@users.noreply.github.com
+          git config --local user.name imodeljs-admin
+        displayName: Setup Git
+
+      - bash: |
+          echo "test change" >> 'core/backend/CHANGELOG.md'
+
+      - bash: "git add ."
+        displayName: Git add
+
+      - bash: |
+          echo Committing version bump 4.6.11...
+          git commit -m "4.6.11" --author="imodeljs-admin <38288322+imodeljs-admin@users.noreply.github.com>"
+        displayName: Git commit dummy version # TODO: try 4.6.11 as patch and 4.6.0 as minor
+
+      # - ? ${{ if or(eq(parameters.BumpType, 'minor'), eq(parameters.BumpType, 'patch')) }}
+      #   : - bash: 'git tag -a release/$(getVersion.version) -m "v$(getVersion.version)"'
+      #       displayName: Create git tag
+
+      - bash: "git push --follow-tags https://$(GITHUBTOKEN)@github.com/iTwin/itwinjs-core HEAD:$(Build.SourceBranch)"
+        displayName: Push version bump
