@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-    - 'mikeN/fin-release-fix'
+    - 'mikeN/*'
     paths:
     - '**/CHANGELOG.md'
 
