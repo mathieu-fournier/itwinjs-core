@@ -7,7 +7,7 @@ pool:
   vmImage: ubuntu-latest
 
 jobs:
-  - job: Fake release
+  - job: Fake_Release
     displayName: Add small change to Changelog
     steps:
       - checkout: self
