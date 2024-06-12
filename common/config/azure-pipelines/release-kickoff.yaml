@@ -38,5 +38,5 @@ jobs:
       #   : - bash: 'git tag -a release/$(getVersion.version) -m "v$(getVersion.version)"'
       #       displayName: Create git tag
 
-      - bash: "git push --follow-tags https://$(GITHUBTOKEN)@github.com/iTwin/itwinjs-core HEAD:$(Build.SourceBranch)"
+      - bash: "git push --follow-tags https://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@github.com/iTwin/itwinjs-core HEAD:$(Build.SourceBranch)"
         displayName: Push version bump
