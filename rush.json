@@ -1,6 +1,6 @@
 {
-  "rushVersion": "5.14.0",
-  "pnpmVersion": "3.5.3",
+  "rushVersion": "5.24.0",
+  "pnpmVersion": "3.8.1",
   "nodeSupportedVersionRange": ">=10.6.0 <13.0.0",
   "projectFolderMinDepth": 2,
   "ensureConsistentVersions": true,
@@ -13,9 +13,7 @@
       "internal",
       "plugins"
     ],
-    "ignoredNpmScopes": [
-      "@types"
-    ]
+    "ignoredNpmScopes": ["@types"]
   },
   "projects": [
     {
