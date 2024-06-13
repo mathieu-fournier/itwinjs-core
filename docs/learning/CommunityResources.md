@@ -25,4 +25,4 @@ We frequently post helpful iModel.js videos and articles:
 
 ### Notifications and Updates
 
-We post status updates and release announcements on the iModel.js [Twitter feed](https://twitter.com/imodeljs).
+We post status updates and release announcements on the iModel.js [Twitter feed](https://twitter.com/itwinjs).
