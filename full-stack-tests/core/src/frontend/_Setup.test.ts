@@ -8,6 +8,9 @@ import { BentleyCloudRpcManager, BentleyCloudRpcParams, RpcConfiguration } from 
 import { rpcInterfaces } from "../common/RpcInterfaces";
 import { Geometry } from "@itwin/core-geometry";
 
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
+
 RpcConfiguration.developmentMode = true;
 RpcConfiguration.disableRoutingValidation = true;
 interface DeepEqualWithFpToleranceOpts {

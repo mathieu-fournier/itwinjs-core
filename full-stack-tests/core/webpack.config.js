@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 const path = require("path");
 const { globSync } = require("glob");
@@ -10,8 +10,7 @@ const fs = require("fs");
 
 /** Loads the provided `.env` file into process.env */
 function loadEnv(envFile) {
-  if (!fs.existsSync(envFile))
-    return;
+  if (!fs.existsSync(envFile)) return;
 
   const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
   const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -41,6 +40,7 @@ function createConfig(shouldInstrument) {
       mainFields: ["main", "module"],
       fallback: {
         assert: require.resolve("assert"),
+        buffer: require.resolve("buffer/"),
         crypto: require.resolve("crypto-browserify"),
         http: require.resolve("stream-http"),
         https: require.resolve("https-browserify"),
@@ -49,8 +49,8 @@ function createConfig(shouldInstrument) {
         zlib: require.resolve("browserify-zlib"),
       },
       alias: {
-        "supports-color$": "supports-color/browser.js"
-      }
+        "supports-color$": "supports-color/browser.js",
+      },
     },
     module: {
       noParse: [
@@ -87,7 +87,7 @@ function createConfig(shouldInstrument) {
     },
     externals: {
       electron: "commonjs electron",
-      fs
+      fs,
     },
     plugins: [
       // Makes some environment variables available to the JS code, for example:
@@ -104,6 +104,10 @@ function createConfig(shouldInstrument) {
             ),
           }
         ),
+      }),
+      new webpack.ProvidePlugin({
+        buffer: ["buffer", "Buffer"],
+        Buffer: ["buffer", "Buffer"],
       }),
       // certa doesn't like chunks
       new webpack.optimize.LimitChunkCountPlugin({
@@ -134,7 +138,4 @@ function createConfig(shouldInstrument) {
 }
 
 // Runs webpack once for each config in the export array
-module.exports = [
-  createConfig(false),
-  createConfig(true)
-]
+module.exports = [createConfig(false), createConfig(true)];
