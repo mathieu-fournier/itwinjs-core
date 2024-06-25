@@ -20,7 +20,9 @@ jobs:
         inputs:
           versionSpec: 20.x
           checkLatest: true
-
+      - script: |
+          echo "The current branch is $(Build.SourceBranch)"
+        displayName: 'Print current branch'
       - bash: |
           git config --local user.email 38288322+imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
