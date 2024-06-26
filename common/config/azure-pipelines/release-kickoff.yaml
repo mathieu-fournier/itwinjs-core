@@ -45,5 +45,5 @@ jobs:
       #   : - bash: 'git tag -a release/$(getVersion.version) -m "v$(getVersion.version)"'
       #       displayName: Create git tag
 
-      - bash: "git push https://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:PAT@github.com/iTwin/itwinjs-core HEAD:mikeN/fin-release-fix"
+      - bash: "git push https://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@github.com/iTwin/itwinjs-core HEAD:mikeN/fin-release-fix"
         displayName: Push version bump
