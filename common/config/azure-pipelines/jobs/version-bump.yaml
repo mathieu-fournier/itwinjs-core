@@ -281,6 +281,9 @@ jobs:
               "---`npublish: false`n---`n# NextVersion`n" | Set-Content $sourceFile
             displayName: "Clear current NextVersion.md"
 
+          - bash: git pull
+            displayName: Git pull
+
           - bash: git add .
             displayName: Git add all changes
 
