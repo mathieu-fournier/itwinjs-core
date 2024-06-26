@@ -5,33 +5,33 @@
 
 # TRY detect tag, or get ver num from tag
 
-name: Finalize Release
+# name: Finalize Release
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-    - 'mikeN/*'
-    paths:
-    - '**/CHANGELOG.md'
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#     - 'mikeN/*'
+#     paths:
+#     - '**/CHANGELOG.md'
 
-jobs:
-  finalize:
-    name: Cherry-pick Changelogs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
-          ref: ${{ github.ref }} # checkouts the branch that triggered the workflow
-          fetch-depth: 0
-      - name: Set Git Config
-        run: |
-          git config --local user.email 38288322+imodeljs-admin@users.noreply.github.com
-          git config --local user.name imodeljs-admin
-      - name: Run update-changelogs.mjs
-        run: |
-          sudo npm install -g @microsoft/rush
-          npx zx@latest --install ./.github/workflows/automation-scripts/update-changelogs.mjs
-        # turn off the default behavior to fail fast. The script has its own error handling
-        shell: bash {0}
+# jobs:
+#   finalize:
+#     name: Cherry-pick Changelogs
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
+#           ref: ${{ github.ref }} # checkouts the branch that triggered the workflow
+#           fetch-depth: 0
+#       - name: Set Git Config
+#         run: |
+#           git config --local user.email 38288322+imodeljs-admin@users.noreply.github.com
+#           git config --local user.name imodeljs-admin
+#       - name: Run update-changelogs.mjs
+#         run: |
+#           sudo npm install -g @microsoft/rush
+#           npx zx@latest --install ./.github/workflows/automation-scripts/update-changelogs.mjs
+#         # turn off the default behavior to fail fast. The script has its own error handling
+#         shell: bash {0}
