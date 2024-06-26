@@ -13,6 +13,7 @@ jobs:
     displayName: Add small change to Changelog
     steps:
       - checkout: self
+        persistCredentials: true
         fetchDepth: 0
       - bash: git status
         displayName: check branch
@@ -45,5 +46,5 @@ jobs:
       #   : - bash: 'git tag -a release/$(getVersion.version) -m "v$(getVersion.version)"'
       #       displayName: Create git tag
 
-      - bash: "git push https://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@github.com/iTwin/itwinjs-core HEAD:mikeN/fin-release-fix"
+      - bash: "git push https://$(GITHUBTOKEN)@github.com/iTwin/itwinjs-core HEAD:$(Build.SourceBranch)"
         displayName: Push version bump
