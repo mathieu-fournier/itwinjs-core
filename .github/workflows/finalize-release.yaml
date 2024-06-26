@@ -9,11 +9,6 @@
 
 # on:
 #   workflow_dispatch:
-#   push:
-#     branches:
-#     - 'mikeN/*'
-#     paths:
-#     - '**/CHANGELOG.md'
 
 # jobs:
 #   finalize:
