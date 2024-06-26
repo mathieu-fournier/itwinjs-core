@@ -39,7 +39,7 @@ jobs:
 
       - bash: |
           echo Committing version bump 4.6.11...
-          git commit -m "4.6.11" --author="imodeljs-admin <38288322+imodeljs-admin@users.noreply.github.com>"
+          git commit -m "4.7.0" --author="imodeljs-admin <38288322+imodeljs-admin@users.noreply.github.com>"
         displayName: Git commit dummy version # TODO: try 4.6.11 as patch and 4.6.0 as minor
 
       # - ? ${{ if or(eq(parameters.BumpType, 'minor'), eq(parameters.BumpType, 'patch')) }}
