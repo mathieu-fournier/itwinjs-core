@@ -45,5 +45,5 @@ jobs:
       #   : - bash: 'git tag -a release/$(getVersion.version) -m "v$(getVersion.version)"'
       #       displayName: Create git tag
 
-      - bash: "git push --follow-tags origin $(Build.SourceBranch)"
+      - bash: "git push --follow-tags origin HEAD:$(Build.SourceBranch)"
         displayName: Push version bump
